@@ -3,6 +3,7 @@ using UnityEngine;
 using EditorAttributes;
 using System.Collections.Generic;
 using System.Linq;
+using CLogic.Utils;
 
 namespace CLogic.Systems.DialogueSystem
 {
@@ -139,7 +140,7 @@ namespace CLogic.Systems.DialogueSystem
 
             if(currentNode.nextNodeID == -1)
             {
-                Debug.LogWarning("Abrupt graph ending detected. Please ensure end nodes are properly linked where the graph ends");
+                Integrations.LogWarning("Abrupt graph ending detected. Please ensure end nodes are properly linked where the graph ends");
                 EndDialogue();
                 return false;
             }
@@ -179,7 +180,7 @@ namespace CLogic.Systems.DialogueSystem
             {
                 if (!nodeProcessors.TryGetValue(type, out processor))
                 {
-                    Debug.LogError($"No processor for type {type}");
+                    Integrations.LogError($"No processor for type {type}");
                     return;
                 }
             }
