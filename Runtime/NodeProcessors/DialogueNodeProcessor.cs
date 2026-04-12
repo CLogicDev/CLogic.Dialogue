@@ -8,20 +8,22 @@ namespace CLogic.Systems.DialogueSystem
     public abstract class DialogueNodeData
     {
         public int nextNodeID = -1;
-
+        
         public int startNodeActionID = -1;
         public int endNodeActionID = -1;
     }
-
+    
     [Serializable]
     public class ContextNodeData : DialogueNodeData
     {
-        [SerializeReference] public List<BlockNodeData> childBlocks = new();
+        [SerializeReference]
+        public List<BlockNodeData> childBlocks = new();
     }
-
+    
     [Serializable]
-    public class BlockNodeData : DialogueNodeData { }
-
+    public class BlockNodeData : DialogueNodeData
+    {}
+    
     /// <summary>
     /// Used to refer to processor nodes in the inspector.
     /// Do not inherit from this class. Use <see cref="DialogueNodeProcessor&lt;T&gt;"/> instead.
@@ -40,19 +42,19 @@ namespace CLogic.Systems.DialogueSystem
         public override Type NodeType => typeof(T);
         public override bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director)
         {
-            if(dialogueNode.endNodeActionID != -1)
+            if (dialogueNode.endNodeActionID != -1)
                 director.ProcessNode(director.GetNodeFromID(dialogueNode.endNodeActionID), true);
-
+            
             return true;
         }
         public override void ProcessNode(DialogueNodeData dialogueNode, DialogueDirector director) => ProcessNode((T)dialogueNode, director);
-
+        
         public virtual void ProcessNode(T dialogueNode, DialogueDirector director)
         {
-            if(dialogueNode.startNodeActionID != -1)
+            if (dialogueNode.startNodeActionID != -1)
                 director.ProcessNode(director.GetNodeFromID(dialogueNode.startNodeActionID), true);
         }
-
+        
         public override void HandleCancellation(DialogueNodeData dialogueNode, DialogueDirector director) {}
     }
 }

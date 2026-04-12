@@ -9,126 +9,136 @@ namespace CLogic.Systems.DialogueSystem
 {
     public partial class DialogueDirector : MonoBehaviour
     {
-        [field: SerializeField] public DialogueGraph CurrentGraph { get; private set; }
-
+        [field: SerializeField]
+        public DialogueGraph CurrentGraph { get; private set; }
+        
         public int maxDiscoveryDepth = 2;
         
-        [field: SerializeField] public List<DialogueNodeProcessor> processorOverrides {get; private set;} = new();
-
+        [field: SerializeField]
+        public List<DialogueNodeProcessor> processorOverrides { get; private set; } = new();
+        
         private DialogueNodeData currentNode;
         private IDialogueNodeProcessor currentProcessor;
         
         private int currentNodeID;
-
+        
         [NonSerialized]
         private DialogueNodeData[] nodes;
-
+        
         [SerializeField, ShowField(nameof(IsUsingBakedProcessors))]
         private List<DialogueNodeProcessor> bakedProcessors = new();
         private Dictionary<Type, IDialogueNodeProcessor> nodeProcessors = new();
         private Dictionary<Type, IDialogueNodeProcessor> nodeProcessorOverrides = new();
-
+        
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
         
         private Action currentFinishCallback;
-
+        
         [ShowInInspector]
         public bool IsPlaying => currentNode != null;
-
+        
         [ReadOnly, ShowInInspector]
         public bool IsUsingBakedProcessors => bakedProcessors.Count > 0;
-
+        
         private void Awake()
         {
-            foreach (var processor in processorOverrides)
+            foreach (DialogueNodeProcessor processor in processorOverrides)
+            {
                 nodeProcessorOverrides.Add(processor.NodeType, processor);
+            }
             
             IEnumerable<IDialogueNodeProcessor> processorProvider = IsUsingBakedProcessors ? bakedProcessors : DiscoverProcessors(transform);
             
             nodeProcessors.Clear();
-            foreach (var processor in processorProvider)
+            foreach (IDialogueNodeProcessor processor in processorProvider)
             {
-                if(!nodeProcessorOverrides.ContainsKey(processor.NodeType))
+                if (!nodeProcessorOverrides.ContainsKey(processor.NodeType))
                     nodeProcessors.Add(processor.NodeType, processor);
             }
             
             nodeProcessors.Add(typeof(ActionNodeData), new ActionNodeProcessor()); // Action node processor is a special processor type
         }
-
+        
         [Button("Bake Processors")]
         public void BakeProcessors()
         {
             bakedProcessors.Clear();
-            foreach (var processor in DiscoverProcessors(transform))
+            foreach (IDialogueNodeProcessor processor in DiscoverProcessors(transform))
             {
-                if(!nodeProcessorOverrides.ContainsKey(processor.NodeType))
+                if (!nodeProcessorOverrides.ContainsKey(processor.NodeType))
                     bakedProcessors.Add(processor as DialogueNodeProcessor); // If processors are discovered they must implement DialogueNodeProcessor
             }
         }
-
+        
         public IEnumerable<IDialogueNodeProcessor> DiscoverProcessors(Transform parent, int currentDepth = 0)
         {
             //Check parent components
             foreach (IDialogueNodeProcessor dialogueNodeProcessor in parent.GetComponents<IDialogueNodeProcessor>())
+            {
                 yield return dialogueNodeProcessor;
+            }
             
             //Don't check children is depth is exceeded
-            if(currentDepth >= maxDiscoveryDepth)
+            if (currentDepth >= maxDiscoveryDepth)
                 yield break;
             
             foreach (Transform child in parent)
             {
                 //Check child components
                 foreach (IDialogueNodeProcessor dialogueNodeProcessor in child.GetComponents<IDialogueNodeProcessor>())
+                {
                     yield return dialogueNodeProcessor;
+                }
                 
                 //Recursively check nested children
                 foreach (Transform nestedChild in child)
                 {
                     foreach (IDialogueNodeProcessor dialogueNodeProcessor in DiscoverProcessors(nestedChild, currentDepth + 2)) // Depth is +2 since child is checked then the nested child
+                    {
                         yield return dialogueNodeProcessor;
+                    }
                 }
             }
         }
-
+        
         [Button]
         private void PlayCurrentDialogue() => PlayDialogueGraph(CurrentGraph);
-
+        
         public void PlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
         public void PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null)
         {
-            if(!forced && IsPlaying)
+            if (!forced && IsPlaying)
                 return;
             
-            if(IsPlaying)
+            if (IsPlaying)
                 EndDialogue();
-
+            
             CurrentGraph = graph;
             nodes = CurrentGraph.nodes;
             currentFinishCallback = onFinish;
             
             OnDialogueStart?.Invoke();
-
+            
             currentNode = GetNodeFromID(startIndex ?? CurrentGraph.startNodeID);
             ProcessNode(currentNode);
         }
-
+        
         // Not local function to allow access from sub graph handler
-
+        
         [Button]
         public void EndDialogue()
         {
             if (!IsPlaying)
                 return;
-
+            
             currentProcessor?.HandleCancellation(currentNode, this);
             currentNode = null;
             
             currentFinishCallback?.Invoke();
             OnDialogueEnd?.Invoke();
         }
-
+        
         /// <summary>
         /// Tries to go to the next node
         /// </summary>
@@ -137,8 +147,8 @@ namespace CLogic.Systems.DialogueSystem
         {
             if (!IsPlaying || !currentProcessor.CanProgressNode(currentNode, this))
                 return false;
-
-            if(currentNode.nextNodeID == -1)
+            
+            if (currentNode.nextNodeID == -1)
             {
                 Integrations.LogWarning("Abrupt graph ending detected. Please ensure end nodes are properly linked where the graph ends");
                 EndDialogue();
@@ -150,26 +160,26 @@ namespace CLogic.Systems.DialogueSystem
                 EndDialogue();
                 return false;
             }
-
+            
             GoToNode(currentNode.nextNodeID);
             return true;
         }
-
+        
         internal void GoToNode(int nodeID)
         {
             if (!IsPlaying)
                 return;
-
+            
             currentNode = GetNodeFromID(nodeID);
             currentNodeID = nodeID;
             ProcessNode(currentNode);
         }
-
+        
         public DialogueNodeData GetNodeFromID(int nodeID) => nodes[nodeID];
-
+        
         public void ProcessNode(DialogueNodeData node, bool fireAndForget = false)
         {
-            if(node is SubGraphNodeData subGraphNodeData)
+            if (node is SubGraphNodeData subGraphNodeData)
             {
                 ProcessSubGraph(subGraphNodeData); // Sub graph processing has precedence over all processing logic
                 return;
@@ -185,9 +195,9 @@ namespace CLogic.Systems.DialogueSystem
                 }
             }
             
-            if(!fireAndForget)
+            if (!fireAndForget)
                 currentProcessor = processor;
-
+            
             processor.ProcessNode(node, this);
         }
     }

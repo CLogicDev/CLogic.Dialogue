@@ -11,7 +11,8 @@ namespace CLogic.Systems.DialogueSystem
     
     public class AudioNodeProcessor : DialogueNodeProcessor<AudioNodeData>
     {
-        [SerializeField] private AudioSource audioSource;
+        [SerializeField]
+        private AudioSource audioSource;
         
         public override void ProcessNode(AudioNodeData dialogueNode, DialogueDirector director)
         {

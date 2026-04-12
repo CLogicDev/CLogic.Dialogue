@@ -10,11 +10,11 @@ namespace CLogic.Systems.DialogueSystem.Editor
         public const string OP_EXPAND_SUBGRAPH = "ExpandedSubgraph";
         
         public bool IsSubGraphInstance { get; private set; } = false;
-
+        
         protected override void OnDefineSubgraphNodeOptions(Node.IOptionDefinitionContext context)
         {
             context.AddOption<bool>(OP_EXPAND_SUBGRAPH).WithDisplayName("Expand Into Parent Graph").Build();
-
+            
             IsSubGraphInstance = true;
         }
         
@@ -29,32 +29,32 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 {
                     case VariableKind.Input when inputVariable == null:
                         inputVariable = variable;
-                        break;
+                    break;
                     case VariableKind.Input:
                         graphLogger.LogError("Multiple input variables detected. Only one input variable should exist", this);
                         return;
                     
                     case VariableKind.Output when outputVariable == null:
                         outputVariable = variable;
-                        break;
+                    break;
                     case VariableKind.Output:
                         graphLogger.LogError("Multiple output variables detected. Only one output variable should exist", this);
                         return;
                 }
             }
-
-            if(inputVariable == null)
+            
+            if (inputVariable == null)
             {
                 graphLogger.LogError("No input found for subgraph", this);
                 return;
             }
-
-            if(outputVariable == null)
+            
+            if (outputVariable == null)
             {
                 graphLogger.LogError("No output variable for subgraph", this);
                 return;
             }
-
+            
             List<IVariableNode> nodeBuffer = new(1);
             List<IPort> portBuffer = new(1);
             
@@ -68,12 +68,12 @@ namespace CLogic.Systems.DialogueSystem.Editor
                     graphLogger.LogError("No input connected. Please ensure the graph has at least one input", inputVariable);
                     return;
             }
-
+            
             IVariableNode inputVariableNode = nodeBuffer[0];
-            var inputVariablePort = inputVariableNode.GetOutputPort(0);
-
+            IPort inputVariablePort = inputVariableNode.GetOutputPort(0);
+            
             inputVariablePort.GetConnectedPorts(portBuffer);
-
+            
             switch (portBuffer.Count)
             {
                 case 0:
@@ -83,7 +83,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
                     graphLogger.LogError("Multiple inputs detected. Please ensure only one input path exists", inputVariableNode);
                     return;
             }
-
+            
             outputVariable.GetNodes(nodeBuffer);
             switch (nodeBuffer.Count)
             {
@@ -94,10 +94,10 @@ namespace CLogic.Systems.DialogueSystem.Editor
                     graphLogger.LogError("No output connected. Please ensure the graph has at least one output", outputVariable);
                     return;
             }
-
+            
             IVariableNode outputVariableNode = nodeBuffer[0];
-            var outputVariablePort = outputVariableNode.GetInputPort(0);
-
+            IPort outputVariablePort = outputVariableNode.GetInputPort(0);
+            
             outputVariablePort.GetConnectedPorts(portBuffer);
             switch (portBuffer.Count)
             {

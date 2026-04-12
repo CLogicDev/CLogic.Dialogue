@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace CLogic.Systems.DialogueSystem
-{    
+{
     [Serializable]
-    public class ActionNodeData : ContextNodeData { }
-
+    public class ActionNodeData : ContextNodeData
+    {}
+    
     public class ActionNodeProcessor : IDialogueNodeProcessor
     {
         public Type NodeType => typeof(ActionNodeData);
@@ -14,10 +15,12 @@ namespace CLogic.Systems.DialogueSystem
         
         public void ProcessNode(DialogueNodeData dialogueNode, DialogueDirector director)
         {
-            ActionNodeData actionNodeData = (ActionNodeData)dialogueNode;
+            var actionNodeData = (ActionNodeData)dialogueNode;
             
-            foreach (var childBlock in actionNodeData.childBlocks)
+            foreach (BlockNodeData childBlock in actionNodeData.childBlocks)
+            {
                 director.ProcessNode(childBlock, true);
+            }
         }
         public void HandleCancellation(DialogueNodeData dialogueNode, DialogueDirector director) {}
     }

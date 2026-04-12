@@ -12,32 +12,32 @@ namespace CLogic.Systems.DialogueSystem.Editor
             context.AddInputPort<IDialogueGraphNode>("In").WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             HandleSetup();
         }
-
+        
         public override BranchNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
         {
             BranchNodeData nodeData = new();
             ProcessChildBlocks(nodeData, graph, nodeMap);
-
+            
             return nodeData;
         }
         
         public override void OnValidate(GraphLogger graphLogger)
         {
-            if(BlockCount == 0)
+            if (BlockCount == 0)
             {
                 graphLogger.LogError("Branch node needs at least one branch output", this);
             }
-
-            foreach (var block in BlockNodes)
+            
+            foreach (BlockNode block in BlockNodes)
             {
                 if (block is IDialogueGraphNode dialogueNode)
                     dialogueNode.OnValidate(graphLogger);
             }
         }
-
-        void HandleSetup()
+        
+        private void HandleSetup()
         {
-            if(BlockCount == 0)
+            if (BlockCount == 0)
                 CreateBlockNode<ChoiceOptionNode>();
         }
     }
