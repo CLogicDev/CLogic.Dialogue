@@ -9,14 +9,13 @@ namespace CLogic.Systems.DialogueSystem
             public DialogueGraph graph;
             public Action finishCallback;
             public int originatingID;
-            
         }
         
         private Stack<SubGraph> graphStack = new();
-
+        
         private void ProcessSubGraph(SubGraphNodeData subgraph)
         {
-            graphStack.Push(new SubGraph()
+            graphStack.Push(new SubGraph
             {
                 graph = CurrentGraph,
                 finishCallback = currentFinishCallback,
@@ -25,10 +24,10 @@ namespace CLogic.Systems.DialogueSystem
             
             PlayDialogueGraph(subgraph.graph, HandleSubGraphFinished);
         }
-
+        
         private void HandleSubGraphFinished()
         {
-            if(!graphStack.TryPop(out SubGraph graph))
+            if (!graphStack.TryPop(out SubGraph graph))
                 return;
             
             PlayDialogueGraph(graph.graph, graph.finishCallback, true, graph.graph.nodes[graph.originatingID].nextNodeID);

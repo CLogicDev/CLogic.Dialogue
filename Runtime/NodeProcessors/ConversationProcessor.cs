@@ -13,43 +13,42 @@ namespace CLogic.Systems.DialogueSystem
         public float textSpeed;
         public bool skippable;
     }
-
+    
     public class ConversationProcessor : DialogueNodeProcessor<ConversationNodeData>
     {
-        [SerializeField] 
+        [SerializeField]
         private TypeWriter dialogueTextIterator;
         
-        [SerializeField] 
+        [SerializeField]
         private TextMeshProUGUI characterNameText;
-
+        
         private ConversationNodeData currentNode;
-
+        
         public override void ProcessNode(ConversationNodeData dialogueNode, DialogueDirector director)
         {
-            
             base.ProcessNode(dialogueNode, director);
             currentNode = dialogueNode;
             characterNameText.text = dialogueNode.characterName;
-
+            
             float typingSpeed = dialogueNode.textSpeed == 0f ? dialogueTextIterator.speedWordsPerMin : dialogueNode.textSpeed;
-
-            dialogueTextIterator.StartWriting(dialogueNode.text,  typingSpeed, null);
+            
+            dialogueTextIterator.StartWriting(dialogueNode.text, typingSpeed, null);
         }
-
+        
         public override bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director)
         {
             base.CanProgressNode(dialogueNode, director);
             
             if (!dialogueTextIterator.IsWriting)
                 return true;
-
+            
             if (!currentNode.skippable)
                 return false;
-
+            
             dialogueTextIterator.SkipAnimation();
             return false;
         }
-
+        
         public override void HandleCancellation(DialogueNodeData dialogueNode, DialogueDirector director)
         {
             dialogueTextIterator.StopWriting();

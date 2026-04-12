@@ -7,11 +7,11 @@ namespace CLogic.Systems.DialogueSystem
     public class DialogueGraph : ScriptableObject
     {
         public int startNodeID = -1;
-
+        
         [SerializeReference]
         public DialogueNodeData[] nodes;
     }
-
+    
     [Serializable]
     public class SubGraphNodeData : DialogueNodeData
     {
