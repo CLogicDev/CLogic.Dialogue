@@ -47,7 +47,7 @@ namespace CLogic.Systems.DialogueSystem
             
             return true;
         }
-        public override void ProcessNode(DialogueNodeData dialogueNode, DialogueDirector director) => ProcessNode((T)dialogueNode, director);
+        public sealed override void ProcessNode(DialogueNodeData dialogueNode, DialogueDirector director) => ProcessNode((T)dialogueNode, director);
         
         public virtual void ProcessNode(T dialogueNode, DialogueDirector director)
         {
