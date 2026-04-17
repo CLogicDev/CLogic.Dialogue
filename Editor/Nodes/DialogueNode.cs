@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace CLogic.Systems.DialogueSystem.Editor
 {
+    /// <summary>
+    /// Use when the node is part of the dialogue flow<br></br>
+    /// Otherwise look into <see cref="IDialogueGraphNode"/>
+    /// </summary>
     [Serializable]
     public abstract class DialogueNode<T> : Node, IDialogueGraphNode where T : DialogueNodeData
     {

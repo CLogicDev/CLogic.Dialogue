@@ -13,6 +13,11 @@ namespace CLogic.Systems.DialogueSystem
     public class ChoiceNodeData : BlockNodeData
     {
         public string choiceText;
+        
+        #if CLOGIC_CONDITIONALS
+        public Conditionals.ConditionalEvaluator conditional;
+        #endif
+        
     }
     
     public class ChoiceProcessor : DialogueNodeProcessor<BranchNodeData>
@@ -29,6 +34,7 @@ namespace CLogic.Systems.DialogueSystem
                 var choiceNode = dialogueNode.childBlocks[i] as ChoiceNodeData;
                 
                 GameObject buttonObject = Instantiate(choiceButtonPrefab, choiceContainer);
+                buttonObject.SetActive(false); // Fixes delay with interactable state
                 
                 var button = buttonObject.GetComponent<Button>();
                 var buttonText = buttonObject.GetComponentInChildren<TMP_Text>();
@@ -37,6 +43,12 @@ namespace CLogic.Systems.DialogueSystem
                 
                 int index = i;
                 button.onClick.AddListener(() => SelectChoice(index, dialogueNode, director));
+                
+                #if CLOGIC_CONDITIONALS
+                button.interactable = choiceNode.conditional == null || choiceNode.conditional.Evaluate();
+                #endif
+                
+                buttonObject.SetActive(true);
             }
         }
         
