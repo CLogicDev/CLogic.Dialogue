@@ -11,10 +11,18 @@ namespace CLogic.Systems.DialogueSystem.Editor
         private const string IN_TEXT = "Text";
         private const string OUT_EXECUTION = "Out";
         
+        #if CLOGIC_CONDITIONALS
+        private const string IN_CONDITIONAL = "Conditional";
+        #endif
+        
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
             context.AddInputPort<string>(IN_TEXT).Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            
+            #if CLOGIC_CONDITIONALS
+            context.AddInputPort<Conditionals.ConditionalEvaluator>(IN_CONDITIONAL).Build();
+            #endif
         }
         
         public override ChoiceNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
@@ -27,6 +35,10 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 nodeData.nextNodeID = nodeID;
             
             nodeData.choiceText = GetPortValue<string>(GetInputPortByName(IN_TEXT));
+            
+            #if CLOGIC_CONDITIONALS
+            nodeData.conditional = GetPortValue<Conditionals.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
+            #endif
             
             return nodeData;
         }
