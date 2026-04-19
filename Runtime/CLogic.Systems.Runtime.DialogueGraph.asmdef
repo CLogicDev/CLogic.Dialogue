@@ -1,22 +1,29 @@
 {
-  "name": "CLogic.Systems.Runtime.DialogueGraph",
-  "rootNamespace": "CLogic.Systems.DialogueSystem",
-  "references": [
-    "GUID:febaf25a60dafbd44941357b21678606",
-    "GUID:75469ad4d38634e559750d17036d5f7c",
-    "GUID:6055be8ebefd69e48b49212b09b47b2f",
-    "GUID:796dbfd4c20d116479214ebdfefb9f6b",
-    "GUID:c521dbdf32fe8f847b29afbfcbe81a3b",
-    "GUID:469a165fb75484b4d8ddb2d20708801c",
-    "GUID:76d9caaf8c921d048ae46a50a53a69b6"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "name": "CLogic.Systems.Runtime.DialogueGraph",
+    "rootNamespace": "CLogic.Systems.DialogueSystem",
+    "references": [
+        "GUID:febaf25a60dafbd44941357b21678606",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:796dbfd4c20d116479214ebdfefb9f6b",
+        "GUID:c521dbdf32fe8f847b29afbfcbe81a3b",
+        "GUID:469a165fb75484b4d8ddb2d20708801c",
+        "GUID:76d9caaf8c921d048ae46a50a53a69b6",
+        "GUID:743432685a1859d48b828bbf3716c2d0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "dev.clogic.conditionals",
+            "expression": "",
+            "define": "CLOGIC_CONDITIONALS"
+        }
+    ],
+    "noEngineReferences": false
 }

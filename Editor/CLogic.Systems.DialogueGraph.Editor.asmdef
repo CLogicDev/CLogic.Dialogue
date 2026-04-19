@@ -1,21 +1,26 @@
 {
-  "name": "CLogic.Systems.DialogueGraph.Editor",
-  "rootNamespace": "CLogic.Systems.DialogueSystem.Editor",
-  "references": [
-    "GUID:1a5ce730afcd98d4d91f6a091725bb81",
-    "GUID:70ef9a24f4cfc4aec911c1414e3f90ad",
-    "GUID:d1e08c06f8f9473888c892637c83c913",
-    "GUID:796dbfd4c20d116479214ebdfefb9f6b"
-  ],
-  "includePlatforms": [
-    "Editor"
-  ],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [],
-  "noEngineReferences": false
+    "name": "CLogic.Systems.DialogueGraph.Editor",
+    "rootNamespace": "CLogic.Systems.DialogueSystem.Editor",
+    "references": [
+        "GUID:1a5ce730afcd98d4d91f6a091725bb81",
+        "GUID:796dbfd4c20d116479214ebdfefb9f6b",
+        "GUID:743432685a1859d48b828bbf3716c2d0"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "dev.clogic.conditionals",
+            "expression": "",
+            "define": "CLOGIC_CONDITIONALS"
+        }
+    ],
+    "noEngineReferences": false
 }

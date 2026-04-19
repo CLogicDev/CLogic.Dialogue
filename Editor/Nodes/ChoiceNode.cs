@@ -7,8 +7,12 @@ namespace CLogic.Systems.DialogueSystem.Editor
     [Serializable, Node("Basic Nodes")]
     public class ChoiceNode : DialogueContextNode<BranchNodeData>
     {
+        public override bool SupportExecution => false;
+        
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
+            base.OnDefinePorts(context);
+            
             context.AddInputPort<IDialogueGraphNode>("In").WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             HandleSetup();
         }
@@ -23,15 +27,11 @@ namespace CLogic.Systems.DialogueSystem.Editor
         
         public override void OnValidate(GraphLogger graphLogger)
         {
+            base.OnValidate(graphLogger);
+            
             if (BlockCount == 0)
             {
-                graphLogger.LogError("Branch node needs at least one branch output", this);
-            }
-            
-            foreach (BlockNode block in BlockNodes)
-            {
-                if (block is IDialogueGraphNode dialogueNode)
-                    dialogueNode.OnValidate(graphLogger);
+                graphLogger.LogError("Choice node needs at least one branch output", this);
             }
         }
         

@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace CLogic.Systems.DialogueSystem.Editor
 {
+    /// <summary>
+    /// Use when the node is part of the dialogue flow<br></br>
+    /// Otherwise look into <see cref="IDialogueGraphNode"/>
+    /// </summary>
     [Serializable]
     public abstract class DialogueNode<T> : Node, IDialogueGraphNode where T : DialogueNodeData
     {
@@ -45,11 +49,14 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 break;
             }
             
+            if(!SupportStartAction || !SupportEndAction)
+                return;
+            
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
                 if (SupportStartAction)
                 {
-                    IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_NODE_START)?.FirstConnectedPort;
+                    IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
                     
                     INode connectedNode = connectedPort.GetNode();
                     if (connectedNode is not null and not ActionNode)
@@ -58,7 +65,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 
                 if (SupportEndAction)
                 {
-                    IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_NODE_END)?.FirstConnectedPort;
+                    IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                     
                     INode connectedNode = connectedPort.GetNode();
                     if (connectedNode is not null and not ActionNode)
@@ -84,7 +91,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
         {
             if (SupportStartAction)
             {
-                IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_NODE_START)?.FirstConnectedPort;
+                IPort connectedPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
                     node.startNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
@@ -92,7 +99,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
             
             if (SupportEndAction)
             {
-                IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_NODE_END)?.FirstConnectedPort;
+                IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
                     node.endNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
@@ -101,7 +108,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
         
         private void CreateExecutionNodeLink(T node, Dictionary<INode, int> nodeMap)
         {
-            IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_EXECUTION)?.FirstConnectedPort;
+            IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
             
             if (connectedPort == null)
                 return;
@@ -114,6 +121,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
         {
             context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            
+            if(!SupportStartAction || !SupportEndAction)
+                return;
             
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {

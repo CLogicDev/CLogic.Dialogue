@@ -55,7 +55,7 @@ MonoBehaviour:
           x: -292
           y: -592
           width: 940
-          height: 591
+          height: 625
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 11624616374961111055
@@ -562,7 +562,7 @@ MonoBehaviour:
             serializedVersion: 2
             Hash: 545d0f0b448837367a8a03767cd51e79
           m_GraphObjectEntityId:
-            m_Data: 0
+            m_rawData: 0
         m_Subtitle: Local Subgraph
         m_AssetProperty:
           m_SubgraphReference:
@@ -573,7 +573,7 @@ MonoBehaviour:
               serializedVersion: 2
               Hash: 545d0f0b448837367a8a03767cd51e79
             m_GraphObjectEntityId:
-              m_Data: 0
+              m_rawData: 0
         m_CopyPasteLocalSubgraphModelReference:
           rid: -2
     - rid: 4218189854764696484

@@ -11,33 +11,91 @@ namespace CLogic.Systems.DialogueSystem.Editor
         public const string IN_EXECUTION = "In";
         public const string OUT_EXECUTION = "Out";
         
+        public const string OUT_NODE_END = "End";
+        public const string OUT_NODE_START = "Start";
+        
+        public const string OP_NODE_EVENTS = "UseEvents";
+        
+        public virtual bool SupportStartAction => true;
+        public virtual bool SupportEndAction => true;
+        
+        public virtual bool SupportExecution => true;
+        
+        protected override void OnDefineOptions(IOptionDefinitionContext context)
+        {
+            if (SupportStartAction || SupportEndAction)
+                context.AddOption<bool>(OP_NODE_EVENTS).WithDisplayName("Use Events").Build();
+        }
+        
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
-            context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
-            context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
+            if (SupportExecution)
+            {
+                context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
+                context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
+            }
+            
+            if(!SupportStartAction || !SupportEndAction)
+                return;
+            
+            if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
+            {
+                if (SupportStartAction)
+                    context.AddOutputPort<ActionNode>(OUT_NODE_START).WithDisplayName("Start").Build();
+                
+                if (SupportEndAction)
+                    context.AddOutputPort<ActionNode>(OUT_NODE_END).WithDisplayName("End").Build();
+            }
         }
         
         public virtual void OnValidate(GraphLogger graphLogger)
         {
             List<IPort> connectedPorts = new();
             
-            GetOutputPortByName(OUT_EXECUTION)?.GetConnectedPorts(connectedPorts);
-            
-            switch (connectedPorts.Count)
+            if (SupportExecution)
             {
-                case 0:
-                    graphLogger.Log("Node output not connected, the graph will end by default", this);
-                break;
+                GetOutputPortByName(OUT_EXECUTION)?.GetConnectedPorts(connectedPorts);
                 
-                case > 1:
-                    graphLogger.LogError("Multiple execution output links are not allowed", this);
-                break;
+                switch (connectedPorts.Count)
+                {
+                    case 0:
+                        graphLogger.Log("Node output not connected, the graph will end by default", this);
+                    break;
+                    
+                    case > 1:
+                        graphLogger.LogError("Multiple execution output links are not allowed", this);
+                    break;
+                }
             }
             
             foreach (BlockNode block in BlockNodes)
             {
                 if (block is IDialogueGraphNode dialogueNode)
                     dialogueNode.OnValidate(graphLogger);
+            }
+            
+            if(!SupportStartAction || !SupportEndAction)
+                return;
+            
+            if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
+            {
+                if (SupportStartAction)
+                {
+                    IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
+                    
+                    INode connectedNode = connectedPort.GetNode();
+                    if (connectedNode is not null and not ActionNode)
+                        graphLogger.LogError("Start node must be connected to an action node", this);
+                }
+                
+                if (SupportEndAction)
+                {
+                    IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
+                    
+                    INode connectedNode = connectedPort.GetNode();
+                    if (connectedNode is not null and not ActionNode)
+                        graphLogger.LogError("End node must be connected to an action node", this);
+                }
             }
         }
         
@@ -55,18 +113,34 @@ namespace CLogic.Systems.DialogueSystem.Editor
             }
         }
         
-        //TODO: Find a way to remove code dupe from DialogueNode.cs
-        public virtual void CreateNodeLink(T node, Dictionary<INode, int> nodeMap)
+        private void CreateActionNodeLink(T node, Dictionary<INode, int> nodeMap)
         {
-            IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_EXECUTION)?.FirstConnectedPort;
+            if (SupportStartAction)
+            {
+                IPort connectedPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
+                
+                if (connectedPort != null)
+                    node.startNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
+            }
+            
+            if (SupportEndAction)
+            {
+                IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
+                
+                if (connectedPort != null)
+                    node.endNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
+            }
+        }
+        
+        //TODO: Find a way to remove code dupe from DialogueNode.cs
+        public virtual void CreateExecutionNodeLink(T node, Dictionary<INode, int> nodeMap)
+        {
+            IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
             
             if (connectedPort == null)
                 return;
             
             INode connectedNode = connectedPort.GetNode();
-            if (connectedNode is EndNode)
-                node.nextNodeID = -2; // Graceful end
-            
             node.nextNodeID = nodeMap.GetValueOrDefault(connectedNode, -1);
         }
         
