@@ -8,6 +8,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
     [Serializable, Node("Events")]
     public class ActionNode : DialogueContextNode<ActionNodeData>
     {
+        public override bool SupportExecution => false;
+        public override bool SupportStartAction => false;
+        public override bool SupportEndAction => false;
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
             context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();

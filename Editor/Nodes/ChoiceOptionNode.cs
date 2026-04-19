@@ -17,6 +17,8 @@ namespace CLogic.Systems.DialogueSystem.Editor
         
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
+            base.OnDefinePorts(context);
+            
             context.AddInputPort<string>(IN_TEXT).Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             
@@ -29,7 +31,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
         {
             ChoiceNodeData nodeData = new();
             
-            IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_EXECUTION)?.FirstConnectedPort;
+            IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
             
             if (connectedPort != null && nodeMap.TryGetValue(connectedPort.GetNode(), out int nodeID))
                 nodeData.nextNodeID = nodeID;
@@ -40,11 +42,15 @@ namespace CLogic.Systems.DialogueSystem.Editor
             nodeData.conditional = GetPortValue<Conditionals.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
             #endif
             
+            CreateActionNodeLink(nodeData, nodeMap);
+            
             return nodeData;
         }
         
         public override void OnValidate(GraphLogger graphLogger)
         {
+            base.OnValidate(graphLogger);
+            
             List<IPort> connectedPorts = new();
             
             GetOutputPortByName(OUT_EXECUTION).GetConnectedPorts(connectedPorts);

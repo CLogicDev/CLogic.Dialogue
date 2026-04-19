@@ -105,7 +105,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
         
         private void CreateExecutionNodeLink(T node, Dictionary<INode, int> nodeMap)
         {
-            IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_EXECUTION)?.FirstConnectedPort;
+            IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
             
             if (connectedPort == null)
                 return;
