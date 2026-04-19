@@ -8,6 +8,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
     [Serializable, UseWithContext(typeof(ActionNode)), Node("Events")]
     public class AudioNode : DialogueBlockNode<AudioNodeData>
     {
+        public override bool SupportStartAction => false;
+        public override bool SupportEndAction => false;
+        
         public const string IN_AUDIOCLIP = "AudioClip";
         
         public override AudioNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap) => new()
