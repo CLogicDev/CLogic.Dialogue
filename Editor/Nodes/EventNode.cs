@@ -8,6 +8,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
     [Serializable, UseWithContext(typeof(ActionNode)), Node("Events")]
     public class EventNode : DialogueBlockNode<EventNodeData>
     {
+        public override bool SupportStartAction => false;
+        public override bool SupportEndAction => false;
+        
         public const string IN_EVENT = "Event";
         
         public override EventNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap) => new()

@@ -49,6 +49,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 break;
             }
             
+            if(!SupportStartAction || !SupportEndAction)
+                return;
+            
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
                 if (SupportStartAction)
@@ -118,6 +121,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
         {
             context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            
+            if(!SupportStartAction || !SupportEndAction)
+                return;
             
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
