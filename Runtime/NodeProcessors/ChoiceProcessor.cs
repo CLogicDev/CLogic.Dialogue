@@ -56,7 +56,7 @@ namespace CLogic.Systems.DialogueSystem
         
         private void SelectChoice(int choiceIndex, BranchNodeData dialogueNode, DialogueDirector director)
         {
-            director.GoToNode(dialogueNode.childBlocks[choiceIndex].nextNodeID);
+            director.GoToNode(dialogueNode.childBlocks[choiceIndex].nextNodeID, true);
             DestroyChoiceButtons();
         }
         

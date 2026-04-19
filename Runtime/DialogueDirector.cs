@@ -143,36 +143,33 @@ namespace CLogic.Systems.DialogueSystem
         /// Tries to go to the next node
         /// </summary>
         /// <returns>Whether the director could go to the next node</returns>
-        public bool GoToNextNode()
-        {
-            if (!IsPlaying || !currentProcessor.CanProgressNode(currentNode, this))
-                return false;
-            
-            if (currentNode.nextNodeID == -1)
-            {
-                Integrations.LogWarning("Abrupt graph ending detected. Please ensure end nodes are properly linked where the graph ends");
-                EndDialogue();
-                return false;
-            }
-            
-            if (currentNode.nextNodeID == -2)
-            {
-                EndDialogue();
-                return false;
-            }
-            
-            GoToNode(currentNode.nextNodeID);
-            return true;
-        }
+        public bool GoToNextNode() => IsPlaying && GoToNode(currentNode.nextNodeID);
         
-        internal void GoToNode(int nodeID)
+        /// <summary>
+        /// Tries to go to a specific node
+        /// </summary>
+        /// <returns>Whether the director could go to that node</returns>
+        internal bool GoToNode(int nodeID, bool forced = false)
         {
-            if (!IsPlaying)
-                return;
+            if(!forced && !currentProcessor.CanProgressNode(currentNode, this))
+                return false;
+            
+            switch (nodeID)
+            {
+                case -1:
+                    Integrations.LogWarning("Abrupt graph ending detected. Please ensure end nodes are properly linked where the graph ends");
+                    EndDialogue();
+                    return false;
+                case -2:
+                    EndDialogue();
+                    return false;
+            }
             
             currentNode = GetNodeFromID(nodeID);
             currentNodeID = nodeID;
             ProcessNode(currentNode);
+            
+            return true;
         }
         
         public DialogueNodeData GetNodeFromID(int nodeID) => nodes[nodeID];
