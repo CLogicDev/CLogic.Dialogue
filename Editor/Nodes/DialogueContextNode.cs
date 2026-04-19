@@ -35,6 +35,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
             }
             
+            if(!SupportStartAction || !SupportEndAction)
+                return;
+            
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
                 if (SupportStartAction)
@@ -70,6 +73,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 if (block is IDialogueGraphNode dialogueNode)
                     dialogueNode.OnValidate(graphLogger);
             }
+            
+            if(!SupportStartAction || !SupportEndAction)
+                return;
             
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {

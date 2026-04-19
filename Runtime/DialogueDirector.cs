@@ -53,7 +53,7 @@ namespace CLogic.Systems.DialogueSystem
             nodeProcessors.Clear();
             foreach (IDialogueNodeProcessor processor in processorProvider)
             {
-                if (!nodeProcessorOverrides.ContainsKey(processor.NodeType))
+                if (nodeProcessors == null || !nodeProcessorOverrides.ContainsKey(processor.NodeType))
                     nodeProcessors.Add(processor.NodeType, processor);
             }
             

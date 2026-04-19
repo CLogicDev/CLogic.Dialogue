@@ -24,6 +24,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
         
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
+            if(!SupportStartAction || !SupportEndAction)
+                return;
+            
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
                 if (SupportStartAction)
@@ -36,6 +39,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
         
         public virtual void OnValidate(GraphLogger graphLogger)
         {
+            if(!SupportStartAction || !SupportEndAction)
+                return;
+            
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
                 if (SupportStartAction)

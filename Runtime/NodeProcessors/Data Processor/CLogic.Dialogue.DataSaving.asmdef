@@ -1,0 +1,25 @@
+{
+    "name": "CLogic.Dialogue.DataSaving",
+    "rootNamespace": "CLogic.Dialogue.DataSaving",
+    "references": [
+        "GUID:1a5ce730afcd98d4d91f6a091725bb81",
+        "GUID:26e92db12413a044bb98150ad5d1dc1f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "CLOGIC_DATA_SAVING"
+    ],
+    "versionDefines": [
+        {
+            "name": "dev.clogic.datasaving",
+            "expression": "",
+            "define": "CLOGIC_DATA_SAVING"
+        }
+    ],
+    "noEngineReferences": false
+}
