@@ -53,7 +53,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
             {
                 if (SupportStartAction)
                 {
-                    IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_NODE_START)?.FirstConnectedPort;
+                    IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
                     
                     INode connectedNode = connectedPort.GetNode();
                     if (connectedNode is not null and not ActionNode)
@@ -62,7 +62,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 
                 if (SupportEndAction)
                 {
-                    IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_NODE_END)?.FirstConnectedPort;
+                    IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                     
                     INode connectedNode = connectedPort.GetNode();
                     if (connectedNode is not null and not ActionNode)
@@ -88,7 +88,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
         {
             if (SupportStartAction)
             {
-                IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_NODE_START)?.FirstConnectedPort;
+                IPort connectedPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
                     node.startNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
@@ -96,7 +96,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
             
             if (SupportEndAction)
             {
-                IPort connectedPort = GetOutputPorts().FirstOrDefault((port) => port.Name == OUT_NODE_END)?.FirstConnectedPort;
+                IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
                     node.endNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
