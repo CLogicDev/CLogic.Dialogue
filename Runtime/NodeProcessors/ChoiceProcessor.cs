@@ -45,6 +45,8 @@ namespace CLogic.Systems.DialogueSystem
                 button.onClick.AddListener(() => SelectChoice(index, dialogueNode, director));
                 
                 #if CLOGIC_CONDITIONALS
+                Debug.Log(choiceNode.conditional == null || choiceNode.conditional.Evaluate());
+                Debug.Log(choiceNode.choiceText);
                 button.interactable = choiceNode.conditional == null || choiceNode.conditional.Evaluate();
                 #endif
                 
