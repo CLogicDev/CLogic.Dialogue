@@ -33,6 +33,11 @@ namespace CLogic.Systems.DialogueSystem.Editor
                         constantNode.TryGetValue(out TValue value);
                         return value;
                     }
+                    
+                    case ProvisionerNode<TValue> provisionerNode:
+                    {
+                       return provisionerNode.GetProvisionedData();
+                    }
                 }
                 return default;
             }

@@ -20,7 +20,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
             var graphData = ScriptableObject.CreateInstance<DialogueGraph>();
             
             CreateNodeMap(editorGraph);
-            ProcessNodes(editorGraph, graphData);
+            ProcessNodes(editorGraph, graphData, context);
             
             if (graphData.startNodeID == -1)
                 SetVariableStartNode();
@@ -174,7 +174,7 @@ namespace CLogic.Systems.DialogueSystem.Editor
             }
         }
         
-        private void ProcessNodes(DialogueEditorGraph editorGraph, DialogueGraph graph)
+        private void ProcessNodes(DialogueEditorGraph editorGraph, DialogueGraph graph, AssetImportContext context)
         {
             var list = new List<(int id, DialogueNodeData data)>();
             
@@ -189,8 +189,17 @@ namespace CLogic.Systems.DialogueSystem.Editor
             
             void ProcessNodesRecursively(IEnumerable<INode> nodes)
             {
+                HashSet<ScriptableObject> savedProvisions = new();
+                int provisionedCount = 0;
                 foreach (INode node in nodes)
                 {
+                    if (node is IScriptableObjectProvisionerNode provisionerNode)
+                    {
+                        ScriptableObject so = provisionerNode.GetScriptableObject();
+                        if(savedProvisions.Add(so))
+                            context.AddObjectToAsset("provision " + provisionedCount++, provisionerNode.GetScriptableObject());
+                    }
+                    
                     if (node is ISubgraphNode subgraphNode)
                     {
                         if (IsAssetSubGraphNode(subgraphNode))
