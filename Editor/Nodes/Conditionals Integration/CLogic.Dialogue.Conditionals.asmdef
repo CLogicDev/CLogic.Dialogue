@@ -1,0 +1,25 @@
+{
+    "name": "CLogic.Dialogue.Conditionals",
+    "rootNamespace": "CLogic.Dialogue.Conditionals",
+    "references": [
+        "GUID:0a8126fef3ded804a80dc64ccd392c95",
+        "GUID:743432685a1859d48b828bbf3716c2d0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "CLOGIC_CONDITIONALS"
+    ],
+    "versionDefines": [
+        {
+            "name": "dev.clogic.conditionals",
+            "expression": "",
+            "define": "CLOGIC_CONDITIONALS"
+        }
+    ],
+    "noEngineReferences": false
+}

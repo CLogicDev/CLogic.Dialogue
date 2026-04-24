@@ -25,6 +25,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
                 if (node is IDialogueGraphNode dialogueNode)
                     dialogueNode.OnValidate(graphLogger);
                 
+                if(node is IProvisionerNode provisionerNode)
+                    provisionerNode.OnValidate(graphLogger);
+                
                 if (node is StartNode && node.GetOutputPortByName(StartNode.OUT_START).IsConnected)
                     connectedStartNodes++;
             }
