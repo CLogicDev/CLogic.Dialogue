@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     public partial class DialogueDirector
     {

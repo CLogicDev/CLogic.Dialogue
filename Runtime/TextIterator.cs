@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using System.Collections;
 
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     [RequireComponent(typeof(TMP_Text)), Obsolete]
     public class TextIterator : MonoBehaviour

@@ -1,7 +1,7 @@
 ﻿using System;
 using CLogic.Systems.ScriptableEventSystem;
 
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     [Serializable]
     public class EventNodeData : BlockNodeData

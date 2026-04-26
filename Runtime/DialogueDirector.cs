@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CLogic.Utils;
 
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     public partial class DialogueDirector : MonoBehaviour
     {

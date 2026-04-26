@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.GraphToolkit.Editor;
 using UnityEngine;
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     public interface IProvisionerNode
     {

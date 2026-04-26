@@ -2,8 +2,9 @@
 using UnityEngine;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     [Serializable, UseWithContext(typeof(ActionNode)), Node("Events")]
     public class AudioNode : DialogueBlockNode<AudioNodeData>

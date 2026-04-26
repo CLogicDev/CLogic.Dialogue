@@ -1,7 +1,8 @@
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     /// <summary>
     /// Use when the node is not directly part of the flow of dialogue, i.e. values that need to be evaluated at runtime <br></br>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using CLogic.Systems.DialogueSystem;
-using CLogic.Systems.DialogueSystem.Editor;
+using CLogic.Dialogue;
+using CLogic.Dialogue.Editor;
 using Unity.GraphToolkit.Editor;
 namespace CLogic.Dialogue.DataSaving.Editor
 {

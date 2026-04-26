@@ -1,6 +1,6 @@
 {
-    "name": "CLogic.Systems.Runtime.DialogueGraph",
-    "rootNamespace": "CLogic.Systems.DialogueSystem",
+    "name": "CLogic.Dialogue",
+    "rootNamespace": "CLogic.Dialogue",
     "references": [
         "GUID:febaf25a60dafbd44941357b21678606",
         "GUID:75469ad4d38634e559750d17036d5f7c",
