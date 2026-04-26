@@ -2,8 +2,9 @@
 using System.Linq;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     [Serializable, UseWithContext(typeof(ChoiceNode))]
     public class ChoiceOptionNode : DialogueBlockNode<ChoiceNodeData>

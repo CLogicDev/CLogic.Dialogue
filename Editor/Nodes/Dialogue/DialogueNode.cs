@@ -2,9 +2,10 @@
 using System.Linq;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 using UnityEngine;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     /// <summary>
     /// Use when the node is part of the dialogue flow<br></br>

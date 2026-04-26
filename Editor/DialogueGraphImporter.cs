@@ -5,9 +5,10 @@ using UnityEditor.AssetImporters;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CLogic.Dialogue;
 using UnityEditor;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     [ScriptedImporter(1, DialogueEditorGraph.ASSET_EXTENSION)]
     public class DialogueGraphImporter : ScriptedImporter

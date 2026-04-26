@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.GraphToolkit.Editor;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     [Serializable, Node("Basic Nodes")]
     public class EndNode : Node

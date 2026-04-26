@@ -1,9 +1,10 @@
 ﻿using System;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 using CLogic.Systems.ScriptableEventSystem;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     [Serializable, UseWithContext(typeof(ActionNode)), Node("Events")]
     public class EventNode : DialogueBlockNode<EventNodeData>

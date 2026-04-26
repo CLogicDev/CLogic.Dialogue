@@ -1,19 +1,21 @@
 {
-    "name": "CLogic.Dialogue.Conditionals",
-    "rootNamespace": "CLogic.Dialogue.Conditionals",
+    "name": "CLogic.Dialogue.Editor",
+    "rootNamespace": "CLogic.Dialogue.Editor",
     "references": [
-        "GUID:0a8126fef3ded804a80dc64ccd392c95",
-        "GUID:743432685a1859d48b828bbf3716c2d0"
+        "GUID:1a5ce730afcd98d4d91f6a091725bb81",
+        "GUID:796dbfd4c20d116479214ebdfefb9f6b",
+        "GUID:743432685a1859d48b828bbf3716c2d0",
+        "GUID:c521dbdf32fe8f847b29afbfcbe81a3b"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [
-        "CLOGIC_CONDITIONALS"
-    ],
+    "defineConstraints": [],
     "versionDefines": [
         {
             "name": "dev.clogic.conditionals",

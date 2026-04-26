@@ -1,8 +1,9 @@
 ﻿using System;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     [Serializable, Node("Basic Nodes")]
     public class ConversationNode : DialogueNode<ConversationNodeData>

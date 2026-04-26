@@ -1,6 +1,6 @@
 ﻿using System;
 using CLogic.Runtime.DataSaving;
-using CLogic.Systems.DialogueSystem;
+using CLogic.Dialogue;
 namespace CLogic.Dialogue.DataSaving
 {
     [Serializable]

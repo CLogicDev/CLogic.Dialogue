@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CLogic.Conditionals;
-using CLogic.Systems.DialogueSystem.Editor;
+using CLogic.Dialogue.Editor;
 using Unity.GraphToolkit.Editor;
 using UnityEngine;
 namespace CLogic.Dialogue.Conditionals.Editor
@@ -40,6 +40,8 @@ namespace CLogic.Dialogue.Conditionals.Editor
             
             var evaluator = ScriptableObject.CreateInstance<LogicalEvaluator>();
             
+            evaluator.name = nameof(LogicalEvaluator);
+            evaluator.hideFlags = HideFlags.HideInHierarchy;
             evaluator.evaluators = GetEvaluators().ToArray();
             evaluator.logicalOperationType = type;
             
