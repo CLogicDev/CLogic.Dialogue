@@ -74,8 +74,7 @@ MonoBehaviour:
         - rid: 8540790323429507087
         m_GraphStickyNoteModels: []
         m_GraphPlacematModels: []
-        m_GraphVariableModels:
-        - rid: 8540790270505254996
+        m_GraphVariableModels: []
         m_GraphPortalModels: []
         m_SectionModels:
         - rid: 4218189853765402829
@@ -84,10 +83,10 @@ MonoBehaviour:
         - rid: 4219950514653102216
         m_LastKnownBounds:
           serializedVersion: 2
-          x: 639
-          y: -797
-          width: 3540
-          height: 1250
+          x: 635
+          y: -809
+          width: 3544
+          height: 1262
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 12902109218748754283
@@ -338,14 +337,6 @@ MonoBehaviour:
           m_Category: 0
           m_Index: 16
         - m_Guid:
-            m_Value0: 6107964611269777059
-            m_Value1: 13231977796524252298
-          m_HashGuid:
-            serializedVersion: 2
-            Hash: a35664db73d9c3548a1caf2db36da1b7
-          m_Category: 1
-          m_Index: 0
-        - m_Guid:
             m_Value0: 16402404022745408254
             m_Value1: 1052423403210303945
           m_HashGuid:
@@ -439,8 +430,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 166b12292a61aa6ea2af66d7527d22c2
         m_Version: 2
-        m_Items:
-        - rid: 8540790270505254996
+        m_Items: []
         m_Title: 
     - rid: 4218189853765402830
       type: {class: DialogueEditorGraph, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
@@ -455,7 +445,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 6be9cfe4f97f0db3e8ef48ecc496407d
         m_Version: 2
-        m_Position: {x: 638.50214, y: 251.44925}
+        m_Position: {x: 634.50214, y: 117.44925}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -803,7 +793,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: f425b8943ab721dc624fd28eab6e0a74
         m_Version: 2
-        m_Position: {x: 2341.992, y: -137.43523}
+        m_Position: {x: 2323.0884, y: -179.77927}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -1961,7 +1951,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 8f7aa09d47342464f2f6683909b7584b
         m_Version: 2
-        m_Position: {x: 2684.111, y: -797.25476}
+        m_Position: {x: 2679.7632, y: -809.1525}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -2344,7 +2334,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 1ff3064815afd800bb54cf9ee68ab2f3
         m_Version: 2
-        m_Position: {x: 2307.625, y: -569.0084}
+        m_Position: {x: 2278.875, y: -670.20844}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -2375,7 +2365,7 @@ MonoBehaviour:
     - rid: 8540790157442285635
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data:
-        m_Value: 0
+        m_Value: 1
     - rid: 8540790157442285636
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data:
@@ -2934,35 +2924,6 @@ MonoBehaviour:
       type: {class: 'Constant`1[[CLogic.Conditionals.ConditionalEvaluator, CLogic.Conditionals]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data:
         m_Value: {fileID: 11400000, guid: 6abe95711c6802b49b53a283524f08d8, type: 2}
-    - rid: 8540790270505254996
-      type: {class: VariableDeclarationModel, ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
-      data:
-        m_Guid:
-          m_Value0: 6107964611269777059
-          m_Value1: 13231977796524252298
-        m_HashGuid:
-          serializedVersion: 2
-          Hash: a35664db73d9c3548a1caf2db36da1b7
-        m_Version: 2
-        m_Name: Evaluators
-        m_UniqueId: 
-        m_DataType:
-          m_Identification: CLogic.Conditionals.ConditionalEvaluator[], CLogic.Conditionals,
-            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-        m_IsExposed: 0
-        m_Scope: 0
-        m_ShowOnInspectorOnly: 0
-        m_Tooltip: 
-        m_InitializationValue:
-          rid: 8540790270505254997
-        m_Modifiers: 0
-        m_VariableFlags: 0
-    - rid: 8540790270505254997
-      type: {class: 'Constant`1[[CLogic.Conditionals.ConditionalEvaluator[], CLogic.Conditionals]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
-      data:
-        m_Value:
-        - {fileID: 0}
-        - {fileID: 0}
     - rid: 8540790270505255007
       type: {class: ConstantNodeModelImp, ns: Unity.GraphToolkit.Editor.Implementation, asm: UnityEditor.GraphToolkitModule}
       data:
@@ -3043,7 +3004,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: a216503e9340009f8c929d0874b8b660
         m_Version: 2
-        m_Position: {x: 1953, y: -419.9565}
+        m_Position: {x: 1898.95, y: -447.55652}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -3081,7 +3042,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: e228e09a030656f88ee5bfe4d91b8864
         m_Version: 2
-        m_Position: {x: 2168.819, y: -291.21954}
+        m_Position: {x: 2134.319, y: -370.56955}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -3245,7 +3206,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 7af01afb99a14f7acddf686d16a6d4e9
         m_Version: 2
-        m_Position: {x: 2230.6738, y: -533.39404}
+        m_Position: {x: 2148.2993, y: -558.80383}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:

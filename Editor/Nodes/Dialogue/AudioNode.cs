@@ -6,7 +6,7 @@ using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, UseWithContext(typeof(ActionNode)), Node("Events")]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Events", "", "Audio Player")]
     public class AudioNode : DialogueBlockNode<AudioNodeData>
     {
         public override bool SupportStartAction => false;

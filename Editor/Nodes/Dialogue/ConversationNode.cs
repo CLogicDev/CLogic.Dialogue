@@ -5,7 +5,7 @@ using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Basic Nodes")]
+    [Serializable, Node("Basic Nodes", "", "Conversation")]
     public class ConversationNode : DialogueNode<ConversationNodeData>
     {
         public const string IN_TEXT = "Text";

@@ -6,7 +6,7 @@ using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, UseWithContext(typeof(ChoiceNode))]
+    [Serializable, UseWithContext(typeof(ChoiceNode)),Node("", "", "Choice Option")]
     public class ChoiceOptionNode : DialogueBlockNode<ChoiceNodeData>
     {
         private const string IN_TEXT = "Text";
