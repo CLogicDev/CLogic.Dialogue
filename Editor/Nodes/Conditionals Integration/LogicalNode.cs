@@ -6,7 +6,7 @@ using Unity.GraphToolkit.Editor;
 using UnityEngine;
 namespace CLogic.Dialogue.Conditionals.Editor
 {
-    [Serializable, UseWithGraph(typeof(DialogueEditorGraph))]
+    [Serializable, UseWithGraph(typeof(DialogueEditorGraph)), Node("Provisioners", "", "Boolean Logic")]
     public class LogicalNode : ProvisionerNode<ConditionalEvaluator>, IScriptableObjectProvisionerNode
     {
         private const string OP_INPUT_COUNT = "InputCount";

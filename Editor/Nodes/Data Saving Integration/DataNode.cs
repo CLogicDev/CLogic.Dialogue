@@ -36,15 +36,15 @@ namespace CLogic.Dialogue.DataSaving.Editor
         }
     }
     
-    [Serializable, UseWithContext(typeof(ActionNode))]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Data", "", "String Data")]
     public class StringDataNode : DataNode<string>
     {}
     
-    [Serializable, UseWithContext(typeof(ActionNode))]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Data", "", "Flag Data")]
     public class FlagDataNode : DataNode<bool>
     {}
     
-    [Serializable, UseWithContext(typeof(ActionNode))]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Data", "", "Value Data")]
     public class ValueDataNode : DataNode<float>
     {}
 }

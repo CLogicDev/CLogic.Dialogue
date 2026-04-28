@@ -5,7 +5,7 @@ using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Basic Nodes")]
+    [Serializable, Node("Basic Nodes", "", "Choice Block")]
     public class ChoiceNode : DialogueContextNode<BranchNodeData>
     {
         public override bool SupportExecution => false;

@@ -6,7 +6,7 @@ using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Events")]
+    [Serializable, Node("Events", "", "Action Block")]
     public class ActionNode : DialogueContextNode<ActionNodeData>
     {
         public override bool SupportExecution => false;
