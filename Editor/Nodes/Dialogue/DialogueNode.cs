@@ -2,6 +2,7 @@
 using System.Linq;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using System.Reflection;
 using CLogic.Dialogue;
 using UnityEngine;
 
@@ -120,8 +121,13 @@ namespace CLogic.Dialogue.Editor
         
         public virtual void CreateDefaultExecutionPorts(IPortDefinitionContext context)
         {
-            context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            var inputPort = context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            
+            PropertyInfo propertyInfo = inputPort.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
+            Type portCapacityType = propertyInfo.PropertyType;
+            object multiCapacity = Enum.Parse(portCapacityType, "Multi");
+            propertyInfo.SetValue(inputPort, multiCapacity);
             
             if(!SupportStartAction || !SupportEndAction)
                 return;
