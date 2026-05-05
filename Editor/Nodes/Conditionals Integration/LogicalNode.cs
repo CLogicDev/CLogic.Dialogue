@@ -77,6 +77,6 @@ namespace CLogic.Dialogue.Conditionals.Editor
             }
             
         }
-        public ScriptableObject GetScriptableObject() => GetProvisionedData();
+        public ScriptableObject GetScriptableObject() => GetProvisionedData<ConditionalEvaluator>();
     }
 }

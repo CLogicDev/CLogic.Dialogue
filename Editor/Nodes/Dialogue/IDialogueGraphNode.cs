@@ -35,9 +35,9 @@ namespace CLogic.Dialogue.Editor
                         return value;
                     }
                     
-                    case ProvisionerNode<TValue> provisionerNode:
+                    case IProvisionerNode provisionerNode when typeof(TValue).IsAssignableFrom(provisionerNode.HandledType):
                     {
-                       return provisionerNode.GetProvisionedData();
+                       return provisionerNode.GetProvisionedData<TValue>();
                     }
                 }
                 return default;
