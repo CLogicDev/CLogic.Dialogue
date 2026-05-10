@@ -162,7 +162,7 @@ MonoBehaviour:
         m_Items: []
         m_Title: 
     - rid: 4218189853765402830
-      type: {class: DialogueEditorGraph, ns: CLogic.Systems.DialogueSystem.Editor, asm: CLogic.Systems.DialogueGraph.Editor}
+      type: {class: DialogueEditorGraph, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
       data: 
     - rid: 4218189853765402837
       type: {class: UserNodeModelImp, ns: Unity.GraphToolkit.Editor.Implementation, asm: UnityEditor.GraphToolkitModule}
@@ -199,7 +199,7 @@ MonoBehaviour:
         m_Node:
           rid: 4218189853765402838
     - rid: 4218189853765402838
-      type: {class: StartNode, ns: CLogic.Systems.DialogueSystem.Editor, asm: CLogic.Systems.DialogueGraph.Editor}
+      type: {class: StartNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
       data: 
     - rid: 4218189854764695552
       type: {class: GraphModelImp, ns: Unity.GraphToolkit.Editor.Implementation, asm: UnityEditor.GraphToolkitModule}
@@ -296,7 +296,7 @@ MonoBehaviour:
       data:
         m_Value: 1
     - rid: 4218189854764695885
-      type: {class: 'Constant`1[[CLogic.Systems.DialogueSystem.Editor.IDialogueGraphNode, CLogic.Systems.DialogueGraph.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
+      type: {class: 'Constant`1[[CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data: 
     - rid: 4218189854764695886
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
@@ -319,10 +319,10 @@ MonoBehaviour:
       data:
         m_Value: 3
     - rid: 4218189854764695891
-      type: {class: ConversationNode, ns: CLogic.Systems.DialogueSystem.Editor, asm: CLogic.Systems.DialogueGraph.Editor}
+      type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
       data: 
     - rid: 4218189854764695975
-      type: {class: DialogueEditorGraph, ns: CLogic.Systems.DialogueSystem.Editor, asm: CLogic.Systems.DialogueGraph.Editor}
+      type: {class: DialogueEditorGraph, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
       data: 
     - rid: 4218189854764696069
       type: {class: WireModel, ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
@@ -393,10 +393,10 @@ MonoBehaviour:
         m_Node:
           rid: 4218189854764696165
     - rid: 4218189854764696164
-      type: {class: 'Constant`1[[CLogic.Systems.DialogueSystem.Editor.IDialogueGraphNode, CLogic.Systems.DialogueGraph.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
+      type: {class: 'Constant`1[[CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data: 
     - rid: 4218189854764696165
-      type: {class: EndNode, ns: CLogic.Systems.DialogueSystem.Editor, asm: CLogic.Systems.DialogueGraph.Editor}
+      type: {class: EndNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
       data: 
     - rid: 4218189854764696182
       type: {class: SubgraphNodeModelImp, ns: Unity.GraphToolkit.Editor.Implementation, asm: UnityEditor.GraphToolkitModule}
@@ -461,7 +461,7 @@ MonoBehaviour:
         m_CopyPasteLocalSubgraphModelReference:
           rid: -2
     - rid: 4218189854764696186
-      type: {class: 'Constant`1[[CLogic.Systems.DialogueSystem.Editor.IDialogueGraphNode, CLogic.Systems.DialogueGraph.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
+      type: {class: 'Constant`1[[CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data: 
     - rid: 4218189854764696269
       type: {class: UserNodeModelImp, ns: Unity.GraphToolkit.Editor.Implementation, asm: UnityEditor.GraphToolkitModule}
@@ -520,7 +520,7 @@ MonoBehaviour:
       data:
         m_Value: 3
     - rid: 4218189854764696273
-      type: {class: 'Constant`1[[CLogic.Systems.DialogueSystem.Editor.IDialogueGraphNode, CLogic.Systems.DialogueGraph.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
+      type: {class: 'Constant`1[[CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data: 
     - rid: 4218189854764696274
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
@@ -539,7 +539,7 @@ MonoBehaviour:
       data:
         m_Value: 1
     - rid: 4218189854764696278
-      type: {class: ConversationNode, ns: CLogic.Systems.DialogueSystem.Editor, asm: CLogic.Systems.DialogueGraph.Editor}
+      type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
       data: 
     - rid: 4218189854764696290
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
@@ -666,7 +666,7 @@ MonoBehaviour:
       data:
         m_Value: 3
     - rid: 4218189854764696432
-      type: {class: 'Constant`1[[CLogic.Systems.DialogueSystem.Editor.IDialogueGraphNode, CLogic.Systems.DialogueGraph.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
+      type: {class: 'Constant`1[[CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data: 
     - rid: 4218189854764696433
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
@@ -685,7 +685,7 @@ MonoBehaviour:
       data:
         m_Value: 1
     - rid: 4218189854764696437
-      type: {class: ConversationNode, ns: CLogic.Systems.DialogueSystem.Editor, asm: CLogic.Systems.DialogueGraph.Editor}
+      type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
       data: 
     - rid: 4218189854764696438
       type: {class: WireModel, ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}

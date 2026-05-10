@@ -1,10 +1,11 @@
 ﻿using System;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Basic Nodes")]
+    [Serializable, Node("Basic Nodes", "", "Conversation")]
     public class ConversationNode : DialogueNode<ConversationNodeData>
     {
         public const string IN_TEXT = "Text";

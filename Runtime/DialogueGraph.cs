@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     public class DialogueGraph : ScriptableObject
     {

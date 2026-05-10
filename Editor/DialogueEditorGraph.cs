@@ -5,7 +5,7 @@ using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     [Serializable, Graph(ASSET_EXTENSION, GraphOptions.SupportsSubgraphs)]
     public partial class DialogueEditorGraph : Graph
@@ -24,6 +24,9 @@ namespace CLogic.Systems.DialogueSystem.Editor
             {
                 if (node is IDialogueGraphNode dialogueNode)
                     dialogueNode.OnValidate(graphLogger);
+                
+                if(node is IProvisionerNode provisionerNode)
+                    provisionerNode.OnValidate(graphLogger);
                 
                 if (node is StartNode && node.GetOutputPortByName(StartNode.OUT_START).IsConnected)
                     connectedStartNodes++;

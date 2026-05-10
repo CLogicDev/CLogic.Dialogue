@@ -2,7 +2,7 @@
 using EditorAttributes;
 using UnityEngine.InputSystem;
 
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     public class DialogueProgressor : MonoBehaviour
     {

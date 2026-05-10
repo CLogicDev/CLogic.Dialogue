@@ -2,25 +2,26 @@
 using System.Linq;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
-    [Serializable, UseWithContext(typeof(ChoiceNode))]
+    [Serializable, UseWithContext(typeof(ChoiceNode)),Node("", "", "Choice Option")]
     public class ChoiceOptionNode : DialogueBlockNode<ChoiceNodeData>
     {
         private const string IN_TEXT = "Text";
         private const string OUT_EXECUTION = "Out";
         
         #if CLOGIC_CONDITIONALS
-        private const string IN_CONDITIONAL = "Conditional";
+        public const string IN_CONDITIONAL = "Conditional";
         #endif
         
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
-            base.OnDefinePorts(context);
-            
             context.AddInputPort<string>(IN_TEXT).Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            
+            base.OnDefinePorts(context);
             
             #if CLOGIC_CONDITIONALS
             context.AddInputPort<Conditionals.ConditionalEvaluator>(IN_CONDITIONAL).Build();

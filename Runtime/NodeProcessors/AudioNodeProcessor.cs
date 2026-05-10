@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     [Serializable]
     public class AudioNodeData : BlockNodeData

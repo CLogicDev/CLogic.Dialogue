@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unity.GraphToolkit.Editor;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     // Handles sub graph logic for the main graph
     public partial class DialogueEditorGraph

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     [Serializable]
     public class ActionNodeData : ContextNodeData

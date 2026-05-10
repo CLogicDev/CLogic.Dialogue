@@ -2,10 +2,11 @@
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 using System.Reflection;
+using CLogic.Dialogue;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Events")]
+    [Serializable, Node("Events", "", "Action Block")]
     public class ActionNode : DialogueContextNode<ActionNodeData>
     {
         public override bool SupportExecution => false;
