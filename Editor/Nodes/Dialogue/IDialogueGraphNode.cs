@@ -14,11 +14,14 @@ namespace CLogic.Dialogue.Editor
         
         public void OnValidate(GraphLogger graphLogger);
         
-        public static TValue GetPortValue<TValue>(IPort port)
+        public static bool TryGetPortValue<TValue>(IPort port, out TValue value)
         {
-            if (port == null)
-                return default;
-            
+            if(port == null)
+            {
+                value = default;
+                return false;
+            }
+
             if (port.IsConnected)
             {
                 INode node = port.FirstConnectedPort.GetNode();
@@ -26,25 +29,34 @@ namespace CLogic.Dialogue.Editor
                 {
                     case IVariableNode variableNode:
                     {
-                        variableNode.Variable.TryGetDefaultValue(out TValue value);
-                        return value;
+                        variableNode.Variable.TryGetDefaultValue(out value);
+                        return true;
                     }
                     case IConstantNode constantNode:
                     {
-                        constantNode.TryGetValue(out TValue value);
-                        return value;
+                        constantNode.TryGetValue(out value);
+                        return true;
                     }
                     
                     case IProvisionerNode provisionerNode when typeof(TValue).IsAssignableFrom(provisionerNode.HandledType):
                     {
-                       return provisionerNode.GetProvisionedData<TValue>();
+                       value = provisionerNode.GetProvisionedData<TValue>();
+                       return true;
                     }
                 }
-                return default;
+                value = default;
+                return false;
             }
             
-            port.TryGetValue(out TValue fallback);
-            return fallback;
+            bool hasInlinedValue = port.TryGetValue(out value) && value != null;
+            
+            return hasInlinedValue;
+        }
+
+        public static TValue GetPortValue<TValue>(IPort port)
+        {
+            TryGetPortValue<TValue>(port, out var value);
+            return value;
         }
     }
 }
