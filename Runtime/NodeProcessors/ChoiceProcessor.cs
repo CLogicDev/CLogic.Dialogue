@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using System;
+using CLogic.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +8,11 @@ namespace CLogic.Dialogue
 {
     [Serializable]
     public class BranchNodeData : ContextNodeData
-    {}
+    {
+        #if CLOGIC_CONDITIONALS
+        public bool isAutoChoice;
+        #endif
+    }
     
     [Serializable]
     public class ChoiceNodeData : BlockNodeData
@@ -29,29 +34,64 @@ namespace CLogic.Dialogue
         
         public override void ProcessNode(BranchNodeData dialogueNode, DialogueDirector director)
         {
-            for (int i = 0; i < dialogueNode.childBlocks.Count; i++)
+            #if CLOGIC_CONDITIONALS
+            if(dialogueNode.isAutoChoice)
+            {
+                HandleAutoChoice(dialogueNode, director);
+                return;
+            }
+            #endif
+            
+            HandleChoice(dialogueNode, director);
+        }
+
+        private void HandleChoice(BranchNodeData dialogueNode, DialogueDirector director)
+        {
+            for(int i = 0; i < dialogueNode.childBlocks.Count; i++)
             {
                 var choiceNode = dialogueNode.childBlocks[i] as ChoiceNodeData;
-                
+
                 GameObject buttonObject = Instantiate(choiceButtonPrefab, choiceContainer);
                 buttonObject.SetActive(false); // Fixes delay with interactable state
-                
+
                 var button = buttonObject.GetComponent<Button>();
                 var buttonText = buttonObject.GetComponentInChildren<TMP_Text>();
-                
+
                 buttonText.text = choiceNode.choiceText;
-                
+
                 int index = i;
                 button.onClick.AddListener(() => SelectChoice(index, dialogueNode, director));
-                
+
                 #if CLOGIC_CONDITIONALS
                 Debug.Log(choiceNode.conditional == null || choiceNode.conditional.Evaluate());
                 Debug.Log(choiceNode.choiceText);
                 button.interactable = choiceNode.conditional == null || choiceNode.conditional.Evaluate();
                 #endif
-                
+
                 buttonObject.SetActive(true);
             }
+        }
+        
+        private void HandleAutoChoice(BranchNodeData dialogueNode, DialogueDirector director)
+        {
+            int selectedIndex = -1;
+            for(int i = 0; i < dialogueNode.childBlocks.Count; i++)
+            {
+                BlockNodeData blockNodeData = dialogueNode.childBlocks[i];
+                var choiceNode = (ChoiceNodeData)blockNodeData;
+                if(!choiceNode.conditional)
+                    continue;
+
+                if(selectedIndex != -1)
+                {
+                    Integrations.LogWarning($"[Dialogue] Auto choice has multiple valid branches. Choice {selectedIndex} and {i} are both valid. Defaulting to normal choice logic");
+                    HandleChoice(dialogueNode, director);
+                    return;
+                }
+                selectedIndex = i;
+            }
+            
+            SelectChoice(selectedIndex, dialogueNode, director);
         }
         
         public override bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director) => false;
