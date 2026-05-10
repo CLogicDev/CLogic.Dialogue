@@ -3,7 +3,7 @@ using System;
 using CLogic.Utils.UI;
 using UnityEngine;
 
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     [Serializable]
     public class ConversationNodeData : DialogueNodeData

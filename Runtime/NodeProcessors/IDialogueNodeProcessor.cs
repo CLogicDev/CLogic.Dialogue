@@ -1,5 +1,5 @@
 ﻿using System;
-namespace CLogic.Systems.DialogueSystem
+namespace CLogic.Dialogue
 {
     public interface IDialogueNodeProcessor
     {

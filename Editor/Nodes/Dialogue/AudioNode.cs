@@ -2,10 +2,11 @@
 using UnityEngine;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
-    [Serializable, UseWithContext(typeof(ActionNode)), Node("Events")]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Events", "", "Audio Player")]
     public class AudioNode : DialogueBlockNode<AudioNodeData>
     {
         public override bool SupportStartAction => false;

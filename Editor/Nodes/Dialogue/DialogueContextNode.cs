@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 using Unity.GraphToolkit.Editor;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
     [Serializable]
     public abstract class DialogueContextNode<T> : ContextNode, IDialogueGraphNode where T : ContextNodeData

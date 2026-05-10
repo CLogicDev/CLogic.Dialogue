@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 using Unity.GraphToolkit.Editor;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Basic Nodes")]
+    [Serializable, Node("Basic Nodes", "", "Start Point")]
     public class StartNode : Node, IDialogueGraphNode
     {
         public const string OUT_START = "Start";

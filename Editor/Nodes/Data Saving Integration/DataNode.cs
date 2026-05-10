@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using CLogic.Systems.DialogueSystem;
-using CLogic.Systems.DialogueSystem.Editor;
+using CLogic.Dialogue;
+using CLogic.Dialogue.Editor;
 using Unity.GraphToolkit.Editor;
 namespace CLogic.Dialogue.DataSaving.Editor
 {
@@ -36,15 +36,15 @@ namespace CLogic.Dialogue.DataSaving.Editor
         }
     }
     
-    [Serializable, UseWithContext(typeof(ActionNode))]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Data", "", "String Data")]
     public class StringDataNode : DataNode<string>
     {}
     
-    [Serializable, UseWithContext(typeof(ActionNode))]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Data", "", "Flag Data")]
     public class FlagDataNode : DataNode<bool>
     {}
     
-    [Serializable, UseWithContext(typeof(ActionNode))]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Data", "", "Value Data")]
     public class ValueDataNode : DataNode<float>
     {}
 }

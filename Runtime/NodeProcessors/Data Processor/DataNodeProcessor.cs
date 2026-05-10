@@ -1,6 +1,6 @@
 ﻿using System;
 using CLogic.Runtime.DataSaving;
-using CLogic.Systems.DialogueSystem;
+using CLogic.Dialogue;
 using UnityEngine;
 namespace CLogic.Dialogue.DataSaving
 {

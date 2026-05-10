@@ -1,11 +1,12 @@
 ﻿using System;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using CLogic.Dialogue;
 using CLogic.Systems.ScriptableEventSystem;
 
-namespace CLogic.Systems.DialogueSystem.Editor
+namespace CLogic.Dialogue.Editor
 {
-    [Serializable, UseWithContext(typeof(ActionNode)), Node("Events")]
+    [Serializable, UseWithContext(typeof(ActionNode)), Node("Events", "", "Event Raiser")]
     public class EventNode : DialogueBlockNode<EventNodeData>
     {
         public override bool SupportStartAction => false;
