@@ -34,9 +34,9 @@ namespace CLogic.Dialogue.Editor
             BranchNodeData nodeData = new();
             ProcessChildBlocks(nodeData, graph, nodeMap);
             
+            #if CLOGIC_CONDITIONALS
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
             
-            #if CLOGIC_CONDITIONALS
             nodeData.isAutoChoice = isAutoChoice;
             #endif
             
