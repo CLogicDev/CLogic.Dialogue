@@ -99,7 +99,7 @@ namespace CLogic.Dialogue
         {
             DestroyChoiceButtons();
             
-            if(choice.endNodeActionID != -1)
+            if(choice.startNodeActionID != -1)
                 director.ProcessNode(director.GetNodeFromID(choice.endNodeActionID), true);
             
             director.GoToNode(choice.nextNodeID, true);
