@@ -129,7 +129,7 @@ namespace CLogic.Dialogue.Editor
             object multiCapacity = Enum.Parse(portCapacityType, "Multi");
             propertyInfo.SetValue(inputPort, multiCapacity);
             
-            if(!SupportStartAction || !SupportEndAction)
+            if(!SupportStartAction && !SupportEndAction)
                 return;
             
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
