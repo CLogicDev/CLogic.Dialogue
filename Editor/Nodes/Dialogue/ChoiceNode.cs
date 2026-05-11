@@ -1,6 +1,7 @@
 using System;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
+using System.Reflection;
 using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
@@ -25,7 +26,13 @@ namespace CLogic.Dialogue.Editor
         {
             base.OnDefinePorts(context);
             
-            context.AddInputPort<IDialogueGraphNode>("In").WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            var inputPort = context.AddInputPort<IDialogueGraphNode>("In").WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            
+            PropertyInfo propertyInfo = inputPort.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
+            Type portCapacityType = propertyInfo.PropertyType;
+            object multiCapacity = Enum.Parse(portCapacityType, "Multi");
+            propertyInfo.SetValue(inputPort, multiCapacity);
+            
             HandleSetup();
         }
         
