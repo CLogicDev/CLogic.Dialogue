@@ -25,7 +25,7 @@ namespace CLogic.Dialogue.Editor
         
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
-            if(!SupportStartAction || !SupportEndAction)
+            if(!SupportStartAction && !SupportEndAction)
                 return;
             
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
