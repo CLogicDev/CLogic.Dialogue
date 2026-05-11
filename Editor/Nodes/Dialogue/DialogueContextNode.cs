@@ -36,7 +36,7 @@ namespace CLogic.Dialogue.Editor
                 context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
             }
             
-            if(!SupportStartAction || !SupportEndAction)
+            if(!SupportStartAction && !SupportEndAction)
                 return;
             
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
