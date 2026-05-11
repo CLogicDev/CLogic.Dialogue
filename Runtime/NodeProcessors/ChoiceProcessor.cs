@@ -47,25 +47,24 @@ namespace CLogic.Dialogue
 
         private void HandleChoice(BranchNodeData dialogueNode, DialogueDirector director)
         {
-            for(int i = 0; i < dialogueNode.childBlocks.Count; i++)
+            foreach (BlockNodeData choice in dialogueNode.childBlocks)
             {
-                var choiceNode = dialogueNode.childBlocks[i] as ChoiceNodeData;
-
+                var choiceNode = choice as ChoiceNodeData;
+                
                 GameObject buttonObject = Instantiate(choiceButtonPrefab, choiceContainer);
                 buttonObject.SetActive(false); // Fixes delay with interactable state
-
+                
                 var button = buttonObject.GetComponent<Button>();
                 var buttonText = buttonObject.GetComponentInChildren<TMP_Text>();
-
+                
                 buttonText.text = choiceNode.choiceText;
-
-                int index = i;
-                button.onClick.AddListener(() => SelectChoice(index, dialogueNode, director));
-
+                
+                button.onClick.AddListener(() => SelectChoice(choiceNode, director));
+                
                 #if CLOGIC_CONDITIONALS
                 button.interactable = choiceNode.conditional == null || choiceNode.conditional.Evaluate();
                 #endif
-
+                
                 buttonObject.SetActive(true);
             }
         }
@@ -90,16 +89,20 @@ namespace CLogic.Dialogue
                 selectedIndex = i;
             }
             
-            SelectChoice(selectedIndex, dialogueNode, director);
+            SelectChoice((ChoiceNodeData)dialogueNode.childBlocks[selectedIndex], director);
         }
         #endif
         
         public override bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director) => false;
         
-        private void SelectChoice(int choiceIndex, BranchNodeData dialogueNode, DialogueDirector director)
+        private void SelectChoice(ChoiceNodeData choice, DialogueDirector director)
         {
             DestroyChoiceButtons();
-            director.GoToNode(dialogueNode.childBlocks[choiceIndex].nextNodeID, true);
+            
+            if(choice.endNodeActionID != -1)
+                director.ProcessNode(director.GetNodeFromID(choice.endNodeActionID), true);
+            
+            director.GoToNode(choice.nextNodeID, true);
         }
         
         private void DestroyChoiceButtons()

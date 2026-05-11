@@ -16,6 +16,8 @@ namespace CLogic.Dialogue.Editor
         public const string IN_CONDITIONAL = "Conditional";
         #endif
         
+        public override bool SupportEndAction => false;
+        
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
             context.AddInputPort<string>(IN_TEXT).Build();
