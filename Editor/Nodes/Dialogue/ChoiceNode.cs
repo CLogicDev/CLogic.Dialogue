@@ -9,8 +9,8 @@ namespace CLogic.Dialogue.Editor
     [Serializable, Node("Basic Nodes", "", "Choice Block")]
     public class ChoiceNode : DialogueContextNode<BranchNodeData>
     {
-        public override bool SupportExecution => false;
-
+        public override bool SupportEndAction => false;
+        
         private const string OP_AUTO_CHOICE = "AutoChoice";
         
         protected override void OnDefineOptions(IOptionDefinitionContext context)
