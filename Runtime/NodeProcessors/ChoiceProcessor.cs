@@ -98,8 +98,8 @@ namespace CLogic.Dialogue
         
         private void SelectChoice(int choiceIndex, BranchNodeData dialogueNode, DialogueDirector director)
         {
-            director.GoToNode(dialogueNode.childBlocks[choiceIndex].nextNodeID, true);
             DestroyChoiceButtons();
+            director.GoToNode(dialogueNode.childBlocks[choiceIndex].nextNodeID, true);
         }
         
         private void DestroyChoiceButtons()
