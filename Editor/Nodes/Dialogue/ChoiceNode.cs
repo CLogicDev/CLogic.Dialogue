@@ -36,7 +36,9 @@ namespace CLogic.Dialogue.Editor
             
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
             
+            #if CLOGIC_CONDITIONALS
             nodeData.isAutoChoice = isAutoChoice;
+            #endif
             
             return nodeData;
         }
