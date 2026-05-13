@@ -143,8 +143,14 @@ namespace CLogic.Dialogue
         /// Tries to go to the next node
         /// </summary>
         /// <returns>Whether the director could go to the next node</returns>
-        public bool GoToNextNode() => IsPlaying && GoToNode(currentNode.nextNodeID);
-        
+        public bool GoToNextNode(bool forced = false)
+        {
+            if(forced)
+                return GoToNode(currentNode.nextNodeID, true);
+            
+            return IsPlaying && GoToNode(currentNode.nextNodeID);
+        }
+
         /// <summary>
         /// Tries to go to a specific node
         /// </summary>
