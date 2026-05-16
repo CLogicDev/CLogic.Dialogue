@@ -5,6 +5,8 @@ using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
+    #if ENABLE_CONVERSATION_NODE
+    
     [Serializable, Node("Basic Nodes", "", "Conversation")]
     public class ConversationNode : DialogueNode<ConversationNodeData>
     {
@@ -48,4 +50,5 @@ namespace CLogic.Dialogue.Editor
             return node;
         }
     }
+    #endif
 }
