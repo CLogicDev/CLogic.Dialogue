@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CLogic.Utils.Shared;
+using UnityEditor;
+using UnityEditor.Build;
 namespace CLogic.Dialogue
 {
     
@@ -22,5 +26,31 @@ namespace CLogic.Dialogue
 
         // What features of the dialogue system should be enabled
         public DefaultFeatures features;
+        
+        public static void UpdateDefines(DefaultFeatures features)
+        {
+            NamedBuildTarget target = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            string currentDefines = PlayerSettings.GetScriptingDefineSymbols(target);
+            List<string> listedDefines = currentDefines
+                .Split(';')
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToList();
+            
+            AddOrRemove(DefaultFeatures.DEFINE_CONVERSATION_NODE, features.conversationNode);
+            AddOrRemove(DefaultFeatures.DEFINE_CHOICE_NODE, features.choiceNode);
+            AddOrRemove(DefaultFeatures.DEFINE_CHOICE_OPTION_NODE, features.choiceOptionNode);
+            
+            PlayerSettings.SetScriptingDefineSymbols(target, string.Join(";", listedDefines));
+            
+            return;
+
+            void AddOrRemove(string define, bool exists)
+            {
+                if(exists)
+                    listedDefines.Add(define);
+                else
+                    listedDefines.Remove(define);
+            }
+        }
     }
 }

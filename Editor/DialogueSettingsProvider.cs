@@ -5,8 +5,19 @@ using UnityEditor.Build;
 using UnityEngine;
 namespace CLogic.Dialogue.Editor
 {
+    public class BuildTargetChangedHandler : IActiveBuildTargetChanged
+    {
+        public int callbackOrder => 0;
+
+        public void OnActiveBuildTargetChanged(BuildTarget previousTarget, BuildTarget newTarget)
+        {
+            DialogueSettings.UpdateDefines(DialogueSettings.GetOrCreateSettings().features);
+        }
+    }
+    
     public static class DialogueSettingsProvider
     {
+        
         [SettingsProvider]
         public static SettingsProvider CreateProvider()
         {
@@ -28,39 +39,13 @@ namespace CLogic.Dialogue.Editor
 
                     if (GUI.changed)
                     {
-                        UpdateDefines(settings.features);
+                        DialogueSettings.UpdateDefines(settings.features);
                     }
                 },
-                keywords = new System.Collections.Generic.HashSet<string>(new[] { "Dialogue", "Settings" })
+                keywords = new HashSet<string>(new[] { "Dialogue", "Settings" })
             };
 
             return provider;
-        }
-
-        private static void UpdateDefines(DefaultFeatures features)
-        {
-            NamedBuildTarget target = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-            string currentDefines = PlayerSettings.GetScriptingDefineSymbols(target);
-            List<string> listedDefines = currentDefines
-                .Split(';')
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .ToList();
-            
-            AddOrRemove(DefaultFeatures.DEFINE_CONVERSATION_NODE, features.conversationNode);
-            AddOrRemove(DefaultFeatures.DEFINE_CHOICE_NODE, features.choiceNode);
-            AddOrRemove(DefaultFeatures.DEFINE_CHOICE_OPTION_NODE, features.choiceOptionNode);
-            
-            PlayerSettings.SetScriptingDefineSymbols(target, string.Join(";", listedDefines));
-            
-            return;
-
-            void AddOrRemove(string define, bool exists)
-            {
-                if(exists)
-                    listedDefines.Add(define);
-                else
-                    listedDefines.Remove(define);
-            }
         }
     }
 }
