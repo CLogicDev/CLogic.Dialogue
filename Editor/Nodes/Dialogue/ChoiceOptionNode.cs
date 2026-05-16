@@ -6,6 +6,7 @@ using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
+    #if ENABLE_CHOICE_OPTION_NODE
     [Serializable, UseWithContext(typeof(ChoiceNode)),Node("", "", "Choice Option")]
     public class ChoiceOptionNode : DialogueBlockNode<ChoiceNodeData>
     {
@@ -70,4 +71,5 @@ namespace CLogic.Dialogue.Editor
             }
         }
     }
+    #endif
 }
