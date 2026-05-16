@@ -6,7 +6,6 @@ using UnityEditor;
 using UnityEditor.Build;
 namespace CLogic.Dialogue
 {
-    
     [Serializable]
     public class DefaultFeatures
     {
