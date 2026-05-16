@@ -18,7 +18,7 @@ namespace CLogic.Dialogue
         public List<DialogueNodeProcessor> processorOverrides { get; private set; } = new();
         
         private DialogueNodeData currentNode;
-        private IDialogueNodeProcessor currentProcessor;
+        public IDialogueNodeProcessor CurrentProcessor { get; private set; }
         
         private int currentNodeID;
         
@@ -132,7 +132,7 @@ namespace CLogic.Dialogue
             if (!IsPlaying)
                 return;
             
-            currentProcessor?.HandleCancellation(currentNode, this);
+            CurrentProcessor?.HandleCancellation(currentNode, this);
             currentNode = null;
             
             currentFinishCallback?.Invoke();
@@ -157,7 +157,7 @@ namespace CLogic.Dialogue
         /// <returns>Whether the director could go to that node</returns>
         internal bool GoToNode(int nodeID, bool forced = false)
         {
-            if(!forced && !currentProcessor.CanProgressNode(currentNode, this))
+            if(!forced && !CurrentProcessor.CanProgressNode(currentNode, this))
                 return false;
             
             switch (nodeID)
@@ -189,19 +189,31 @@ namespace CLogic.Dialogue
             }
             
             Type type = node.GetType();
-            if (!nodeProcessorOverrides.TryGetValue(type, out IDialogueNodeProcessor processor))
+            
+            if(!TryGetProcessorForNode(type, out IDialogueNodeProcessor processor))
             {
-                if (!nodeProcessors.TryGetValue(type, out processor))
-                {
-                    Integrations.LogError($"No processor for type {type}");
-                    return;
-                }
+                Integrations.LogError($"No processor for type {type}");
+                return;
             }
             
             if (!fireAndForget)
-                currentProcessor = processor;
+                CurrentProcessor = processor;
             
             processor.ProcessNode(node, this);
+        }
+
+        public bool TryGetProcessorForNode<T>(Type type, out T processor) where T : IDialogueNodeProcessor
+        {
+            if(nodeProcessorOverrides.TryGetValue(type, out IDialogueNodeProcessor rawProcessor) || nodeProcessors.TryGetValue(type, out rawProcessor))
+            {
+                processor = (T)rawProcessor;
+                return true;
+            }
+
+            Integrations.LogError($"No processor for type {type}");
+            processor = default;
+            return false;
+
         }
     }
 }
