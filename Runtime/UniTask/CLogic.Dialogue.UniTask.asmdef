@@ -1,0 +1,17 @@
+{
+    "name": "CLogic.Dialogue.UniTask",
+    "rootNamespace": "CLogic.Dialogue.UniTask",
+    "references": [
+        "GUID:1a5ce730afcd98d4d91f6a091725bb81",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
