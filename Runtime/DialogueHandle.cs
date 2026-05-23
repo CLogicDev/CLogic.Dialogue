@@ -2,7 +2,7 @@
 namespace CLogic.Dialogue
 {
     [Serializable]
-    public struct DialogueHandle
+    public class DialogueHandle
     {
         private DialogueDirector director;
 
@@ -11,6 +11,12 @@ namespace CLogic.Dialogue
         public bool IsFinished { get; internal set; }
 
         public event Action OnFinish;
+
+        internal DialogueHandle()
+        {
+            DialogueGraph = null;
+            IsPlaying = false;
+        }
         
         internal DialogueHandle(DialogueDirector director, bool playState, DialogueGraph dialogueGraph, Action onFinish)
         {
@@ -26,6 +32,11 @@ namespace CLogic.Dialogue
             IsFinished = true;
             IsPlaying = false;
             OnFinish?.Invoke();
+        }
+        
+        public void Cancel()
+        {
+            director.EndDialogue();
         }
     }
 }
