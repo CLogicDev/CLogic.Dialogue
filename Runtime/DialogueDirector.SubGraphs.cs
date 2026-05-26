@@ -6,7 +6,7 @@ namespace CLogic.Dialogue
     {
         public struct SubGraph
         {
-            public DialogueGraph graph;
+            public DialogueHandle dialogue;
             public Action finishCallback;
             public int originatingID;
         }
@@ -15,14 +15,12 @@ namespace CLogic.Dialogue
         
         private void ProcessSubGraph(SubGraphNodeData subgraph)
         {
+            var handle = PlayDialogueGraph(subgraph.graph, HandleSubGraphFinished);
             graphStack.Push(new SubGraph
             {
-                graph = CurrentGraph,
-                finishCallback = currentFinishCallback,
+                dialogue = handle,
                 originatingID = currentNodeID
             });
-            
-            PlayDialogueGraph(subgraph.graph, HandleSubGraphFinished);
         }
         
         private void HandleSubGraphFinished()
@@ -30,7 +28,7 @@ namespace CLogic.Dialogue
             if (!graphStack.TryPop(out SubGraph graph))
                 return;
             
-            PlayDialogueGraph(graph.graph, graph.finishCallback, true, graph.graph.nodes[graph.originatingID].nextNodeID);
+            PlayDialogueGraph(graph.dialogue.DialogueGraph, graph.finishCallback, true, graph.dialogue.DialogueGraph.nodes[graph.originatingID].nextNodeID);
         }
     }
 }
