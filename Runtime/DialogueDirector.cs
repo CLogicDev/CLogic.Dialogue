@@ -10,7 +10,7 @@ namespace CLogic.Dialogue
     public partial class DialogueDirector : MonoBehaviour
     {
         [field: SerializeField]
-        public DialogueGraph CurrentGraph { get; private set; }
+        public DialogueHandle CurrentDialogue { get; private set; }
         
         public int maxDiscoveryDepth = 2;
         
@@ -32,8 +32,6 @@ namespace CLogic.Dialogue
         
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
-        
-        private Action currentFinishCallback;
         
         [ShowInInspector]
         public bool IsPlaying => currentNode != null;
@@ -102,26 +100,24 @@ namespace CLogic.Dialogue
             }
         }
         
-        [Button]
-        private void PlayCurrentDialogue() => PlayDialogueGraph(CurrentGraph);
-        
-        public void PlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
-        public void PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null)
+        public DialogueHandle PlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
+        public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null)
         {
             if (!forced && IsPlaying)
-                return;
+                return new DialogueHandle();
             
             if (IsPlaying)
                 EndDialogue();
             
-            CurrentGraph = graph;
-            nodes = CurrentGraph.nodes;
-            currentFinishCallback = onFinish;
+            CurrentDialogue = new DialogueHandle(this, true, graph, onFinish);
+            nodes = graph.nodes;
             
             OnDialogueStart?.Invoke();
             
-            currentNode = GetNodeFromID(startIndex ?? CurrentGraph.startNodeID);
+            currentNode = GetNodeFromID(startIndex ?? graph.startNodeID);
             ProcessNode(currentNode);
+
+            return CurrentDialogue;
         }
         
         // Not local function to allow access from sub graph handler
@@ -135,7 +131,7 @@ namespace CLogic.Dialogue
             CurrentProcessor?.HandleCancellation(currentNode, this);
             currentNode = null;
             
-            currentFinishCallback?.Invoke();
+            CurrentDialogue.SetDialogueFinished();
             OnDialogueEnd?.Invoke();
         }
         
