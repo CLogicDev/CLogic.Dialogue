@@ -23,8 +23,8 @@ namespace CLogic.Dialogue.Editor
         
         public const string OP_NODE_EVENTS = "UseEvents";
         
-        public virtual bool SupportStartAction => true;
-        public virtual bool SupportEndAction => true;
+        public virtual bool SupportsStartAction => true;
+        public virtual bool SupportsEndAction => true;
         
         public virtual void OnValidate(GraphLogger graphLogger)
         {
@@ -51,12 +51,12 @@ namespace CLogic.Dialogue.Editor
                 break;
             }
             
-            if(!SupportStartAction || !SupportEndAction)
+            if(!SupportsStartAction || !SupportsEndAction)
                 return;
             
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
-                if (SupportStartAction)
+                if (SupportsStartAction)
                 {
                     IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
                     
@@ -65,7 +65,7 @@ namespace CLogic.Dialogue.Editor
                         graphLogger.LogError("Start node must be connected to an action node", this);
                 }
                 
-                if (SupportEndAction)
+                if (SupportsEndAction)
                 {
                     IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                     
@@ -78,9 +78,10 @@ namespace CLogic.Dialogue.Editor
         
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
-            if (SupportStartAction || SupportEndAction)
+            if (SupportsStartAction || SupportsEndAction)
                 context.AddOption<bool>(OP_NODE_EVENTS).WithDisplayName("Use Events").Build();
         }
+        
         public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap);
         
         public virtual void CreateNodeLink(T node, Dictionary<INode, int> nodeMap)
@@ -95,7 +96,7 @@ namespace CLogic.Dialogue.Editor
             node.nextNodeID = nodeMap.GetValueOrDefault(connectedNode, -1);
             
             // Action link
-            if (SupportStartAction)
+            if (SupportsStartAction)
             {
                 IPort actionPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
                 
@@ -103,7 +104,7 @@ namespace CLogic.Dialogue.Editor
                     node.startNodeActionID = nodeMap.GetValueOrDefault(actionPort.GetNode(), -1);
             }
             
-            if (SupportEndAction)
+            if (SupportsEndAction)
             {
                 IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                 
@@ -112,7 +113,7 @@ namespace CLogic.Dialogue.Editor
             }
         }
         
-        public virtual void CreateDefaultExecutionPorts(IPortDefinitionContext context)
+        protected void CreateDefaultExecutionPorts(IPortDefinitionContext context)
         {
             var inputPort = context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
@@ -122,15 +123,15 @@ namespace CLogic.Dialogue.Editor
             object multiCapacity = Enum.Parse(portCapacityType, "Multi");
             propertyInfo.SetValue(inputPort, multiCapacity);
             
-            if(!SupportStartAction && !SupportEndAction)
+            if(!SupportsStartAction && !SupportsEndAction)
                 return;
             
             if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
-                if (SupportStartAction)
+                if (SupportsStartAction)
                     context.AddOutputPort<ActionNode>(OUT_NODE_START).WithDisplayName("Start").Build();
                 
-                if (SupportEndAction)
+                if (SupportsEndAction)
                     context.AddOutputPort<ActionNode>(OUT_NODE_END).WithDisplayName("End").Build();
             }
         }
