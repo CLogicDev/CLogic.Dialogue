@@ -11,6 +11,6 @@ namespace CLogic.Dialogue
     
     public class EventNodeProcessor : DialogueNodeProcessor<EventNodeData>
     {
-        protected override void ProcessNode(EventNodeData nodeDate, DialogueDirector director) => nodeDate.voidEvent.Invoke();
+        protected override void ProcessNode(EventNodeData nodeData, DialogueDirector director) => nodeData.voidEvent.Invoke();
     }
 }

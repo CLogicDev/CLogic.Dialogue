@@ -52,10 +52,10 @@ namespace CLogic.Dialogue
         
         public sealed override void ProcessNode(DialogueNodeData nodeDate, DialogueDirector director) => ProcessNode((T)nodeDate, director);
         
-        protected virtual void ProcessNode(T nodeDate, DialogueDirector director)
+        protected virtual void ProcessNode(T nodeData, DialogueDirector director)
         {
-            if (nodeDate.startNodeActionID != -1)
-                director.ProcessNode(director.GetNodeFromID(nodeDate.startNodeActionID), true);
+            if (nodeData.startNodeActionID != -1)
+                director.ProcessNode(director.GetNodeFromID(nodeData.startNodeActionID), true);
         }
         
         public override void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director) => HandleCancellation((T)nodeDate, director);
