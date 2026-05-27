@@ -35,6 +35,8 @@ namespace CLogic.Dialogue.Editor
         
         public override void OnValidate(GraphLogger graphLogger)
         {
+            base.OnValidate(graphLogger);
+            
             if (BlockCount == 0)
                 graphLogger.LogWarning("Behavior node has no blocks", this);
         }
