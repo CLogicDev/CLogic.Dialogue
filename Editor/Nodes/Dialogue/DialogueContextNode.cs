@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using CLogic.Dialogue;
 using Unity.GraphToolkit.Editor;
+using UnityEngine;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -22,13 +23,16 @@ namespace CLogic.Dialogue.Editor
         
         public virtual bool SupportExecution => true;
         
+        [field: SerializeField]
+        public bool IsFirstCreation { get; protected set; } = true;
+        
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
             if (SupportStartAction || SupportEndAction)
                 context.AddOption<bool>(OP_NODE_EVENTS).WithDisplayName("Use Events").Build();
         }
         
-        protected override void OnDefinePorts(IPortDefinitionContext context)
+        protected sealed override void OnDefinePorts(IPortDefinitionContext context)
         {
             if (SupportExecution)
             {
@@ -47,7 +51,13 @@ namespace CLogic.Dialogue.Editor
                 if (SupportEndAction)
                     context.AddOutputPort<ActionNode>(OUT_NODE_END).WithDisplayName("End").Build();
             }
+            
+            DefineDialoguePorts(context);
+            InitFinished();
         }
+        
+        protected virtual void DefineDialoguePorts(IPortDefinitionContext context)
+        {}
         
         public virtual void OnValidate(GraphLogger graphLogger)
         {
@@ -146,5 +156,23 @@ namespace CLogic.Dialogue.Editor
         }
         
         DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<INode, int> nodeMap) => ProcessNodeAsset(graph, nodeMap);
+        
+        private void InitFinished()
+        {
+            if (IsFirstCreation)
+            {
+                OnFirstCreation();
+                IsFirstCreation = false;
+            }
+            
+            PostInit();
+        }
+        
+        protected virtual void PostInit()
+        {}
+        
+        // NOTE: Will not be called on a duplicated node
+        protected virtual void OnFirstCreation()
+        {}
     }
 }
