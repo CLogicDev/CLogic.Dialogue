@@ -85,18 +85,22 @@ namespace CLogic.Dialogue.Editor
         
         public virtual void CreateNodeLink(T node, Dictionary<INode, int> nodeMap)
         {
-            CreateExecutionNodeLink(node, nodeMap);
-            CreateActionNodeLink(node, nodeMap);
-        }
-        
-        private void CreateActionNodeLink(T node, Dictionary<INode, int> nodeMap)
-        {
+            // Execution link
+            IPort executionPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
+            
+            if (executionPort == null)
+                return;
+            
+            INode connectedNode = executionPort.GetNode();
+            node.nextNodeID = nodeMap.GetValueOrDefault(connectedNode, -1);
+            
+            // Action link
             if (SupportStartAction)
             {
-                IPort connectedPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
+                IPort actionPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
                 
-                if (connectedPort != null)
-                    node.startNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
+                if (actionPort != null)
+                    node.startNodeActionID = nodeMap.GetValueOrDefault(actionPort.GetNode(), -1);
             }
             
             if (SupportEndAction)
@@ -106,17 +110,6 @@ namespace CLogic.Dialogue.Editor
                 if (connectedPort != null)
                     node.endNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
             }
-        }
-        
-        private void CreateExecutionNodeLink(T node, Dictionary<INode, int> nodeMap)
-        {
-            IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
-            
-            if (connectedPort == null)
-                return;
-            
-            INode connectedNode = connectedPort.GetNode();
-            node.nextNodeID = nodeMap.GetValueOrDefault(connectedNode, -1);
         }
         
         public virtual void CreateDefaultExecutionPorts(IPortDefinitionContext context)
