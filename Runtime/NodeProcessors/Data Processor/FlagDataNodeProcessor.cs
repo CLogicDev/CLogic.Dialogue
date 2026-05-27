@@ -9,11 +9,11 @@ namespace CLogic.Dialogue.DataSaving
     
     public class FlagDataNodeProcessor : DataNodeProcessor<bool>
     {
-        public override void ProcessNode(SaveData<bool> dialogueNode, DialogueDirector director)
+        protected override void ProcessNode(SaveData<bool> nodeDate, DialogueDirector director)
         {
-            base.ProcessNode(dialogueNode, director);
+            base.ProcessNode(nodeDate, director);
             
-            GameSaver.SetData(dialogueNode.id, dialogueNode.data, dialogueNode.sectionId);
+            GameSaver.SetData(nodeDate.id, nodeDate.data, nodeDate.sectionId);
         }
     }
 }

@@ -32,17 +32,17 @@ namespace CLogic.Dialogue
         [SerializeField]
         private RectTransform choiceContainer;
         
-        public override void ProcessNode(BranchNodeData dialogueNode, DialogueDirector director)
+        protected override void ProcessNode(BranchNodeData nodeDate, DialogueDirector director)
         {
             #if CLOGIC_CONDITIONALS
-            if(dialogueNode.isAutoChoice)
+            if(nodeDate.isAutoChoice)
             {
-                HandleAutoChoice(dialogueNode, director);
+                HandleAutoChoice(nodeDate, director);
                 return;
             }
             #endif
             
-            HandleChoice(dialogueNode, director);
+            HandleChoice(nodeDate, director);
         }
 
         private void HandleChoice(BranchNodeData dialogueNode, DialogueDirector director)
@@ -93,7 +93,7 @@ namespace CLogic.Dialogue
         }
         #endif
         
-        public override bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director) => false;
+        protected override bool CanProgressNode(BranchNodeData nodeData, DialogueDirector director) => false;
         
         private void SelectChoice(ChoiceNodeData choice, DialogueDirector director)
         {
@@ -113,6 +113,6 @@ namespace CLogic.Dialogue
             }
         }
         
-        public override void HandleCancellation(DialogueNodeData dialogueNode, DialogueDirector director) => DestroyChoiceButtons();
+        public override void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director) => DestroyChoiceButtons();
     }
 }

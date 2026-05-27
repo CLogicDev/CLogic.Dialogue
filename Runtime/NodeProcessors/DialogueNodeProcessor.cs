@@ -33,28 +33,33 @@ namespace CLogic.Dialogue
         public abstract Type NodeType { get; }
         
         public abstract bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director);
-        public abstract void ProcessNode(DialogueNodeData dialogueNode, DialogueDirector director);
-        public abstract void HandleCancellation(DialogueNodeData dialogueNode, DialogueDirector director);
+        public abstract void ProcessNode(DialogueNodeData nodeDate, DialogueDirector director);
+        public abstract void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director);
     }
     
     public abstract class DialogueNodeProcessor<T> : DialogueNodeProcessor where T : DialogueNodeData
     {
         public override Type NodeType => typeof(T);
-        public override bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director)
+        public sealed override bool CanProgressNode(DialogueNodeData nodeDate, DialogueDirector director) => CanProgressNode((T)nodeDate, director);
+        
+        protected virtual bool CanProgressNode(T nodeData, DialogueDirector director)
         {
-            if (dialogueNode.endNodeActionID != -1)
-                director.ProcessNode(director.GetNodeFromID(dialogueNode.endNodeActionID), true);
+            if (nodeData.endNodeActionID != -1)
+                director.ProcessNode(director.GetNodeFromID(nodeData.endNodeActionID), true);
             
             return true;
         }
-        public sealed override void ProcessNode(DialogueNodeData dialogueNode, DialogueDirector director) => ProcessNode((T)dialogueNode, director);
         
-        public virtual void ProcessNode(T dialogueNode, DialogueDirector director)
+        public sealed override void ProcessNode(DialogueNodeData nodeDate, DialogueDirector director) => ProcessNode((T)nodeDate, director);
+        
+        protected virtual void ProcessNode(T nodeDate, DialogueDirector director)
         {
-            if (dialogueNode.startNodeActionID != -1)
-                director.ProcessNode(director.GetNodeFromID(dialogueNode.startNodeActionID), true);
+            if (nodeDate.startNodeActionID != -1)
+                director.ProcessNode(director.GetNodeFromID(nodeDate.startNodeActionID), true);
         }
         
-        public override void HandleCancellation(DialogueNodeData dialogueNode, DialogueDirector director) {}
+        public override void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director) => HandleCancellation((T)nodeDate, director);
+        
+        protected virtual void HandleCancellation(T nodeDate, DialogueDirector director) { }
     }
 }

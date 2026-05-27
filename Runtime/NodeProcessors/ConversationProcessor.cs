@@ -24,20 +24,20 @@ namespace CLogic.Dialogue
         
         private ConversationNodeData currentNode;
         
-        public override void ProcessNode(ConversationNodeData dialogueNode, DialogueDirector director)
+        protected override void ProcessNode(ConversationNodeData nodeDate, DialogueDirector director)
         {
-            base.ProcessNode(dialogueNode, director);
-            currentNode = dialogueNode;
-            characterNameText.text = dialogueNode.characterName;
+            base.ProcessNode(nodeDate, director);
+            currentNode = nodeDate;
+            characterNameText.text = nodeDate.characterName;
             
-            float typingSpeed = dialogueNode.textSpeed == 0f ? dialogueTextIterator.speedWordsPerMin : dialogueNode.textSpeed;
+            float typingSpeed = nodeDate.textSpeed == 0f ? dialogueTextIterator.speedWordsPerMin : nodeDate.textSpeed;
             
-            dialogueTextIterator.StartWriting(dialogueNode.text, typingSpeed, null);
+            dialogueTextIterator.StartWriting(nodeDate.text, typingSpeed, null);
         }
         
-        public override bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director)
+        protected override bool CanProgressNode(ConversationNodeData nodeData, DialogueDirector director)
         {
-            base.CanProgressNode(dialogueNode, director);
+            base.CanProgressNode(nodeData, director);
             
             if (!dialogueTextIterator.IsWriting)
                 return true;
@@ -49,7 +49,7 @@ namespace CLogic.Dialogue
             return false;
         }
         
-        public override void HandleCancellation(DialogueNodeData dialogueNode, DialogueDirector director)
+        public override void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director)
         {
             dialogueTextIterator.StopWriting();
         }
