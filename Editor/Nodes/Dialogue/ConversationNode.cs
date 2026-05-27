@@ -24,7 +24,7 @@ namespace CLogic.Dialogue.Editor
             context.AddOption<int>(OP_TEXT_AREA_LINES).WithDefaultValue(3).WithDisplayName("Text Area Width").ShowInInspectorOnly().Build();
         }
         
-        protected override void OnDefinePorts(IPortDefinitionContext context)
+        protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {
             CreateDefaultExecutionPorts(context);
             

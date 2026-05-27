@@ -26,6 +26,9 @@ namespace CLogic.Dialogue.Editor
         public virtual bool SupportsStartAction => true;
         public virtual bool SupportsEndAction => true;
         
+        [field: SerializeField]
+        public bool IsFirstCreation { get; protected set; } = true;
+        
         public virtual void OnValidate(GraphLogger graphLogger)
         {
             List<IPort> connectedPorts = new();
@@ -81,6 +84,14 @@ namespace CLogic.Dialogue.Editor
             if (SupportsStartAction || SupportsEndAction)
                 context.AddOption<bool>(OP_NODE_EVENTS).WithDisplayName("Use Events").Build();
         }
+        
+        protected sealed override void OnDefinePorts(IPortDefinitionContext context)
+        {
+            base.OnDefinePorts(context);
+            DefineDialoguePorts(context);
+            InitFinished();
+        }
+        protected abstract void DefineDialoguePorts(IPortDefinitionContext context);
         
         public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap);
         
@@ -139,5 +150,23 @@ namespace CLogic.Dialogue.Editor
         protected TValue GetPortValue<TValue>(IPort port) => IDialogueGraphNode.GetPortValue<TValue>(port);
         
         DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<INode, int> nodeMap) => ProcessNodeAsset(graph, nodeMap);
+        
+        private void InitFinished()
+        {
+            if (IsFirstCreation)
+            {
+                OnFirstCreation();
+                IsFirstCreation = false;
+            }
+            
+            PostInit();
+        }
+        
+        protected virtual void PostInit() 
+        {}
+        
+        // NOTE: Will not be called on a duplicated node
+        protected virtual void OnFirstCreation()
+        {}
     }
 }

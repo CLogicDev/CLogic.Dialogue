@@ -12,7 +12,7 @@ namespace CLogic.Dialogue.Editor
         public override bool SupportExecution => false;
         public override bool SupportStartAction => false;
         public override bool SupportEndAction => false;
-        protected override void OnDefinePorts(IPortDefinitionContext context)
+        protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {
             context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
             

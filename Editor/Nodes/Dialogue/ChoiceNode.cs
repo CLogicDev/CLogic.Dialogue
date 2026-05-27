@@ -23,18 +23,14 @@ namespace CLogic.Dialogue.Editor
             #endif
         }
 
-        protected override void OnDefinePorts(IPortDefinitionContext context)
+        protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {
-            base.OnDefinePorts(context);
-            
             var inputPort = context.AddInputPort<IDialogueGraphNode>("In").WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             
             PropertyInfo propertyInfo = inputPort.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
             Type portCapacityType = propertyInfo.PropertyType;
             object multiCapacity = Enum.Parse(portCapacityType, "Multi");
             propertyInfo.SetValue(inputPort, multiCapacity);
-            
-            HandleSetup();
         }
         
         public override BranchNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
@@ -102,10 +98,9 @@ namespace CLogic.Dialogue.Editor
             #endif
         }
         
-        private void HandleSetup()
+        protected override void OnFirstCreation()
         {
-            if (BlockCount == 0)
-                CreateBlockNode<ChoiceOptionNode>();
+            CreateBlockNode<ChoiceOptionNode>();
         }
     }
     #endif
