@@ -39,19 +39,18 @@ namespace CLogic.Dialogue.Editor
                 context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
                 context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
             }
-            
-            if(!SupportStartAction && !SupportEndAction)
-                return;
-            
-            if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
+
+            if(SupportStartAction || SupportEndAction)
             {
-                if (SupportStartAction)
-                    context.AddOutputPort<ActionNode>(OUT_NODE_START).WithDisplayName("Start").Build();
-                
-                if (SupportEndAction)
-                    context.AddOutputPort<ActionNode>(OUT_NODE_END).WithDisplayName("End").Build();
+                if(GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
+                {
+                    if(SupportStartAction)
+                        context.AddOutputPort<ActionNode>(OUT_NODE_START).WithDisplayName("Start").Build();
+
+                    if(SupportEndAction)
+                        context.AddOutputPort<ActionNode>(OUT_NODE_END).WithDisplayName("End").Build();
+                }
             }
-            
             DefineDialoguePorts(context);
             InitFinished();
         }
