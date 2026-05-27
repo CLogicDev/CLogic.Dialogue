@@ -32,17 +32,17 @@ namespace CLogic.Dialogue
         [SerializeField]
         private RectTransform choiceContainer;
         
-        protected override void ProcessNode(BranchNodeData nodeDate, DialogueDirector director)
+        protected override void ProcessNode(BranchNodeData nodeData, DialogueDirector director)
         {
             #if CLOGIC_CONDITIONALS
-            if(nodeDate.isAutoChoice)
+            if(nodeData.isAutoChoice)
             {
-                HandleAutoChoice(nodeDate, director);
+                HandleAutoChoice(nodeData, director);
                 return;
             }
             #endif
             
-            HandleChoice(nodeDate, director);
+            HandleChoice(nodeData, director);
         }
 
         private void HandleChoice(BranchNodeData dialogueNode, DialogueDirector director)

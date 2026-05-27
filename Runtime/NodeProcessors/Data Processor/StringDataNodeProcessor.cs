@@ -9,11 +9,11 @@ namespace CLogic.Dialogue.DataSaving
     
     public class StringDataNodeProcessor : DataNodeProcessor<string>
     {
-        protected override void ProcessNode(SaveData<string> nodeDate, DialogueDirector director)
+        protected override void ProcessNode(SaveData<string> nodeData, DialogueDirector director)
         {
-            base.ProcessNode(nodeDate, director);
+            base.ProcessNode(nodeData, director);
             
-            GameSaver.SetData(nodeDate.id, nodeDate.data, nodeDate.sectionId);
+            GameSaver.SetData(nodeData.id, nodeData.data, nodeData.sectionId);
         }
     }
 }

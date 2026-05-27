@@ -14,9 +14,9 @@ namespace CLogic.Dialogue
         [SerializeField]
         private AudioSource audioSource;
         
-        protected override void ProcessNode(AudioNodeData nodeDate, DialogueDirector director)
+        protected override void ProcessNode(AudioNodeData nodeData, DialogueDirector director)
         {
-            audioSource.clip = nodeDate.audioClip;
+            audioSource.clip = nodeData.audioClip;
             audioSource.Play();
         }
     }

@@ -24,15 +24,15 @@ namespace CLogic.Dialogue
         
         private ConversationNodeData currentNode;
         
-        protected override void ProcessNode(ConversationNodeData nodeDate, DialogueDirector director)
+        protected override void ProcessNode(ConversationNodeData nodeData, DialogueDirector director)
         {
-            base.ProcessNode(nodeDate, director);
-            currentNode = nodeDate;
-            characterNameText.text = nodeDate.characterName;
+            base.ProcessNode(nodeData, director);
+            currentNode = nodeData;
+            characterNameText.text = nodeData.characterName;
             
-            float typingSpeed = nodeDate.textSpeed == 0f ? dialogueTextIterator.speedWordsPerMin : nodeDate.textSpeed;
+            float typingSpeed = nodeData.textSpeed == 0f ? dialogueTextIterator.speedWordsPerMin : nodeData.textSpeed;
             
-            dialogueTextIterator.StartWriting(nodeDate.text, typingSpeed, null);
+            dialogueTextIterator.StartWriting(nodeData.text, typingSpeed, null);
         }
         
         protected override bool CanProgressNode(ConversationNodeData nodeData, DialogueDirector director)
