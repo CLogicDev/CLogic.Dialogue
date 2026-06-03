@@ -15,12 +15,12 @@ namespace CLogic.Dialogue
         
         private void ProcessSubGraph(SubGraphNodeData subgraph)
         {
-            var handle = PlayDialogueGraph(subgraph.graph, HandleSubGraphFinished);
             graphStack.Push(new SubGraph
             {
-                dialogue = handle,
+                dialogue = CurrentDialogue,
                 originatingID = currentNodeID
             });
+            PlayDialogueGraph(subgraph.graph, HandleSubGraphFinished);
         }
         
         private void HandleSubGraphFinished()
