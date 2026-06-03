@@ -48,7 +48,7 @@ MonoBehaviour:
           x: 727
           y: 154
           width: 1017
-          height: 264
+          height: 269
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 5972218960777429339
@@ -131,11 +131,11 @@ MonoBehaviour:
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
-            m_ValueList: 
+            m_ValueList: {_typeName: UInt8, _data: }
         m_OutputPortInfos:
           expandedPortsById:
             m_KeyList: []
-            m_ValueList: 
+            m_ValueList: {_typeName: UInt8, _data: }
         m_Collapsed: 0
         m_CurrentModeIndex: 0
         m_ElementColor:
@@ -182,11 +182,11 @@ MonoBehaviour:
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
-            m_ValueList: 
+            m_ValueList: {_typeName: UInt8, _data: }
         m_OutputPortInfos:
           expandedPortsById:
             m_KeyList: []
-            m_ValueList: 
+            m_ValueList: {_typeName: UInt8, _data: }
         m_Collapsed: 0
         m_CurrentModeIndex: 0
         m_ElementColor:
@@ -255,7 +255,8 @@ MonoBehaviour:
         m_Value: 1
     - rid: 8540790323121487963
       type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
-      data: 
+      data:
+        <IsFirstCreation>k__BackingField: 0
     - rid: 8540790323121487964
       type: {class: UserNodeModelImp, ns: Unity.GraphToolkit.Editor.Implementation, asm: UnityEditor.GraphToolkitModule}
       data:
@@ -280,11 +281,11 @@ MonoBehaviour:
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
-            m_ValueList: 
+            m_ValueList: {_typeName: UInt8, _data: }
         m_OutputPortInfos:
           expandedPortsById:
             m_KeyList: []
-            m_ValueList: 
+            m_ValueList: {_typeName: UInt8, _data: }
         m_Collapsed: 0
         m_CurrentModeIndex: 0
         m_ElementColor:
