@@ -236,16 +236,8 @@ namespace CLogic.Dialogue.Editor
                 
                 SubGraphNodeData nodeData = new();
                 
-                MethodInfo getGraphModelMethodInfo = subgraphNode.GetType().BaseType.GetMethod("GetSubgraphModel", BindingFlags.Instance | BindingFlags.Public);
-                object graphModel = getGraphModelMethodInfo.Invoke(subgraphNode, null);
-                
-                PropertyInfo getGraphObjectProp = graphModel.GetType().BaseType.GetProperty("GraphObject", BindingFlags.Instance | BindingFlags.Public);
-                object graphAsset = getGraphObjectProp.GetValue(graphModel);
-                
-                PropertyInfo getFilePathProp = graphAsset.GetType().BaseType.GetProperty("FilePath", BindingFlags.Instance | BindingFlags.Public);
-                string filePath = getFilePathProp.GetValue(graphAsset) as string;
-                
-                var subgraph = AssetDatabase.LoadAssetAtPath<DialogueGraph>(filePath);
+                GUID subgraphGuid = subgraphNode.GetSubgraph().AssetGuid;
+                var subgraph = AssetDatabase.LoadAssetByGUID<DialogueGraph>(subgraphGuid);
                 
                 nodeData.graph = subgraph;
                 
