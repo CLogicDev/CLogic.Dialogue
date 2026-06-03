@@ -15,13 +15,7 @@ namespace CLogic.Dialogue.Editor
         
         protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {
-            context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
-            
-            IPort port = GetInputPortByName(IN_EXECUTION);
-            PropertyInfo propertyInfo = port.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
-            Type portCapacityType = propertyInfo.PropertyType;
-            object multiCapacity = Enum.Parse(portCapacityType, "Multi");
-            propertyInfo.SetValue(port, multiCapacity);
+            context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).WithCapacity(PortCapacity.Multi).Build();
         }
         
         public override ActionNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
