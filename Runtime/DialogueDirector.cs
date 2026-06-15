@@ -151,7 +151,7 @@ namespace CLogic.Dialogue
         /// Tries to go to a specific node
         /// </summary>
         /// <returns>Whether the director could go to that node</returns>
-        internal bool GoToNode(int nodeID, bool forced = false)
+        public bool GoToNode(int nodeID, bool forced = false)
         {
             if(!forced && !CurrentProcessor.CanProgressNode(currentNode, this))
                 return false;
