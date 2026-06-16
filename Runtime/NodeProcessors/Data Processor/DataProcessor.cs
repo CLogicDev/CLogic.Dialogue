@@ -14,5 +14,5 @@ namespace CLogic.Dialogue.DataSaving
         public T data;
     }
     
-    public abstract class DataNodeProcessor<T> : DialogueNodeProcessor<SaveData<T>> { }
+    public abstract class DataProcessor<T> : DialogueProcessor<SaveData<T>> { }
 }
