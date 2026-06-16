@@ -17,7 +17,7 @@ namespace CLogic.Dialogue
         {
             var actionNodeData = (ActionNodeData)nodeData;
             
-            foreach (BlockNodeData childBlock in actionNodeData.childBlocks)
+            foreach (DialogueNodeData childBlock in actionNodeData.childBlocks)
             {
                 director.ProcessNode(childBlock, true);
             }
