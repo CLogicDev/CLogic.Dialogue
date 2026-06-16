@@ -9,7 +9,7 @@ namespace CLogic.Dialogue
         public AudioClip audioClip;
     }
     
-    public class AudioNodeProcessor : DialogueNodeProcessor<AudioNodeData>
+    public class AudioProcessor : DialogueProcessor<AudioNodeData>
     {
         [SerializeField]
         private AudioSource audioSource;

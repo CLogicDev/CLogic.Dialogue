@@ -25,7 +25,7 @@ namespace CLogic.Dialogue
         
     }
     
-    public class ChoiceProcessor : DialogueNodeProcessor<BranchNodeData>
+    public class ChoiceProcessor : DialogueProcessor<BranchNodeData>
     {
         [SerializeField]
         private GameObject choiceButtonPrefab;

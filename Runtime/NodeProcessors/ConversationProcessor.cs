@@ -14,7 +14,7 @@ namespace CLogic.Dialogue
         public bool skippable;
     }
     
-    public class ConversationProcessor : DialogueNodeProcessor<ConversationNodeData>
+    public class ConversationProcessor : DialogueProcessor<ConversationNodeData>
     {
         [SerializeField]
         private TypeWriter dialogueTextIterator;

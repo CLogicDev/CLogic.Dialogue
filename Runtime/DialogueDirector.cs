@@ -15,10 +15,10 @@ namespace CLogic.Dialogue
         public int maxDiscoveryDepth = 2;
         
         [field: SerializeField]
-        public List<DialogueNodeProcessor> processorOverrides { get; private set; } = new();
+        public List<DialogueProcessor> processorOverrides { get; private set; } = new();
         
         private DialogueNodeData currentNode;
-        public IDialogueNodeProcessor CurrentProcessor { get; private set; }
+        public IDialogueProcessor CurrentProcessor { get; private set; }
         
         private int currentNodeID;
         
@@ -26,9 +26,9 @@ namespace CLogic.Dialogue
         private DialogueNodeData[] nodes;
         
         [SerializeField, ShowField(nameof(IsUsingBakedProcessors))]
-        private List<DialogueNodeProcessor> bakedProcessors = new();
-        private Dictionary<Type, IDialogueNodeProcessor> nodeProcessors = new();
-        private Dictionary<Type, IDialogueNodeProcessor> nodeProcessorOverrides = new();
+        private List<DialogueProcessor> bakedProcessors = new();
+        private Dictionary<Type, IDialogueProcessor> nodeProcessors = new();
+        private Dictionary<Type, IDialogueProcessor> nodeProcessorOverrides = new();
         
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
@@ -41,38 +41,38 @@ namespace CLogic.Dialogue
         
         private void Awake()
         {
-            foreach (DialogueNodeProcessor processor in processorOverrides)
+            foreach (DialogueProcessor processor in processorOverrides)
             {
                 nodeProcessorOverrides.Add(processor.NodeType, processor);
             }
             
-            IEnumerable<IDialogueNodeProcessor> processorProvider = IsUsingBakedProcessors ? bakedProcessors : DiscoverProcessors(transform);
+            IEnumerable<IDialogueProcessor> processorProvider = IsUsingBakedProcessors ? bakedProcessors : DiscoverProcessors(transform);
             
             nodeProcessors.Clear();
-            foreach (IDialogueNodeProcessor processor in processorProvider)
+            foreach (IDialogueProcessor processor in processorProvider)
             {
                 if (nodeProcessors == null || !nodeProcessorOverrides.ContainsKey(processor.NodeType))
                     nodeProcessors.Add(processor.NodeType, processor);
             }
             
-            nodeProcessors.Add(typeof(ActionNodeData), new ActionNodeProcessor()); // Action node processor is a special processor type
+            nodeProcessors.Add(typeof(ActionNodeData), new ActionProcessor()); // Action node processor is a special processor type
         }
         
         [Button("Bake Processors")]
         public void BakeProcessors()
         {
             bakedProcessors.Clear();
-            foreach (IDialogueNodeProcessor processor in DiscoverProcessors(transform))
+            foreach (IDialogueProcessor processor in DiscoverProcessors(transform))
             {
                 if (!nodeProcessorOverrides.ContainsKey(processor.NodeType))
-                    bakedProcessors.Add(processor as DialogueNodeProcessor); // If processors are discovered they must implement DialogueNodeProcessor
+                    bakedProcessors.Add(processor as DialogueProcessor); // If processors are discovered they must implement DialogueNodeProcessor
             }
         }
         
-        public IEnumerable<IDialogueNodeProcessor> DiscoverProcessors(Transform parent, int currentDepth = 0)
+        public IEnumerable<IDialogueProcessor> DiscoverProcessors(Transform parent, int currentDepth = 0)
         {
             //Check parent components
-            foreach (IDialogueNodeProcessor dialogueNodeProcessor in parent.GetComponents<IDialogueNodeProcessor>())
+            foreach (IDialogueProcessor dialogueNodeProcessor in parent.GetComponents<IDialogueProcessor>())
             {
                 yield return dialogueNodeProcessor;
             }
@@ -84,7 +84,7 @@ namespace CLogic.Dialogue
             foreach (Transform child in parent)
             {
                 //Check child components
-                foreach (IDialogueNodeProcessor dialogueNodeProcessor in child.GetComponents<IDialogueNodeProcessor>())
+                foreach (IDialogueProcessor dialogueNodeProcessor in child.GetComponents<IDialogueProcessor>())
                 {
                     yield return dialogueNodeProcessor;
                 }
@@ -92,7 +92,7 @@ namespace CLogic.Dialogue
                 //Recursively check nested children
                 foreach (Transform nestedChild in child)
                 {
-                    foreach (IDialogueNodeProcessor dialogueNodeProcessor in DiscoverProcessors(nestedChild, currentDepth + 2)) // Depth is +2 since child is checked then the nested child
+                    foreach (IDialogueProcessor dialogueNodeProcessor in DiscoverProcessors(nestedChild, currentDepth + 2)) // Depth is +2 since child is checked then the nested child
                     {
                         yield return dialogueNodeProcessor;
                     }
@@ -186,7 +186,7 @@ namespace CLogic.Dialogue
             
             Type type = node.GetType();
             
-            if(!TryGetProcessorForNode(type, out IDialogueNodeProcessor processor))
+            if(!TryGetProcessorForNode(type, out IDialogueProcessor processor))
             {
                 Integrations.LogError($"No processor for type {type}");
                 return;
@@ -198,9 +198,9 @@ namespace CLogic.Dialogue
             processor.ProcessNode(node, this);
         }
 
-        public bool TryGetProcessorForNode<T>(Type type, out T processor) where T : IDialogueNodeProcessor
+        public bool TryGetProcessorForNode<T>(Type type, out T processor) where T : IDialogueProcessor
         {
-            if(nodeProcessorOverrides.TryGetValue(type, out IDialogueNodeProcessor rawProcessor) || nodeProcessors.TryGetValue(type, out rawProcessor))
+            if(nodeProcessorOverrides.TryGetValue(type, out IDialogueProcessor rawProcessor) || nodeProcessors.TryGetValue(type, out rawProcessor))
             {
                 processor = (T)rawProcessor;
                 return true;

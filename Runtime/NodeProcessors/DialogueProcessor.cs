@@ -27,10 +27,10 @@ namespace CLogic.Dialogue
     
     /// <summary>
     /// Used to refer to processor nodes in the inspector.
-    /// Do not inherit from this class. Use <see cref="DialogueNodeProcessor&lt;T&gt;"/> instead.
+    /// Do not inherit from this class. Use <see cref="DialogueProcessor{T}"/> instead.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public abstract class DialogueNodeProcessor : MonoBehaviour, IDialogueNodeProcessor
+    public abstract class DialogueProcessor : MonoBehaviour, IDialogueProcessor
     {
         public abstract Type NodeType { get; }
         
@@ -39,10 +39,10 @@ namespace CLogic.Dialogue
         public abstract void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director);
         
         [Obsolete("Use DialogueNodeProcessor<> instead", false)]
-        protected internal DialogueNodeProcessor(){}
+        protected internal DialogueProcessor(){}
     }
     
-    public abstract class DialogueNodeProcessor<T> : DialogueNodeProcessor where T : DialogueNodeData
+    public abstract class DialogueProcessor<T> : DialogueProcessor where T : DialogueNodeData
     {
         public override Type NodeType => typeof(T);
         public sealed override bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director)
@@ -59,7 +59,7 @@ namespace CLogic.Dialogue
         protected virtual bool CanProgressNode(T nodeData, DialogueDirector director) => true;
         
         #pragma warning disable CS0618
-        protected DialogueNodeProcessor()
+        protected DialogueProcessor()
         {}
         #pragma warning restore CS0618
         

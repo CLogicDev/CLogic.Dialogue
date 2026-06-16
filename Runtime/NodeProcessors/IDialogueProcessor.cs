@@ -1,7 +1,7 @@
 ﻿using System;
 namespace CLogic.Dialogue
 {
-    public interface IDialogueNodeProcessor
+    public interface IDialogueProcessor
     {
         public Type NodeType { get; }
         
