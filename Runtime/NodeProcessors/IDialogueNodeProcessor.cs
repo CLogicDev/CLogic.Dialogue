@@ -9,7 +9,7 @@ namespace CLogic.Dialogue
         /// Called when the director requests to move to the next node
         /// </summary>
         /// <returns>Whether the dialogue director can progress to the next node</returns>
-        public bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director);
+        public bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director);
         
         public void ProcessNode(DialogueNodeData nodeData, DialogueDirector director);
         

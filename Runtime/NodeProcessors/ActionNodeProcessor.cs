@@ -11,7 +11,7 @@ namespace CLogic.Dialogue
     public class ActionNodeProcessor : IDialogueNodeProcessor
     {
         public Type NodeType => typeof(ActionNodeData);
-        public bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director) => true;
+        public bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director) => true;
         
         public void ProcessNode(DialogueNodeData nodeData, DialogueDirector director)
         {

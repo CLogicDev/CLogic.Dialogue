@@ -34,7 +34,7 @@ namespace CLogic.Dialogue
     {
         public abstract Type NodeType { get; }
         
-        public abstract bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director);
+        public abstract bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director);
         public abstract void ProcessNode(DialogueNodeData nodeData, DialogueDirector director);
         public abstract void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director);
         
@@ -75,6 +75,7 @@ namespace CLogic.Dialogue
         
         public override void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => HandleCancellation((T)nodeData, director);
         
-        protected virtual void HandleCancellation(T nodeData, DialogueDirector director) { }
+        protected virtual void HandleCancellation(T nodeData, DialogueDirector director) 
+        {}
     }
 }
