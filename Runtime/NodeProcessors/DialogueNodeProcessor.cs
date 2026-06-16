@@ -59,15 +59,15 @@ namespace CLogic.Dialogue
         {}
         #pragma warning restore CS0618
         
-        public sealed override void ProcessNode(DialogueNodeData nodeDate, DialogueDirector director) => ProcessNode((T)nodeDate, director);
-        
-        protected virtual void ProcessNode(T nodeData, DialogueDirector director)
+        public sealed override void ProcessNode(DialogueNodeData nodeData, DialogueDirector director)
         {
             if (nodeData.startNodeActionID != -1)
                 director.ProcessNode(director.GetNodeFromID(nodeData.startNodeActionID), true);
+            
+            ProcessNode((T)nodeData, director);
         }
         
-        public override void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director) => HandleCancellation((T)nodeDate, director);
+        protected abstract void ProcessNode(T nodeData, DialogueDirector director);
         
         protected virtual void HandleCancellation(T nodeDate, DialogueDirector director) { }
     }
