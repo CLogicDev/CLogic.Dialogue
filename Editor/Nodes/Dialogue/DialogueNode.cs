@@ -31,51 +31,57 @@ namespace CLogic.Dialogue.Editor
         
         public virtual void OnValidate(GraphLogger graphLogger)
         {
-            List<IPort> connectedPorts = new();
+            IPort outputPort = GetOutputPortByName(OUT_EXECUTION);
             
-            GetOutputPortByName(OUT_EXECUTION).GetConnectedPorts(connectedPorts);
-            
-            foreach (IPort port in connectedPorts)
+            if (outputPort != null)
             {
-                INode node = port?.GetNode();
+                List<IPort> connectedPorts = new();
                 
-                if (node is ActionNode)
-                    graphLogger.LogError("Action node cannot be used as execution output", this);
-            }
-            
-            switch (connectedPorts.Count)
-            {
-                case 0:
-                    graphLogger.Log("Node output not connected, the graph will end by default", this);
-                break;
+                outputPort.GetConnectedPorts(connectedPorts);
                 
-                case > 1:
-                    graphLogger.LogError("Multiple execution output links are not allowed", this);
-                break;
+                foreach (IPort port in connectedPorts)
+                {
+                    INode node = port?.GetNode();
+                    
+                    if (node is ActionNode)
+                        graphLogger.LogError("Action node cannot be used as execution output", this);
+                }
+                
+                switch (connectedPorts.Count)
+                {
+                    case 0:
+                        graphLogger.Log("Node output not connected, the graph will end by default", this);
+                    break;
+                    
+                    case > 1:
+                        graphLogger.LogError("Multiple execution output links are not allowed", this);
+                    break;
+                }
+                
             }
             
             if(!SupportsStartAction || !SupportsEndAction)
                 return;
             
-            if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
+            if (!GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) || !shouldUseEvents)
+                return;
+            
+            if (SupportsStartAction)
             {
-                if (SupportsStartAction)
-                {
-                    IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
-                    
-                    INode connectedNode = connectedPort.GetNode();
-                    if (connectedNode is not null and not ActionNode)
-                        graphLogger.LogError("Start node must be connected to an action node", this);
-                }
+                IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
                 
-                if (SupportsEndAction)
-                {
-                    IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
-                    
-                    INode connectedNode = connectedPort.GetNode();
-                    if (connectedNode is not null and not ActionNode)
-                        graphLogger.LogError("End node must be connected to an action node", this);
-                }
+                INode connectedNode = connectedPort.GetNode();
+                if (connectedNode is not null and not ActionNode)
+                    graphLogger.LogError("Start node must be connected to an action node", this);
+            }
+            
+            if (SupportsEndAction)
+            {
+                IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
+                
+                INode connectedNode = connectedPort.GetNode();
+                if (connectedNode is not null and not ActionNode)
+                    graphLogger.LogError("End node must be connected to an action node", this);
             }
         }
         
