@@ -35,8 +35,8 @@ namespace CLogic.Dialogue
         public abstract Type NodeType { get; }
         
         public abstract bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director);
-        public abstract void ProcessNode(DialogueNodeData nodeDate, DialogueDirector director);
-        public abstract void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director);
+        public abstract void ProcessNode(DialogueNodeData nodeData, DialogueDirector director);
+        public abstract void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director);
         
         [Obsolete("Use DialogueNodeProcessor<> instead", false)]
         protected internal DialogueNodeProcessor(){}
@@ -69,6 +69,8 @@ namespace CLogic.Dialogue
         
         protected abstract void ProcessNode(T nodeData, DialogueDirector director);
         
-        protected virtual void HandleCancellation(T nodeDate, DialogueDirector director) { }
+        public override void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => HandleCancellation((T)nodeData, director);
+        
+        protected virtual void HandleCancellation(T nodeData, DialogueDirector director) { }
     }
 }

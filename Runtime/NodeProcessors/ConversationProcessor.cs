@@ -26,7 +26,6 @@ namespace CLogic.Dialogue
         
         protected override void ProcessNode(ConversationNodeData nodeData, DialogueDirector director)
         {
-            base.ProcessNode(nodeData, director);
             currentNode = nodeData;
             characterNameText.text = nodeData.characterName;
             
@@ -49,7 +48,7 @@ namespace CLogic.Dialogue
             return false;
         }
         
-        public override void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director)
+        public override void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director)
         {
             dialogueTextIterator.StopWriting();
         }

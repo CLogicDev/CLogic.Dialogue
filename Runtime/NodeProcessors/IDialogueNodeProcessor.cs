@@ -11,11 +11,11 @@ namespace CLogic.Dialogue
         /// <returns>Whether the dialogue director can progress to the next node</returns>
         public bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director);
         
-        public void ProcessNode(DialogueNodeData nodeDate, DialogueDirector director);
+        public void ProcessNode(DialogueNodeData nodeData, DialogueDirector director);
         
         /// <summary>
         /// Called when the current graph is cancelled which this processor was active
         /// </summary>
-        public void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director);
+        public void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director);
     }
 }
