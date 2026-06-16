@@ -148,7 +148,11 @@ namespace CLogic.Dialogue.Editor
                 {
                     targetId = -2; // Graceful end
                 }
-                else if (nodeMap.TryGetValue(subgraphEndNode, out int endNodeId))
+                else if(subgraphEndNode == null)
+                {
+                    targetId = -1;
+                }
+                else if ( nodeMap.TryGetValue(subgraphEndNode, out int endNodeId))
                 {
                     targetId = endNodeId;
                 }
