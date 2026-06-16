@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace CLogic.Dialogue
 {
@@ -28,6 +29,7 @@ namespace CLogic.Dialogue
     /// Used to refer to processor nodes in the inspector.
     /// Do not inherit from this class. Use <see cref="DialogueNodeProcessor&lt;T&gt;"/> instead.
     /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class DialogueNodeProcessor : MonoBehaviour, IDialogueNodeProcessor
     {
         public abstract Type NodeType { get; }
@@ -35,13 +37,15 @@ namespace CLogic.Dialogue
         public abstract bool CanProgressNode(DialogueNodeData dialogueNode, DialogueDirector director);
         public abstract void ProcessNode(DialogueNodeData nodeDate, DialogueDirector director);
         public abstract void HandleCancellation(DialogueNodeData nodeDate, DialogueDirector director);
+        
+        [Obsolete("Use DialogueNodeProcessor<> instead", false)]
+        protected internal DialogueNodeProcessor(){}
     }
     
     public abstract class DialogueNodeProcessor<T> : DialogueNodeProcessor where T : DialogueNodeData
     {
         public override Type NodeType => typeof(T);
         public sealed override bool CanProgressNode(DialogueNodeData nodeDate, DialogueDirector director) => CanProgressNode((T)nodeDate, director);
-        
         protected virtual bool CanProgressNode(T nodeData, DialogueDirector director)
         {
             if (nodeData.endNodeActionID != -1)
@@ -49,6 +53,11 @@ namespace CLogic.Dialogue
             
             return true;
         }
+        
+        #pragma warning disable CS0618
+        protected DialogueNodeProcessor()
+        {}
+        #pragma warning restore CS0618
         
         public sealed override void ProcessNode(DialogueNodeData nodeDate, DialogueDirector director) => ProcessNode((T)nodeDate, director);
         
