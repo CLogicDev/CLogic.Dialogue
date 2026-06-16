@@ -45,14 +45,18 @@ namespace CLogic.Dialogue
     public abstract class DialogueNodeProcessor<T> : DialogueNodeProcessor where T : DialogueNodeData
     {
         public override Type NodeType => typeof(T);
-        public sealed override bool CanProgressNode(DialogueNodeData nodeDate, DialogueDirector director) => CanProgressNode((T)nodeDate, director);
-        protected virtual bool CanProgressNode(T nodeData, DialogueDirector director)
+        public sealed override bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director)
         {
+            if (!CanProgressNode((T)nodeData, director))
+                return false;
+            
             if (nodeData.endNodeActionID != -1)
                 director.ProcessNode(director.GetNodeFromID(nodeData.endNodeActionID), true);
             
             return true;
         }
+        
+        protected virtual bool CanProgressNode(T nodeData, DialogueDirector director) => true;
         
         #pragma warning disable CS0618
         protected DialogueNodeProcessor()
