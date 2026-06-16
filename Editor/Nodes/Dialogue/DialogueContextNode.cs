@@ -117,7 +117,7 @@ namespace CLogic.Dialogue.Editor
             {
                 if (block is IDialogueGraphNode dialogueNode)
                 {
-                    var blockNodeData = dialogueNode.ProcessNode(graph, nodeMap) as BlockNodeData;
+                    DialogueNodeData blockNodeData = dialogueNode.ProcessNode(graph, nodeMap);
                     nodeData.childBlocks.Add(blockNodeData);
                 }
             }

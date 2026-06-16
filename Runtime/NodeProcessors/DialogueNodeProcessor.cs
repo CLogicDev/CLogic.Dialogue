@@ -18,7 +18,7 @@ namespace CLogic.Dialogue
     public class ContextNodeData : DialogueNodeData
     {
         [SerializeReference]
-        public List<BlockNodeData> childBlocks = new();
+        public List<DialogueNodeData> childBlocks = new();
     }
     
     [Serializable]

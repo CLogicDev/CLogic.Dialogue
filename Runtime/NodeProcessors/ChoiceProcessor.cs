@@ -47,9 +47,9 @@ namespace CLogic.Dialogue
 
         private void HandleChoice(BranchNodeData dialogueNode, DialogueDirector director)
         {
-            foreach (BlockNodeData choice in dialogueNode.childBlocks)
+            foreach (DialogueNodeData dialogueNodeData in dialogueNode.childBlocks)
             {
-                var choiceNode = choice as ChoiceNodeData;
+                var choiceNode = dialogueNodeData as ChoiceNodeData;
                 
                 GameObject buttonObject = Instantiate(choiceButtonPrefab, choiceContainer);
                 buttonObject.SetActive(false); // Fixes delay with interactable state
@@ -75,7 +75,7 @@ namespace CLogic.Dialogue
             int selectedIndex = -1;
             for(int i = 0; i < dialogueNode.childBlocks.Count; i++)
             {
-                BlockNodeData blockNodeData = dialogueNode.childBlocks[i];
+                DialogueNodeData blockNodeData = dialogueNode.childBlocks[i];
                 var choiceNode = (ChoiceNodeData)blockNodeData;
                 if(!choiceNode.conditional)
                     continue;
