@@ -50,7 +50,21 @@ namespace CLogic.Dialogue.Editor
                 switch (connectedPorts.Count)
                 {
                     case 0:
-                        graphLogger.Log("Node output not connected, the graph will end by default", this);
+                        #if UNITY_6000_6_OR_NEWER
+                        graphLogger.Log("Node output not connected, the graph will end by default", this, new GraphLogAction("Add End Node", obj =>
+                        {
+                            Graph.UndoBeginRecordGraph("Add End Node");
+                            var endNode = new EndNode();
+                            endNode.Position = Position;
+                            endNode.Position += Vector2.right * 300;
+                            endNode.Position += Vector2.up * 32f;
+                            Graph.AddNode(endNode);
+                            Graph.Connect(outputPort, endNode.GetInputPort(0));
+                            Graph.UndoEndRecordGraph();
+                        }));
+                        #else
+                         graphLogger.Log("Node output not connected, the graph will end by default", this);
+                        #endif
                     break;
                     
                     case > 1:

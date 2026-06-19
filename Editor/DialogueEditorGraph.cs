@@ -38,5 +38,16 @@ namespace CLogic.Dialogue.Editor
             if (IsSubGraphInstance)
                 ValidateSubGraph(graphLogger);
         }
+        
+        public override bool IsConnectionAllowed(IPort output, IPort input)
+        {
+            if (output.Name == DialogueNode<DialogueNodeData>.OUT_NODE_START)
+                return input.GetNode() is ActionNode;
+            
+            if (input.GetNode() is ActionNode)
+                return output.Name is DialogueNode<DialogueNodeData>.OUT_NODE_START or DialogueNode<DialogueNodeData>.OUT_NODE_END;
+            
+            return base.IsConnectionAllowed(output, input);
+        }
     }
 }
