@@ -53,19 +53,19 @@ namespace CLogic.Dialogue.Editor
         
         private void CreateNodeMap(DialogueEditorGraph editorGraph)
         {
-            nodeMap = new Dictionary<INode, int>();
-            portMap = new Dictionary<IPort, int>();
+            nodeMap = new Dictionary<INode, int>(editorGraph.NodeCount);
+            portMap = new Dictionary<IPort, int>(editorGraph.NodeCount);
             List<IVariableNode> variableNodeBuffer = new(1); // Created outside to reduce heap allocations
             int id = 0;
             
             // Prevents asset subgraphs from ending abruptly
-            MapSubGraphEndPoint();
+            MapAssetSubGraphEndPoint();
             
             MapNodesRecursively(editorGraph.GetNodes());
             
             return;
             
-            void MapSubGraphEndPoint()
+            void MapAssetSubGraphEndPoint()
             {
                 if (editorGraph.IsSubGraphInstance)
                     return;
@@ -208,41 +208,33 @@ namespace CLogic.Dialogue.Editor
                     nodeMap.Add(variableNodeBuffer[0], targetId);
                 }
             }
-            
-            IEnumerable<IVariable> GetVariablesForKind(Graph graph, VariableKind kind)
-            {
-                foreach (IVariable variable in graph.GetVariables())
-                {
-                    if (variable.VariableKind == kind)
-                        yield return variable;
-                }
-            }
         }
         
         private void ProcessNodes(DialogueEditorGraph editorGraph, DialogueGraph graph, AssetImportContext context)
         {
             var list = new List<(int id, DialogueNodeData data)>();
+            HashSet<ScriptableObject> savedProvisions = new();
             
             ProcessNodesRecursively(editorGraph.GetNodes());
             
-            graph.nodes = list
-                    .OrderBy(x => x.id)
-                    .Select(x => x.data)
-                    .ToArray();
+            list.Sort((a,b) => a.id.CompareTo(b.id));
+            graph.nodes = new DialogueNodeData[list.Count];
             
+            for (int i = 0; i < list.Count; i++)
+            {
+                graph.nodes[i] = list[i].data;
+            }
             return;
             
             void ProcessNodesRecursively(IEnumerable<INode> nodes)
             {
-                HashSet<ScriptableObject> savedProvisions = new();
-                int provisionedCount = 0;
                 foreach (INode node in nodes)
                 {
                     if (node is IScriptableObjectProvisionerNode provisionerNode)
                     {
                         ScriptableObject so = provisionerNode.GetScriptableObject();
                         if(savedProvisions.Add(so))
-                            context.AddObjectToAsset("provision " + provisionedCount++, provisionerNode.GetScriptableObject());
+                            context.AddObjectToAsset("provision " + (savedProvisions.Count - 1), provisionerNode.GetScriptableObject());
                     }
                     
                     if (node is ISubgraphNode subgraphNode)
@@ -252,12 +244,14 @@ namespace CLogic.Dialogue.Editor
                             DialogueNodeData subgraphData = ProcessAssetSubgraphNode(subgraphNode);
                             
                             if (subgraphData != null)
-                                list.Add((nodeMap[subgraphNode], ProcessAssetSubgraphNode(subgraphNode)));
+                                list.Add((nodeMap[subgraphNode], subgraphData));
                         }
                         else
                             ProcessNodesRecursively(subgraphNode.GetSubgraph().GetNodes());
+                        
                         continue;
                     }
+                    
                     if (node is not IDialogueGraphNode dialogueNode)
                         continue;
                     
@@ -307,6 +301,7 @@ namespace CLogic.Dialogue.Editor
         
         private bool IsAssetSubGraphNode(ISubgraphNode subgraphNode)
         {
+            // No API to distinguish from asset subgraph to local subgraphs
             Type typeToQuery = subgraphNode.GetType().BaseType;
             PropertyInfo prop = typeToQuery.GetProperty("IsReferencingLocalSubgraph", BindingFlags.Instance | BindingFlags.Public);
             return !(bool)prop.GetValue(subgraphNode);
