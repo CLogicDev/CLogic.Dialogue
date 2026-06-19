@@ -10,6 +10,8 @@ namespace CLogic.Dialogue.Editor
     /// </summary>
     public interface IDialogueGraphNode
     {
+        public const int INVALID_END = -1;
+        public const int GRACEFUL_END = -2;
         public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
         public void OnValidate(GraphLogger graphLogger);
