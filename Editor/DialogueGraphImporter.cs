@@ -24,7 +24,7 @@ namespace CLogic.Dialogue.Editor
             CreateNodeMap(editorGraph);
             ProcessNodes(editorGraph, graphData, context);
             
-            if (graphData.startNodeID == -1)
+            if (graphData.startNodeID == IDialogueGraphNode.INVALID_END)
                 SetVariableStartNode();
             
             context.AddObjectToAsset("main", graphData);
@@ -82,7 +82,7 @@ namespace CLogic.Dialogue.Editor
                     
                     // Output node should
                     // be considered as a graceful exit
-                    portMap.Add(variableNodeBuffer[0].GetInputPort(0), -2);
+                    portMap.Add(variableNodeBuffer[0].GetInputPort(0), IDialogueGraphNode.GRACEFUL_END);
                 }
                 
             }
@@ -96,7 +96,7 @@ namespace CLogic.Dialogue.Editor
                     
                     if (node is EndNode)
                     {
-                        portMap.Add(node.GetInputPort(0), -2);
+                        portMap.Add(node.GetInputPort(0), IDialogueGraphNode.GRACEFUL_END);
                     }
                     
                     if (node is IDialogueGraphNode and not StartNode) // Start node is a special node which doesn't need an id
@@ -184,11 +184,11 @@ namespace CLogic.Dialogue.Editor
                     int targetId;
                     if (subgraphEndNode is EndNode) // If the subgraph points to an end node in the origin graph, set the variable node inside the subgraph to point to a graceful end
                     {
-                        targetId = -2; // Graceful end
+                        targetId = IDialogueGraphNode.GRACEFUL_END; // Graceful end
                     }
                     else if(subgraphEndNode == null)
                     {
-                        targetId = -1;
+                        targetId = IDialogueGraphNode.INVALID_END;
                     }
                     else if (nodeMap.TryGetValue(subgraphEndNode, out int endNodeId))
                     {

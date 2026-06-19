@@ -110,7 +110,7 @@ namespace CLogic.Dialogue.Editor
                 return;
             
             INode connectedNode = executionPort.GetNode();
-            node.nextNodeID = portMap.GetValueOrDefault(executionPort, -1);
+            node.nextNodeID = portMap.GetValueOrDefault(executionPort, IDialogueGraphNode.INVALID_END);
             
             // Action link
             if (SupportsStartAction)
@@ -118,7 +118,7 @@ namespace CLogic.Dialogue.Editor
                 IPort actionPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
                 
                 if (actionPort != null)
-                    node.startNodeActionID = portMap.GetValueOrDefault(actionPort, -1);
+                    node.startNodeActionID = portMap.GetValueOrDefault(actionPort, IDialogueGraphNode.INVALID_END);
             }
             
             if (SupportsEndAction)
@@ -126,7 +126,7 @@ namespace CLogic.Dialogue.Editor
                 IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
-                    node.endNodeActionID = portMap.GetValueOrDefault(connectedPort, -1);
+                    node.endNodeActionID = portMap.GetValueOrDefault(connectedPort, IDialogueGraphNode.INVALID_END);
             }
         }
         
