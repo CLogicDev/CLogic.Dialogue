@@ -14,6 +14,7 @@ namespace CLogic.Dialogue.Editor
     public class DialogueGraphImporter : ScriptedImporter
     {
         private Dictionary<INode, int> nodeMap;
+        private Dictionary<IPort, int> portMap;
         
         public override void OnImportAsset(AssetImportContext context)
         {
@@ -32,12 +33,12 @@ namespace CLogic.Dialogue.Editor
             // Make the input variable behave as the starter node (in case of sub graphing)
             void SetVariableStartNode()
             {
+                List<IVariableNode> nodeBuffer = new(1);
                 foreach (IVariable variable in editorGraph.GetVariables())
                 {
                     if (variable.VariableKind != VariableKind.Input)
                         continue;
                     
-                    List<IVariableNode> nodeBuffer = new(1);
                     variable.GetNodes(nodeBuffer);
                     
                     INode starterNode = nodeBuffer[0].GetOutputPort(0).FirstConnectedPort?.GetNode();
@@ -53,6 +54,7 @@ namespace CLogic.Dialogue.Editor
         private void CreateNodeMap(DialogueEditorGraph editorGraph)
         {
             nodeMap = new Dictionary<INode, int>();
+            portMap = new Dictionary<IPort, int>();
             List<IVariableNode> variableNodeBuffer = new(1); // Created outside to reduce heap allocations
             int id = 0;
             
@@ -68,20 +70,21 @@ namespace CLogic.Dialogue.Editor
                 if (editorGraph.IsSubGraphInstance)
                     return;
                 
-                IVariable outputNode = GetVariableForKind(editorGraph, VariableKind.Output);
+                foreach (IVariable variable in editorGraph.GetVariables())
+                {
+                    if(variable.VariableKind != VariableKind.Output)
+                        continue;
+                    
+                    variable.GetNodes(variableNodeBuffer);
+                    
+                    if (variableNodeBuffer.Count <= 0)
+                        return;
+                    
+                    // Output node should
+                    // be considered as a graceful exit
+                    portMap.Add(variableNodeBuffer[0].GetInputPort(0), -2);
+                }
                 
-                if (outputNode == null) // Only asset subgraphs should end with an output node
-                    return;
-                
-                variableNodeBuffer.Clear();
-                outputNode.GetNodes(variableNodeBuffer);
-                
-                if (variableNodeBuffer.Count <= 0)
-                    return;
-                
-                // Output node should
-                // be considered as a graceful exit
-                nodeMap.Add(variableNodeBuffer[0], -2);
             }
             
             void MapNodesRecursively(IEnumerable<INode> nodes)
@@ -92,10 +95,15 @@ namespace CLogic.Dialogue.Editor
                         continue;
                     
                     if (node is EndNode)
-                        nodeMap.Add(node, -2);
+                    {
+                        portMap.Add(node.GetInputPort(0), -2);
+                    }
                     
                     if (node is IDialogueGraphNode and not StartNode) // Start node is a special node which doesn't need an id
+                    { 
+                        portMap.Add(node.GetInputPortByName(DialogueNode<DialogueNodeData>.IN_EXECUTION), id);
                         nodeMap.Add(node, id++);
+                    }
                     
                     if (node is not ISubgraphNode subgraphNode)
                         continue;
@@ -118,6 +126,7 @@ namespace CLogic.Dialogue.Editor
                     return;
                 }
                 
+                portMap.Add(subgraphNode.GetInputPort(0), id);
                 nodeMap.Add(subgraphNode, id++);
             }
             
@@ -127,55 +136,86 @@ namespace CLogic.Dialogue.Editor
                 MapNodesRecursively(subgraph.GetNodes());
                 
                 //Support input node
-                variableNodeBuffer.Clear();
-                IVariable subgraphInputVariable = GetVariableForKind(subgraph, VariableKind.Input);
-                subgraphInputVariable.GetNodes(variableNodeBuffer); // There should always only be one here but no checks can be made yet due to API limits
-                
-                INode subgraphStarterNode = variableNodeBuffer[0].GetOutputPort(0).FirstConnectedPort.GetNode();
-                
-                nodeMap.Add(subgraphNode, nodeMap[subgraphStarterNode]);
+                foreach (IVariable subgraphInputVariable in subgraph.GetVariables()) // There can be multiple input points and thus multiple start points
+                {
+                    if(subgraphInputVariable.VariableKind != VariableKind.Input)
+                        continue;
+                    
+                    // Each input variable can only point to one corresponding input node
+                    subgraphInputVariable.GetNodes(variableNodeBuffer); 
+                    // There should always only be one here but no checks can be made yet due to API limits
+                    
+                    INode subgraphStarterNode = variableNodeBuffer[0].GetOutputPort(0).FirstConnectedPort.GetNode();
+                    
+                    IPort inputPort = null; // Should never be null according to API
+                    foreach (IPort port in subgraphNode.GetInputPorts())
+                    {
+                        if(port.DisplayName != subgraphInputVariable.Name)
+                            continue;
+                        
+                        inputPort = port;
+                        break;
+                    }
+                    
+                    portMap.Add(inputPort, nodeMap[subgraphStarterNode]);
+                }
                 
                 //Support output node
-                variableNodeBuffer.Clear();
-                IVariable subgraphOutputVariable = GetVariableForKind(subgraph, VariableKind.Output);
-                subgraphOutputVariable.GetNodes(variableNodeBuffer); // There should always only be one here but no checks can be made yet due to API limits
-                
-                // Node the subgraph node (not the subgraph) points to inside the parent graph
-                INode subgraphEndNode = subgraphNode.GetOutputPort(0).FirstConnectedPort.GetNode();
-                
-                int targetId;
-                if (subgraphEndNode is EndNode) // If the subgraph points to an end node in the origin graph, set the variable node inside the subgraph to point to a graceful end
+                foreach (IVariable subgraphOutputVariable in subgraph.GetVariables())
                 {
-                    targetId = -2; // Graceful end
-                }
-                else if(subgraphEndNode == null)
-                {
-                    targetId = -1;
-                }
-                else if ( nodeMap.TryGetValue(subgraphEndNode, out int endNodeId))
-                {
-                    targetId = endNodeId;
-                }
-                else
-                {
-                    targetId = id;
+                    if(subgraphOutputVariable.VariableKind != VariableKind.Output)
+                        continue;
                     
-                    //Force map the output node to map to the subgraph node leading to it
-                    nodeMap.TryAdd(subgraphEndNode, id++);
+                    // Each output variable can only point to one corresponding output node
+                    subgraphOutputVariable.GetNodes(variableNodeBuffer); // There should always only be one here but no checks can be made yet due to API limits
+                    
+                    // Node in the subgraph node (not the subgraph) points to inside the parent graph
+                    IPort outputPort = null; // Should never be null according to API
+                    foreach (IPort port in subgraphNode.GetOutputPorts())
+                    {
+                        if(port.DisplayName != subgraphOutputVariable.Name)
+                            continue;
+                        
+                        outputPort = port;
+                        break;
+                    }
+                    INode subgraphEndNode = outputPort.FirstConnectedPort.GetNode();
+                    
+                    int targetId;
+                    if (subgraphEndNode is EndNode) // If the subgraph points to an end node in the origin graph, set the variable node inside the subgraph to point to a graceful end
+                    {
+                        targetId = -2; // Graceful end
+                    }
+                    else if(subgraphEndNode == null)
+                    {
+                        targetId = -1;
+                    }
+                    else if (nodeMap.TryGetValue(subgraphEndNode, out int endNodeId))
+                    {
+                        targetId = endNodeId;
+                    }
+                    else
+                    {
+                        targetId = id;
+                        
+                        //Force map the node this subgraph is outputting to so that this subgraph may point to it
+                        portMap.TryAdd(outputPort.FirstConnectedPort, targetId);
+                        nodeMap.TryAdd(subgraphEndNode, id++);
+                    }
+                    
+                    //Variable acts as node. Direct that node (from the subgraph) to the output node (of the parent graph)
+                    portMap.Add(variableNodeBuffer[0].GetInputPort(0), targetId);
+                    nodeMap.Add(variableNodeBuffer[0], targetId);
                 }
-                
-                //Variable acts as node. Direct that node (from the subgraph) to the output node (of the parent graph)
-                nodeMap.Add(variableNodeBuffer[0], targetId);
             }
             
-            IVariable GetVariableForKind(Graph graph, VariableKind kind)
+            IEnumerable<IVariable> GetVariablesForKind(Graph graph, VariableKind kind)
             {
                 foreach (IVariable variable in graph.GetVariables())
                 {
                     if (variable.VariableKind == kind)
-                        return variable;
+                        yield return variable;
                 }
-                return null;
             }
         }
         
@@ -221,7 +261,7 @@ namespace CLogic.Dialogue.Editor
                     if (node is not IDialogueGraphNode dialogueNode)
                         continue;
                     
-                    DialogueNodeData data = dialogueNode.ProcessNode(graph, nodeMap);
+                    DialogueNodeData data = dialogueNode.ProcessNode(graph, portMap);
                     
                     if (data != null)
                         list.Add((nodeMap[node], data));

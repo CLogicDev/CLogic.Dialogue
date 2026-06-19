@@ -52,10 +52,10 @@ MonoBehaviour:
         - rid: 4218189854764696486
         m_LastKnownBounds:
           serializedVersion: 2
-          x: -292
-          y: -592
-          width: 940
-          height: 625
+          x: -359
+          y: -573
+          width: 1007
+          height: 611
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 11624616374961111055
@@ -162,7 +162,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 1f5c7f57fde9437ccda6163d38988442
         m_Version: 2
-        m_Position: {x: -291.79968, y: -359.69257}
+        m_Position: {x: -358.79584, y: -553.00183}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -396,11 +396,10 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 0f00bfcf00ef52a13657824d88675f37
         m_Version: 2
-        m_Name: 
+        m_Name: s
         m_UniqueId: 
         m_DataType:
-          m_Identification: CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor, Version=0.0.0.0, Culture=neutral,
-            PublicKeyToken=null
+          m_Identification: CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         m_IsExposed: 0
         m_Scope: 0
         m_ShowOnInspectorOnly: 0
@@ -422,8 +421,7 @@ MonoBehaviour:
         m_Name: _01
         m_UniqueId: 
         m_DataType:
-          m_Identification: CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor, Version=0.0.0.0, Culture=neutral,
-            PublicKeyToken=null
+          m_Identification: CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         m_IsExposed: 0
         m_Scope: 0
         m_ShowOnInspectorOnly: 0
@@ -475,7 +473,8 @@ MonoBehaviour:
         m_Value: 1
     - rid: 4218189854764696254
       type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
-      data: 
+      data:
+        <IsFirstCreation>k__BackingField: 0
     - rid: 4218189854764696255
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data:
@@ -505,7 +504,8 @@ MonoBehaviour:
         m_Value: 1
     - rid: 4218189854764696262
       type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
-      data: 
+      data:
+        <IsFirstCreation>k__BackingField: 0
     - rid: 4218189854764696263
       type: {class: 'Constant`1[[CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data: 
@@ -522,7 +522,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 5643151dfccfb2c2788a73985ea55a42
         m_Version: 2
-        m_Position: {x: 201.25003, y: -592.25006}
+        m_Position: {x: 141.45001, y: -572.7001}
         m_Title: 
         m_Tooltip: Local Subgraph
         m_NodePreviewModel:
@@ -605,7 +605,7 @@ MonoBehaviour:
           m_UniqueId: 6451be000846daca2042a7fbe71c6cee
           m_PortDirection: 1
           m_PortOrientation: 0
-          m_Title: 
+          m_Title: s
     - rid: 4218189854764696485
       type: {class: WireModel, ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data:
@@ -668,10 +668,10 @@ MonoBehaviour:
         m_LocalSubgraphs: []
         m_LastKnownBounds:
           serializedVersion: 2
-          x: -2
-          y: -566
-          width: 615
-          height: 253
+          x: -162
+          y: -115
+          width: 682
+          height: 282
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 2354788927433036628
@@ -766,7 +766,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 5453aba40de4ad2010866c3ad633f818
         m_Version: 2
-        m_Position: {x: -173.5, y: 20.125}
+        m_Position: {x: -161.5975, y: -84.35249}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -814,7 +814,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 13cfe42310593e9e4430b2f31f4081fb
         m_Version: 2
-        m_Position: {x: 173.5, y: -20.125}
+        m_Position: {x: 251.5275, y: -115.345}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -1032,11 +1032,10 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 6451be000846daca2042a7fbe71c6cee
         m_Version: 2
-        m_Name: 
+        m_Name: s
         m_UniqueId: 
         m_DataType:
-          m_Identification: CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor, Version=0.0.0.0, Culture=neutral,
-            PublicKeyToken=null
+          m_Identification: CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         m_IsExposed: 0
         m_Scope: 0
         m_ShowOnInspectorOnly: 0
@@ -1058,8 +1057,7 @@ MonoBehaviour:
         m_Name: _01
         m_UniqueId: 
         m_DataType:
-          m_Identification: CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor, Version=0.0.0.0, Culture=neutral,
-            PublicKeyToken=null
+          m_Identification: CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         m_IsExposed: 0
         m_Scope: 0
         m_ShowOnInspectorOnly: 0
@@ -1114,7 +1112,8 @@ MonoBehaviour:
         m_Value: 1
     - rid: 4218189854764696507
       type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
-      data: 
+      data:
+        <IsFirstCreation>k__BackingField: 0
     - rid: 4218189854764696508
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data:
@@ -1144,7 +1143,8 @@ MonoBehaviour:
         m_Value: 1
     - rid: 4218189854764696515
       type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
-      data: 
+      data:
+        <IsFirstCreation>k__BackingField: 0
     - rid: 4218189854764696516
       type: {class: 'Constant`1[[CLogic.Dialogue.Editor.IDialogueGraphNode, CLogic.Dialogue.Editor]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data: 

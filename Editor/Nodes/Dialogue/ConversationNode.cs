@@ -36,11 +36,11 @@ namespace CLogic.Dialogue.Editor
             context.AddInputPort<bool>(IN_SKIPPABLE).WithDefaultValue(true).Build();
         }
         
-        public override ConversationNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
+        public override ConversationNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             ConversationNodeData node = new();
             
-            CreateNodeLink(node, nodeMap);
+            CreateNodeLink(node, portMap);
             
             node.text = GetPortValue<string>(GetInputPortByName(IN_TEXT));
             node.characterName = GetPortValue<string>(GetInputPortByName(IN_CHARACTER_NAME));

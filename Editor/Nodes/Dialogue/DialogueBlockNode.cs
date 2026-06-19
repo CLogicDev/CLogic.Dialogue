@@ -65,20 +65,20 @@ namespace CLogic.Dialogue.Editor
             }
         }
         
-        public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap);
+        public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
         protected TValue GetPortValue<TValue>(IPort port) => IDialogueGraphNode.GetPortValue<TValue>(port);
         
-        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<INode, int> nodeMap) => ProcessNodeAsset(graph, nodeMap);
+        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap) => ProcessNodeAsset(graph, portMap);
         
-        public void CreateActionNodeLink(T node, Dictionary<INode, int> nodeMap)
+        public void CreateActionNodeLink(T node, Dictionary<IPort, int> portMap)
         {
             if (SupportStartAction)
             {
                 IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
-                    node.startNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
+                    node.startNodeActionID = portMap.GetValueOrDefault(connectedPort, -1);
             }
             
             if (SupportEndAction)
@@ -86,7 +86,7 @@ namespace CLogic.Dialogue.Editor
                 IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
-                    node.endNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
+                    node.endNodeActionID = portMap.GetValueOrDefault(connectedPort, -1);
             }
         }
     }

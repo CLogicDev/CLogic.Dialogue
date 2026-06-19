@@ -31,13 +31,13 @@ namespace CLogic.Dialogue.Editor
             #endif
         }
         
-        public override ChoiceNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
+        public override ChoiceNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             ChoiceNodeData nodeData = new();
             
             IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
             
-            if (connectedPort != null && nodeMap.TryGetValue(connectedPort.GetNode(), out int nodeID))
+            if (connectedPort != null && portMap.TryGetValue(connectedPort, out int nodeID))
                 nodeData.nextNodeID = nodeID;
             
             nodeData.choiceText = GetPortValue<string>(GetInputPortByName(IN_TEXT));
@@ -46,7 +46,7 @@ namespace CLogic.Dialogue.Editor
             nodeData.conditional = GetPortValue<Conditionals.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
             #endif
             
-            CreateActionNodeLink(nodeData, nodeMap);
+            CreateActionNodeLink(nodeData, portMap);
             
             return nodeData;
         }

@@ -33,10 +33,10 @@ namespace CLogic.Dialogue.Editor
             propertyInfo.SetValue(inputPort, multiCapacity);
         }
         
-        public override BranchNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
+        public override BranchNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             BranchNodeData nodeData = new();
-            ProcessChildBlocks(nodeData, graph, nodeMap);
+            ProcessChildBlocks(nodeData, graph, portMap);
             
             #if CLOGIC_CONDITIONALS
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);

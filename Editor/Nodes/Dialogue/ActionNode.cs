@@ -28,11 +28,11 @@ namespace CLogic.Dialogue.Editor
             #endif
         }
         
-        public override ActionNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
+        public override ActionNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             ActionNodeData data = new();
             
-            ProcessChildBlocks(data, graph, nodeMap);
+            ProcessChildBlocks(data, graph, portMap);
             
             return data;
         }

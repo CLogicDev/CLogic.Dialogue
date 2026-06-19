@@ -29,14 +29,14 @@ namespace CLogic.Dialogue.Editor
             }
         }
         
-        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<INode, int> nodeMap)
+        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             IPort port = GetOutputPortByName(OUT_START).FirstConnectedPort;
             
             if (port == null)
                 return null;
             
-            graph.startNodeID = nodeMap[port.GetNode()];
+            graph.startNodeID = portMap[port];
             
             return null;
         }
