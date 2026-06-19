@@ -132,13 +132,19 @@ namespace CLogic.Dialogue.Editor
         
         protected void CreateDefaultExecutionPorts(IPortDefinitionContext context)
         {
-            var inputPort = context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            
+            #if UNITY_6000_6_OR_NEWER
+            context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
+            context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Single).Build();
+            #else
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
+            var inputPort = context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
             
             PropertyInfo propertyInfo = inputPort.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
             Type portCapacityType = propertyInfo.PropertyType;
             object multiCapacity = Enum.Parse(portCapacityType, "Multi");
             propertyInfo.SetValue(inputPort, multiCapacity);
+            #endif
             
             if(!SupportsStartAction && !SupportsEndAction)
                 return;
