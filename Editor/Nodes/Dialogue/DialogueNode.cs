@@ -99,9 +99,9 @@ namespace CLogic.Dialogue.Editor
         }
         protected abstract void DefineDialoguePorts(IPortDefinitionContext context);
         
-        public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap);
+        public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
-        public virtual void CreateNodeLink(T node, Dictionary<INode, int> nodeMap)
+        public virtual void CreateNodeLink(T node, Dictionary<IPort, int> portMap)
         {
             // Execution link
             IPort executionPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
@@ -110,7 +110,7 @@ namespace CLogic.Dialogue.Editor
                 return;
             
             INode connectedNode = executionPort.GetNode();
-            node.nextNodeID = nodeMap.GetValueOrDefault(connectedNode, -1);
+            node.nextNodeID = portMap.GetValueOrDefault(executionPort, -1);
             
             // Action link
             if (SupportsStartAction)
@@ -118,7 +118,7 @@ namespace CLogic.Dialogue.Editor
                 IPort actionPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
                 
                 if (actionPort != null)
-                    node.startNodeActionID = nodeMap.GetValueOrDefault(actionPort.GetNode(), -1);
+                    node.startNodeActionID = portMap.GetValueOrDefault(actionPort, -1);
             }
             
             if (SupportsEndAction)
@@ -126,7 +126,7 @@ namespace CLogic.Dialogue.Editor
                 IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
-                    node.endNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
+                    node.endNodeActionID = portMap.GetValueOrDefault(connectedPort, -1);
             }
         }
         
@@ -155,7 +155,7 @@ namespace CLogic.Dialogue.Editor
         
         protected TValue GetPortValue<TValue>(IPort port) => IDialogueGraphNode.GetPortValue<TValue>(port);
         
-        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<INode, int> nodeMap) => ProcessNodeAsset(graph, nodeMap);
+        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap) => ProcessNodeAsset(graph, portMap);
         
         private void InitFinished()
         {

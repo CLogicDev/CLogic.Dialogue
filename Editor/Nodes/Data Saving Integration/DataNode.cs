@@ -24,7 +24,7 @@ namespace CLogic.Dialogue.DataSaving.Editor
             context.AddInputPort<T>(IN_DATA).WithDisplayName("Data").Build();
         }
         
-        public override SaveData<T> ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap)
+        public override SaveData<T> ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             var data = new SaveData<T>();
             

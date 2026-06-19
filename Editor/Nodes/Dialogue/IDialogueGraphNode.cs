@@ -10,7 +10,7 @@ namespace CLogic.Dialogue.Editor
     /// </summary>
     public interface IDialogueGraphNode
     {
-        public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<INode, int> nodeMap);
+        public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
         public void OnValidate(GraphLogger graphLogger);
         

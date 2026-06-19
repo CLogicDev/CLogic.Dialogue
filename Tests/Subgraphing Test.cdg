@@ -55,7 +55,7 @@ MonoBehaviour:
           x: 665
           y: 177
           width: 2315
-          height: 476
+          height: 481
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 12902109218748754283
@@ -320,7 +320,8 @@ MonoBehaviour:
         m_Value: 3
     - rid: 4218189854764695891
       type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
-      data: 
+      data:
+        <IsFirstCreation>k__BackingField: 0
     - rid: 4218189854764695975
       type: {class: DialogueEditorGraph, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
       data: 
@@ -446,7 +447,7 @@ MonoBehaviour:
             serializedVersion: 2
             Hash: e3ffacf3c9aadf0bb2256e1afc0db091
           m_GraphObjectEntityId:
-            m_Data: 0
+            m_rawData: 0
         m_Subtitle: Asset Subgraph
         m_AssetProperty:
           m_SubgraphReference:
@@ -457,7 +458,7 @@ MonoBehaviour:
               serializedVersion: 2
               Hash: e3ffacf3c9aadf0bb2256e1afc0db091
             m_GraphObjectEntityId:
-              m_Data: 0
+              m_rawData: 0
         m_CopyPasteLocalSubgraphModelReference:
           rid: -2
     - rid: 4218189854764696186
@@ -540,7 +541,8 @@ MonoBehaviour:
         m_Value: 1
     - rid: 4218189854764696278
       type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
-      data: 
+      data:
+        <IsFirstCreation>k__BackingField: 0
     - rid: 4218189854764696290
       type: {class: 'Constant`1[[System.Boolean, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data:
@@ -686,7 +688,8 @@ MonoBehaviour:
         m_Value: 1
     - rid: 4218189854764696437
       type: {class: ConversationNode, ns: CLogic.Dialogue.Editor, asm: CLogic.Dialogue.Editor}
-      data: 
+      data:
+        <IsFirstCreation>k__BackingField: 0
     - rid: 4218189854764696438
       type: {class: WireModel, ns: Unity.GraphToolkit.Editor, asm: UnityEditor.GraphToolkitModule}
       data:

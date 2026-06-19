@@ -109,28 +109,28 @@ namespace CLogic.Dialogue.Editor
             }
         }
         
-        public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap);
+        public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
-        protected void ProcessChildBlocks(T nodeData, DialogueGraph graph, Dictionary<INode, int> nodeMap)
+        protected void ProcessChildBlocks(T nodeData, DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             foreach (BlockNode block in BlockNodes)
             {
                 if (block is IDialogueGraphNode dialogueNode)
                 {
-                    DialogueNodeData blockNodeData = dialogueNode.ProcessNode(graph, nodeMap);
+                    DialogueNodeData blockNodeData = dialogueNode.ProcessNode(graph, portMap);
                     nodeData.childBlocks.Add(blockNodeData);
                 }
             }
         }
         
-        private void CreateActionNodeLink(T node, Dictionary<INode, int> nodeMap)
+        private void CreateActionNodeLink(T node, Dictionary<IPort, int> portMap)
         {
             if (SupportStartAction)
             {
                 IPort connectedPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
-                    node.startNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
+                    node.startNodeActionID = portMap.GetValueOrDefault(connectedPort, -1);
             }
             
             if (SupportEndAction)
@@ -138,12 +138,12 @@ namespace CLogic.Dialogue.Editor
                 IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
-                    node.endNodeActionID = nodeMap.GetValueOrDefault(connectedPort.GetNode(), -1);
+                    node.endNodeActionID = portMap.GetValueOrDefault(connectedPort, -1);
             }
         }
         
         //TODO: Find a way to remove code dupe from DialogueNode.cs
-        public virtual void CreateExecutionNodeLink(T node, Dictionary<INode, int> nodeMap)
+        public virtual void CreateExecutionNodeLink(T node, Dictionary<IPort, int> portMap)
         {
             IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
             
@@ -151,10 +151,10 @@ namespace CLogic.Dialogue.Editor
                 return;
             
             INode connectedNode = connectedPort.GetNode();
-            node.nextNodeID = nodeMap.GetValueOrDefault(connectedNode, -1);
+            node.nextNodeID = portMap.GetValueOrDefault(connectedPort, -1);
         }
         
-        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<INode, int> nodeMap) => ProcessNodeAsset(graph, nodeMap);
+        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap) => ProcessNodeAsset(graph, portMap);
         
         private void InitFinished()
         {

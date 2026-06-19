@@ -14,7 +14,7 @@ namespace CLogic.Dialogue.Editor
         
         public const string IN_EVENT = "Event";
         
-        public override EventNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<INode, int> nodeMap) => new()
+        public override EventNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap) => new()
         {
             voidEvent = GetPortValue<VoidEvent>(GetInputPortByName(IN_EVENT))
         };
