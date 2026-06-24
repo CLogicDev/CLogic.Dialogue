@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CLogic.Utils.Shared;
 using UnityEditor;
-using UnityEditor.Build;
 namespace CLogic.Dialogue
 {
     [Serializable]
@@ -28,7 +27,8 @@ namespace CLogic.Dialogue
         
         public static void UpdateDefines(DefaultFeatures features)
         {
-            NamedBuildTarget target = NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            #if UNITY_EDITOR
+            UnityEditor.Build.NamedBuildTarget target = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
             string currentDefines = PlayerSettings.GetScriptingDefineSymbols(target);
             List<string> listedDefines = currentDefines
                 .Split(';')
@@ -50,6 +50,7 @@ namespace CLogic.Dialogue
                 else
                     listedDefines.Remove(define);
             }
+            #endif
         }
     }
 }
