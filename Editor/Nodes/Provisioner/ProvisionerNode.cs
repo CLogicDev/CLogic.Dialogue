@@ -42,7 +42,7 @@ namespace CLogic.Dialogue.Editor
             throw new InvalidCastException("Provisioned data is not of type " + typeof(T).Name);
         }
         
-        public abstract T GetProvisionedDataInternal();
+        protected abstract T GetProvisionedDataInternal();
         
         public virtual void OnValidate(GraphLogger graphLogger) {  }
     }
