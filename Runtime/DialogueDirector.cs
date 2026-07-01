@@ -116,12 +116,13 @@ namespace CLogic.Dialogue
             
             currentNode = GetNodeFromID(startIndex ?? graph.startNodeID);
             ProcessNode(currentNode);
-
+            
+            SetupDebugContext(graph);
+            ShowExecutionPath(currentNode);
             return CurrentDialogue;
         }
         
         // Not local function to allow access from sub graph handler
-        
         [Button]
         public void EndDialogue()
         {
@@ -170,6 +171,8 @@ namespace CLogic.Dialogue
             currentNode = GetNodeFromID(nodeID);
             currentNodeID = nodeID;
             ProcessNode(currentNode);
+            
+            ShowExecutionPath(currentNode);
             
             return true;
         }

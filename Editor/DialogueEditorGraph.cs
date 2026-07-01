@@ -43,6 +43,9 @@ namespace CLogic.Dialogue.Editor
         #if UNITY_6000_6_OR_NEWER
         public override bool IsConnectionAllowed(IPort output, IPort input)
         {
+            if(output.GetNode() is StartNode)
+                return output.GetNode() is IDialogueGraphNode;
+            
             if (output.Name == DialogueNode<DialogueNodeData>.OUT_NODE_START)
                 return input.GetNode() is ActionNode;
             

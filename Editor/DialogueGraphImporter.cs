@@ -27,6 +27,8 @@ namespace CLogic.Dialogue.Editor
             if (graphData.startNodeID == IDialogueGraphNode.INVALID_END)
                 SetVariableStartNode();
             
+            graphData.graphHash = editorGraph.ID;
+            
             context.AddObjectToAsset("main", graphData);
             context.SetMainObject(graphData);
             
@@ -258,7 +260,10 @@ namespace CLogic.Dialogue.Editor
                     DialogueNodeData data = dialogueNode.ProcessNode(graph, portMap);
                     
                     if (data != null)
+                    {
+                        data.nodeHash = node.ID;
                         list.Add((nodeMap[node], data));
+                    }
                 }
             }
             

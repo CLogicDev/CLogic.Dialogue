@@ -123,8 +123,9 @@ namespace CLogic.Dialogue.Editor
             if (executionPort == null)
                 return;
             
-            INode connectedNode = executionPort.GetNode();
             node.nextNodeID = portMap.GetValueOrDefault(executionPort, IDialogueGraphNode.INVALID_END);
+            node.execInputPortHash = GetInputPortByName(IN_EXECUTION).ID;
+            node.execOutputPortHash = GetOutputPortByName(OUT_EXECUTION).ID;
             
             // Action link
             if (SupportsStartAction)
