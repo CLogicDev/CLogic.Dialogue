@@ -37,6 +37,7 @@ namespace CLogic.Dialogue.Editor
                 return null;
             
             graph.startNodeID = portMap[port];
+            graph.entryPortHash = GetOutputPortByName(OUT_START).ID;
             
             return null;
         }

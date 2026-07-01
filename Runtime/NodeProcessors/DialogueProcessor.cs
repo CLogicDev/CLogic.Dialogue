@@ -8,6 +8,12 @@ namespace CLogic.Dialogue
     [Serializable]
     public abstract class DialogueNodeData
     {
+        // Debugging References
+        public Hash128 nodeHash;
+        
+        public Hash128 execInputPortHash;
+        public Hash128 execOutputPortHash;
+        
         public int nextNodeID = -1;
         
         public int startNodeActionID = -1;
@@ -38,7 +44,7 @@ namespace CLogic.Dialogue
         public abstract void ProcessNode(DialogueNodeData nodeData, DialogueDirector director);
         public abstract void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director);
         
-        [Obsolete("Use DialogueNodeProcessor<> instead", false)]
+        [Obsolete("Use DialogueNodeProcessor<T> instead", false)]
         protected internal DialogueProcessor(){}
     }
     
