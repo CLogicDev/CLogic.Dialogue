@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "displayName": "CLogic.Dialogue",
   "description": "A graph-based dialogue system for creating branching conversations with extensible nodes and editor tooling.",
-  "unity": "6000.5",
+  "unity": "6000.6",
   "documentationUrl": "https://docs.clogic.dev/CLogic.Systems/LoggingSystem",
   "licensesUrl": "https://github.com/CLogicDev/CLogic.Utils/blob/main/LICENSE",
   "keywords": [

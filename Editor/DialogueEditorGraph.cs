@@ -40,7 +40,7 @@ namespace CLogic.Dialogue.Editor
             
             
         }
-        #if UNITY_6000_6_OR_NEWER
+        
         public override bool IsConnectionAllowed(IPort output, IPort input)
         {
             if(output.GetNode() is StartNode)
@@ -54,6 +54,5 @@ namespace CLogic.Dialogue.Editor
             
             return base.IsConnectionAllowed(output, input);
         }
-        #endif
     }
 }
