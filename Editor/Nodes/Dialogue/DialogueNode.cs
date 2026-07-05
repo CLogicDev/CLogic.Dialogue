@@ -13,7 +13,7 @@ namespace CLogic.Dialogue.Editor
     /// Otherwise look into <see cref="IDialogueGraphNode"/>
     /// </summary>
     [Serializable]
-    public abstract class DialogueNode<T> : Node, IDialogueGraphNode where T : DialogueNodeData
+    public abstract class DialogueNode<T> : Node,  IDialogueGraphNode, IConnectionValidator where T : DialogueNodeData
     {
         public const string IN_EXECUTION = "In";
         public const string OUT_EXECUTION = "Out";
@@ -181,5 +181,22 @@ namespace CLogic.Dialogue.Editor
         // NOTE: Will not be called on a duplicated node
         protected virtual void OnFirstCreation()
         {}
+        
+        public virtual bool? CanConnect(IPort output, IPort input)
+        {
+            if (input.GetNode() is not IDialogueGraphNode)
+                return null;
+            
+            if (output.GetNode() is not IDialogueGraphNode)
+                return null;
+            
+            if(output.Name is OUT_NODE_START or OUT_NODE_END)
+                return input.GetNode() is ActionNode;
+            
+            if (output.Name != OUT_EXECUTION)
+                return null;
+            
+            return input.Name == IN_EXECUTION && output.Name == OUT_EXECUTION;
+        }
     }
 }
