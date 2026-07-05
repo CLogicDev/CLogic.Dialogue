@@ -50,7 +50,6 @@ namespace CLogic.Dialogue.Editor
                 switch (connectedPorts.Count)
                 {
                     case 0:
-                        #if UNITY_6000_6_OR_NEWER
                         graphLogger.Log("Node output not connected, the graph will end by default", this, new GraphLogAction("Add End Node", obj =>
                         {
                             Graph.UndoBeginRecordGraph("Add End Node");
@@ -62,9 +61,6 @@ namespace CLogic.Dialogue.Editor
                             Graph.Connect(outputPort, endNode.GetInputPort(0));
                             Graph.UndoEndRecordGraph();
                         }));
-                        #else
-                         graphLogger.Log("Node output not connected, the graph will end by default", this);
-                        #endif
                     break;
                     
                     case > 1:
@@ -148,18 +144,8 @@ namespace CLogic.Dialogue.Editor
         protected void CreateDefaultExecutionPorts(IPortDefinitionContext context)
         {
             
-            #if UNITY_6000_6_OR_NEWER
             context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Single).Build();
-            #else
-            context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
-            var inputPort = context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
-            
-            PropertyInfo propertyInfo = inputPort.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
-            Type portCapacityType = propertyInfo.PropertyType;
-            object multiCapacity = Enum.Parse(portCapacityType, "Multi");
-            propertyInfo.SetValue(inputPort, multiCapacity);
-            #endif
             
             if(!SupportsStartAction && !SupportsEndAction)
                 return;
