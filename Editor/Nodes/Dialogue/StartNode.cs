@@ -8,7 +8,7 @@ namespace CLogic.Dialogue.Editor
     [Serializable, Node("Basic Nodes", "", "Start Point")]
     public class StartNode : Node, IDialogueGraphNode
     {
-        public const string OUT_START = "Start";
+        public const string OUT_START = "Entry";
         
         protected override void OnDefinePorts(IPortDefinitionContext context) => context.AddOutputPort<IDialogueGraphNode>(OUT_START).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
         
