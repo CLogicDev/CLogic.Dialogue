@@ -7,7 +7,7 @@ using CLogic.Dialogue;
 namespace CLogic.Dialogue.Editor
 {
     [Serializable, Node("Events", "", "Action Block")]
-    public class ActionNode : DialogueContextNode<ActionNodeData>
+    public class ActionNode : DialogueContextNode<ActionNodeData>, IConnectionValidator
     {
         public override bool SupportExecution => false;
         public override bool SupportStartAction => false;
@@ -34,5 +34,6 @@ namespace CLogic.Dialogue.Editor
             if (BlockCount == 0)
                 graphLogger.LogWarning("Behavior node has no blocks", this);
         }
+        public bool? CanConnect(IPort output, IPort input) => output.Name is DialogueNode<DialogueNodeData>.OUT_NODE_START or DialogueNode<DialogueNodeData>.OUT_NODE_END;
     }
 }

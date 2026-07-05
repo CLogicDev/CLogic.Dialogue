@@ -7,6 +7,15 @@ using UnityEngine;
 
 namespace CLogic.Dialogue.Editor
 {
+    /// <summary>
+    /// Checks the connection between two ports. Output and Input is checked for the implementation and connection is only allowed if both nodes allow it
+    /// </summary>
+    /// <returns>true if the connection is valid, false otherwise. Null to fall back to default validation</returns>
+    public interface IConnectionValidator
+    {
+        public bool? CanConnect(IPort output, IPort input);
+    }
+    
     [Serializable, Graph(ASSET_EXTENSION, GraphOptions.SupportsSubgraphs)]
     public partial class DialogueEditorGraph : Graph
     {
@@ -43,16 +52,24 @@ namespace CLogic.Dialogue.Editor
         
         public override bool IsConnectionAllowed(IPort output, IPort input)
         {
-            if(output.GetNode() is StartNode)
-                return output.GetNode() is IDialogueGraphNode;
+            INode inputNode = input.GetNode();
+            INode outputNode = output.GetNode();
             
-            if (output.Name == DialogueNode<DialogueNodeData>.OUT_NODE_START)
-                return input.GetNode() is ActionNode;
+            bool? canInputConnect = ValidateForNode(inputNode);
+            bool? canOutputConnect = ValidateForNode(outputNode);
             
-            if (input.GetNode() is ActionNode)
-                return output.Name is DialogueNode<DialogueNodeData>.OUT_NODE_START or DialogueNode<DialogueNodeData>.OUT_NODE_END;
+            if(!canInputConnect.HasValue && !canOutputConnect.HasValue)
+                return base.IsConnectionAllowed(output, input);
             
-            return base.IsConnectionAllowed(output, input);
+            return (canInputConnect ?? true) && (canOutputConnect ?? true);
+            
+            bool? ValidateForNode(INode node)
+            {
+                if (node is not IConnectionValidator validator)
+                    return null;
+                
+                return validator.CanConnect(output, input);
+            }
         }
     }
 }
