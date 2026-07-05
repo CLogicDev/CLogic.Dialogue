@@ -44,6 +44,11 @@ namespace CLogic.Dialogue
         public abstract void ProcessNode(DialogueNodeData nodeData, DialogueDirector director);
         public abstract void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director);
         
+        #if UNITY_EDITOR
+        public virtual void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData)
+        {}
+        #endif
+        
         [Obsolete("Use DialogueNodeProcessor<T> instead", false)]
         protected internal DialogueProcessor(){}
     }
@@ -83,5 +88,11 @@ namespace CLogic.Dialogue
         
         protected virtual void HandleCancellation(T nodeData, DialogueDirector director) 
         {}
+        
+        #if UNITY_EDITOR
+        public sealed override void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData) => VisualizeNode(ctx, (T)nodeData);
+        protected virtual void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, T nodeData)
+        {}
+        #endif
     }
 }

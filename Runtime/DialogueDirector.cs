@@ -117,8 +117,10 @@ namespace CLogic.Dialogue
             currentNode = GetNodeFromID(startIndex ?? graph.startNodeID);
             ProcessNode(currentNode);
             
+            #if UNITY_EDITOR
             SetupDebugContext(graph);
-            ShowExecutionPath(currentNode);
+            ShowVisualizationForNode(currentNode, CurrentProcessor);
+            #endif
             return CurrentDialogue;
         }
         
@@ -172,7 +174,9 @@ namespace CLogic.Dialogue
             currentNodeID = nodeID;
             ProcessNode(currentNode);
             
+            #if UNITY_EDITOR
             ShowExecutionPath(currentNode);
+            #endif
             
             return true;
         }
