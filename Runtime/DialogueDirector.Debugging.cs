@@ -3,8 +3,10 @@ using UnityEngine;
 
 namespace CLogic.Dialogue
 {
+    #if UNITY_EDITOR
     public partial class DialogueDirector
     {
+        
         private Context currentContext;
         private DialogueNodeData previousNode;
         
@@ -15,10 +17,16 @@ namespace CLogic.Dialogue
             currentContext = Registry.CreateVisualizationContext(graph.graphHash);
         }
         
+        private void ShowVisualizationForNode(DialogueNodeData nodeData, IDialogueProcessor processor)
+        {
+            processor.VisualizeNode(currentContext, nodeData);
+            ShowExecutionPath(nodeData);
+        }
+        
         private void ShowExecutionPath(DialogueNodeData newNode)
         {
             Hash128 outputPort;
-            if (previousNode == null)
+            if (previousNode == null) // Occurs when processing the entry node
             {
                 outputPort = CurrentDialogue.DialogueGraph.entryPortHash;
                 previousNode = newNode;
@@ -30,9 +38,6 @@ namespace CLogic.Dialogue
             WireReference wire = currentContext.GetWireReference(outputPort, inputPort);
             wire.IsDashed = true;
         }
-        
-        public void ShowNodeProgress(DialogueNodeData node)
-        {
-        }
     }
+    #endif
 }

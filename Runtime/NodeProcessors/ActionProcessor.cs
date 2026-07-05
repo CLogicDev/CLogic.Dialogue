@@ -23,5 +23,9 @@ namespace CLogic.Dialogue
             }
         }
         public void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) {}
+        #if UNITY_EDITOR
+        public void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData)
+        {}
+        #endif
     }
 }

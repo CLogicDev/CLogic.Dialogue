@@ -17,5 +17,12 @@ namespace CLogic.Dialogue
         /// Called when the current graph is cancelled which this processor was active
         /// </summary>
         public void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director);
+        
+        #if UNITY_EDITOR
+        /// <summary>
+        /// Called when the node is being visualized. This is used to show debugging visuals in the graph editor
+        /// </summary>
+        public void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData);
+        #endif
     }
 }
