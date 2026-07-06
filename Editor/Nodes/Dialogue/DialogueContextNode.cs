@@ -150,7 +150,6 @@ namespace CLogic.Dialogue.Editor
             if (connectedPort == null)
                 return;
             
-            INode connectedNode = connectedPort.GetNode();
             node.nextNodeID = portMap.GetValueOrDefault(connectedPort, -1);
         }
         
