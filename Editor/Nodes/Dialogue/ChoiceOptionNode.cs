@@ -41,6 +41,7 @@ namespace CLogic.Dialogue.Editor
                 nodeData.nextNodeID = nodeID;
             
             nodeData.choiceText = GetPortValue<string>(GetInputPortByName(IN_TEXT));
+            nodeData.execOutputPortHash = GetOutputPortByName(OUT_EXECUTION).ID;
             
             #if CLOGIC_CONDITIONALS
             nodeData.conditional = GetPortValue<Conditionals.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
