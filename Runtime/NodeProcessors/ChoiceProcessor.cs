@@ -59,7 +59,7 @@ namespace CLogic.Dialogue
                 
                 buttonText.text = choiceNode.choiceText;
                 
-                button.onClick.AddListener(() => SelectChoice(choiceNode, director));
+                button.onClick.AddListener(() => SelectChoice(choiceNode, director, dialogueNode));
                 
                 #if CLOGIC_CONDITIONALS
                 button.interactable = choiceNode.conditional == null || choiceNode.conditional.Evaluate();
@@ -89,19 +89,20 @@ namespace CLogic.Dialogue
                 selectedIndex = i;
             }
             
-            SelectChoice((ChoiceNodeData)dialogueNode.childBlocks[selectedIndex], director);
+            SelectChoice((ChoiceNodeData)dialogueNode.childBlocks[selectedIndex], director, dialogueNode);
         }
         #endif
         
         protected override bool CanProgressNode(BranchNodeData nodeData, DialogueDirector director) => false;
         
-        private void SelectChoice(ChoiceNodeData choice, DialogueDirector director)
+        private void SelectChoice(ChoiceNodeData choice, DialogueDirector director, BranchNodeData branchNodeData)
         {
             DestroyChoiceButtons();
             
             if(choice.startNodeActionID != -1)
                 director.ProcessNode(director.GetNodeFromID(choice.startNodeActionID), true);
             
+            branchNodeData.execOutputPortHash = choice.execOutputPortHash;
             director.GoToNode(choice.nextNodeID, true);
         }
         
