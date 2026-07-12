@@ -114,11 +114,13 @@ namespace CLogic.Dialogue
             
             OnDialogueStart?.Invoke();
             
-            currentNode = GetNodeFromID(startIndex ?? graph.startNodeID);
-            ProcessNode(currentNode);
-            
             #if UNITY_EDITOR
             SetupDebugContext(graph);
+            #endif
+            
+            GoToNode(startIndex ?? graph.startNodeID, true);
+            
+            #if UNITY_EDITOR
             ShowVisualizationForNode(currentNode, CurrentProcessor);
             #endif
             return CurrentDialogue;
