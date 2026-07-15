@@ -101,21 +101,21 @@ namespace CLogic.Dialogue
         }
         
         public DialogueHandle PlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
-        public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null)
+        public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null, bool callFinishCallback = true, bool createVisualizationContext = true)
         {
             if (!forced && IsPlaying)
                 return new DialogueHandle();
             
             if (IsPlaying)
-                EndDialogue();
-            
+                EndDialogue(callFinishCallback);
             CurrentDialogue = new DialogueHandle(this, true, graph, onFinish);
             nodes = graph.nodes;
             
             OnDialogueStart?.Invoke();
             
             #if UNITY_EDITOR
-            SetupDebugContext(graph);
+            if(createVisualizationContext)
+                SetupDebugContext(graph);
             #endif
             
             GoToNode(startIndex ?? graph.startNodeID, true);
@@ -127,8 +127,8 @@ namespace CLogic.Dialogue
         }
         
         // Not local function to allow access from sub graph handler
-        [Button]
-        public void EndDialogue()
+        [Button(serializeParameters: false)]
+        public void EndDialogue(bool callFinishCallback = true)
         {
             if (!IsPlaying)
                 return;
@@ -136,8 +136,15 @@ namespace CLogic.Dialogue
             CurrentProcessor?.HandleCancellation(currentNode, this);
             currentNode = null;
             
-            CurrentDialogue.SetDialogueFinished();
-            OnDialogueEnd?.Invoke();
+            if (callFinishCallback)
+            {
+                #if UNITY_EDITOR
+                currentContext?.Dispose();
+                #endif
+                
+                CurrentDialogue.SetDialogueFinished();
+                OnDialogueEnd?.Invoke();
+            }
         }
         
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿#if UNITY_EDITOR
+using System.Reflection;
 using CLogic.Utils;
 using Unity.GraphToolkit.Editor.GraphVisualization;
 using UnityEngine;
@@ -13,9 +14,16 @@ namespace CLogic.Dialogue
         private void SetupDebugContext(DialogueGraph graph)
         {
             Debug.Log("SetupDebugContext");
-            currentContext?.Dispose();
-            previousNode = null;
             currentContext = Registry.CreateVisualizationContext(graph.graphHash);
+        }
+        
+        internal bool IsContextDisposed(Context context)
+        {
+            FieldInfo? field = context.GetType().GetField(
+                "m_Disposed",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            
+            return field?.GetValue(context) is true;
         }
         
         private void ShowVisualizationForNode(DialogueNodeData nodeData, IDialogueProcessor processor)
