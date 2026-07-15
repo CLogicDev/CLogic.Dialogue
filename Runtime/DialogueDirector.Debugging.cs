@@ -1,10 +1,10 @@
-﻿using CLogic.Utils;
+﻿#if UNITY_EDITOR
+using CLogic.Utils;
 using Unity.GraphToolkit.Editor.GraphVisualization;
 using UnityEngine;
 
 namespace CLogic.Dialogue
 {
-    #if UNITY_EDITOR
     public partial class DialogueDirector
     {
         
@@ -48,5 +48,5 @@ namespace CLogic.Dialogue
             currentContext.Motion.Play(wire);
         }
     }
-    #endif
 }
+#endif
