@@ -21,7 +21,7 @@ namespace CLogic.Dialogue.Editor
             var editorGraph = GraphDatabase.LoadGraphForImporter<DialogueEditorGraph>(context.assetPath);
             var graphData = ScriptableObject.CreateInstance<DialogueGraph>();
             
-            CreateNodeMap(editorGraph);
+            CreateNodeMap(editorGraph, graphData);
             ProcessNodes(editorGraph, graphData, context);
             
             if (graphData.startNodeID == IDialogueGraphNode.INVALID_END)
@@ -53,11 +53,14 @@ namespace CLogic.Dialogue.Editor
             }
         }
         
-        private void CreateNodeMap(DialogueEditorGraph editorGraph)
+        private void CreateNodeMap(DialogueEditorGraph editorGraph, DialogueGraph targetGraph)
         {
             nodeMap = new Dictionary<INode, int>(editorGraph.NodeCount);
             portMap = new Dictionary<IPort, int>(editorGraph.NodeCount);
             List<IVariableNode> variableNodeBuffer = new(1); // Created outside to reduce heap allocations
+            
+            targetGraph.subgraphWireReferences = new Dictionary<Hash128, DialogueGraph.SubgraphWireReference>();
+            
             int id = 0;
             
             // Prevents asset subgraphs from ending abruptly
@@ -107,13 +110,13 @@ namespace CLogic.Dialogue.Editor
                         nodeMap.Add(node, id++);
                     }
                     
-                    if (node is not ISubgraphNode subgraphNode)
-                        continue;
-                    
-                    if (IsAssetSubGraphNode(subgraphNode))
-                        HandleAssetSubGraph(subgraphNode);
-                    else
-                        ExpandSubGraph(subgraphNode);
+                    if (node is ISubgraphNode subgraphNode)
+                    {
+                        if (IsAssetSubGraphNode(subgraphNode))
+                            HandleAssetSubGraph(subgraphNode);
+                        else
+                            ExpandSubGraph(subgraphNode);
+                    }
                 }
             }
             
@@ -147,7 +150,8 @@ namespace CLogic.Dialogue.Editor
                     subgraphInputVariable.GetNodes(variableNodeBuffer); 
                     // There should always only be one here but no checks can be made yet due to API limits
                     
-                    INode subgraphStarterNode = variableNodeBuffer[0].GetOutputPort(0).FirstConnectedPort.GetNode();
+                    IPort variableNodeOutputPort = variableNodeBuffer[0].GetOutputPort(0);
+                    INode subgraphStarterNode = variableNodeOutputPort.FirstConnectedPort.GetNode();
                     
                     IPort inputPort = null; // Should never be null according to API
                     foreach (IPort port in subgraphNode.GetInputPorts())
@@ -160,6 +164,15 @@ namespace CLogic.Dialogue.Editor
                     }
                     
                     portMap.Add(inputPort, nodeMap[subgraphStarterNode]);
+                    
+                    // Support wire references going into the subgraph node and back into the entry node inside the subgraph
+                    DialogueGraph.SubgraphWireReference subgraphWireRef = new()
+                    {
+                        subgraphNodePort = inputPort.ID,
+                        variableNodePort = variableNodeOutputPort.ID
+                    };
+                    IPort subgraphStarterNodeInputPort = subgraphStarterNode.GetInputPortByName(DialogueNode<DialogueNodeData>.IN_EXECUTION);
+                    targetGraph.subgraphWireReferences.Add(subgraphStarterNodeInputPort.ID, subgraphWireRef);
                 }
                 
                 //Support output node
@@ -206,8 +219,17 @@ namespace CLogic.Dialogue.Editor
                     }
                     
                     //Variable acts as node. Direct that node (from the subgraph) to the output node (of the parent graph)
-                    portMap.Add(variableNodeBuffer[0].GetInputPort(0), targetId);
+                    IPort variableNodeInputPort = variableNodeBuffer[0].GetInputPort(0);
+                    portMap.Add(variableNodeInputPort, targetId);
                     nodeMap.Add(variableNodeBuffer[0], targetId);
+                    
+                    // Support wire references going out of the subgraph and back into the parent graph
+                    DialogueGraph.SubgraphWireReference subgraphWireRef = new()
+                    {
+                        subgraphNodePort = outputPort.ID,
+                        variableNodePort = variableNodeInputPort.ID
+                    };
+                    targetGraph.subgraphWireReferences.Add(variableNodeInputPort.FirstConnectedPort.ID, subgraphWireRef);
                 }
             }
         }
