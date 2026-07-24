@@ -107,6 +107,9 @@ namespace CLogic.Dialogue.Editor
         
         public static void ValidateActionLinks(GraphLogger graphLogger, INode origin, bool supportsStartAction, bool supportsEndAction)
         {
+            if(!supportsStartAction && !supportsEndAction)
+                return;
+            
             if (!origin.GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) || !shouldUseEvents)
                 return;
             
