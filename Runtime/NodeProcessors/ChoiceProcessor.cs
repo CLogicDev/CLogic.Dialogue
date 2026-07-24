@@ -114,6 +114,6 @@ namespace CLogic.Dialogue
             }
         }
         
-        public override void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => DestroyChoiceButtons();
+        protected override void HandleCancellation(BranchNodeData nodeData, DialogueDirector director) => DestroyChoiceButtons();
     }
 }
