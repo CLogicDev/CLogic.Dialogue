@@ -10,6 +10,14 @@ namespace CLogic.Dialogue.Editor
     /// </summary>
     public interface IDialogueGraphNode
     {
+        public const string IN_EXECUTION = "In";
+        public const string OUT_EXECUTION = "Out";
+        
+        public const string OUT_NODE_END = "End";
+        public const string OUT_NODE_START = "Start";
+        
+        public const string OP_NODE_EVENTS = "UseEvents";
+        
         public const int INVALID_END = -1;
         public const int GRACEFUL_END = -2;
         public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap);

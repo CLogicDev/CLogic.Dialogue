@@ -43,7 +43,7 @@ namespace CLogic.Dialogue.Editor
         }
         public bool? CanConnect(IPort output, IPort input)
         {
-            return input.GetNode() is not ActionNode && input.Name is DialogueNode<DialogueNodeData>.IN_EXECUTION;
+            return input.GetNode() is not ActionNode && input.Name is IDialogueGraphNode.IN_EXECUTION;
         }
     }
 }

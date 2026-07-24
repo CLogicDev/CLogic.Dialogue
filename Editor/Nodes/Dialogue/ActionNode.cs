@@ -34,6 +34,6 @@ namespace CLogic.Dialogue.Editor
             if (BlockCount == 0)
                 graphLogger.LogWarning("Behavior node has no blocks", this);
         }
-        public bool? CanConnect(IPort output, IPort input) => output.Name is DialogueNode<DialogueNodeData>.OUT_NODE_START or DialogueNode<DialogueNodeData>.OUT_NODE_END;
+        public bool? CanConnect(IPort output, IPort input) => output.Name is IDialogueGraphNode.OUT_NODE_START or IDialogueGraphNode.OUT_NODE_END;
     }
 }
