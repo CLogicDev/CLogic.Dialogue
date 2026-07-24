@@ -144,8 +144,8 @@ namespace CLogic.Dialogue.Editor
                 return;
             
             nodeData.nextNodeID = portMap.GetValueOrDefault(executionPort, INVALID_END);
-            nodeData.execInputPortHash = origin.GetInputPortByName(IN_EXECUTION).ID;
-            nodeData.execOutputPortHash = origin.GetOutputPortByName(OUT_EXECUTION).ID;
+            nodeData.execInputPortHash = origin.GetInputPortByName(IN_EXECUTION)?.ID ?? new Hash128();
+            nodeData.execOutputPortHash = origin.GetOutputPortByName(OUT_EXECUTION)?.ID ?? new Hash128();
         }
         
         public static void CreateActionNodeLink(DialogueNodeData nodeData, Dictionary<IPort, int> portMap, INode origin, bool supportsStartAction, bool supportsEndAction)
