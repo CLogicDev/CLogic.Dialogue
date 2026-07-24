@@ -20,6 +20,7 @@ namespace CLogic.Dialogue.Editor
         
         public const int INVALID_END = -1;
         public const int GRACEFUL_END = -2;
+        
         public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
         public void OnValidate(GraphLogger graphLogger);
@@ -65,7 +66,7 @@ namespace CLogic.Dialogue.Editor
 
         public static TValue GetPortValue<TValue>(IPort port)
         {
-            TryGetPortValue<TValue>(port, out var value);
+            TryGetPortValue(port, out TValue value);
             return value;
         }
     }
