@@ -25,13 +25,13 @@ namespace CLogic.Dialogue.Editor
 
         protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {
-            context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
+            context.AddInputPort<IDialogueGraphNode>(IDialogueGraphNode.IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
         }
         
         public override BranchNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             BranchNodeData nodeData = new();
-            nodeData.execInputPortHash = GetInputPortByName(IN_EXECUTION).ID;
+            nodeData.execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID;
             ProcessChildBlocks(nodeData, graph, portMap);
             
             #if CLOGIC_CONDITIONALS
