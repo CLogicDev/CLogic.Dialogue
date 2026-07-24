@@ -35,19 +35,15 @@ namespace CLogic.Dialogue.Editor
         {
             ChoiceOptionData optionData = new();
             
-            IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
-            
-            if (connectedPort != null && portMap.TryGetValue(connectedPort, out int nodeID))
-                optionData.nextNodeID = nodeID;
+            IDialogueGraphNode.CreateExecutionNodeLink(optionData, portMap, this);
             
             optionData.choiceText = GetPortValue<string>(GetInputPortByName(IN_TEXT));
-            optionData.execOutputPortHash = GetOutputPortByName(OUT_EXECUTION).ID;
             
             #if CLOGIC_CONDITIONALS
             optionData.conditional = GetPortValue<Conditionals.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
             #endif
             
-            CreateActionNodeLink(optionData, portMap);
+            IDialogueGraphNode.CreateActionNodeLink(optionData, portMap, this, SupportStartAction, SupportEndAction);
             
             return optionData;
         }
