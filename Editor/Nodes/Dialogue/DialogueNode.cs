@@ -15,13 +15,6 @@ namespace CLogic.Dialogue.Editor
     [Serializable]
     public abstract class DialogueNode<T> : Node,  IDialogueGraphNode, IConnectionValidator where T : DialogueNodeData
     {
-        public const string IN_EXECUTION = "In";
-        public const string OUT_EXECUTION = "Out";
-        
-        public const string OUT_NODE_END = "End";
-        public const string OUT_NODE_START = "Start";
-        
-        public const string OP_NODE_EVENTS = "UseEvents";
         
         public virtual bool SupportsStartAction => true;
         public virtual bool SupportsEndAction => true;
@@ -31,7 +24,7 @@ namespace CLogic.Dialogue.Editor
         
         public virtual void OnValidate(GraphLogger graphLogger)
         {
-            IPort outputPort = GetOutputPortByName(OUT_EXECUTION);
+            IPort outputPort = GetOutputPortByName(IDialogueGraphNode.IN_EXECUTION);
             
             if (outputPort != null)
             {
@@ -73,12 +66,12 @@ namespace CLogic.Dialogue.Editor
             if(!SupportsStartAction || !SupportsEndAction)
                 return;
             
-            if (!GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) || !shouldUseEvents)
+            if (!GetNodeOptionByName(IDialogueGraphNode.OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) || !shouldUseEvents)
                 return;
             
             if (SupportsStartAction)
             {
-                IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
+                IPort connectedPort = GetOutputPortByName(IDialogueGraphNode.OUT_NODE_START)?.FirstConnectedPort;
                 
                 INode connectedNode = connectedPort.GetNode();
                 if (connectedNode is not null and not ActionNode)
@@ -87,7 +80,7 @@ namespace CLogic.Dialogue.Editor
             
             if (SupportsEndAction)
             {
-                IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
+                IPort connectedPort = GetOutputPortByName(IDialogueGraphNode.OUT_NODE_END)?.FirstConnectedPort;
                 
                 INode connectedNode = connectedPort.GetNode();
                 if (connectedNode is not null and not ActionNode)
@@ -98,7 +91,7 @@ namespace CLogic.Dialogue.Editor
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
             if (SupportsStartAction || SupportsEndAction)
-                context.AddOption<bool>(OP_NODE_EVENTS).WithDisplayName("Use Events").Build();
+                context.AddOption<bool>(IDialogueGraphNode.OP_NODE_EVENTS).WithDisplayName("Use Events").Build();
         }
         
         protected sealed override void OnDefinePorts(IPortDefinitionContext context)
@@ -114,19 +107,19 @@ namespace CLogic.Dialogue.Editor
         public virtual void CreateNodeLink(T node, Dictionary<IPort, int> portMap)
         {
             // Execution link
-            IPort executionPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
+            IPort executionPort = GetOutputPortByName(IDialogueGraphNode.OUT_EXECUTION)?.FirstConnectedPort;
             
             if (executionPort == null)
                 return;
             
             node.nextNodeID = portMap.GetValueOrDefault(executionPort, IDialogueGraphNode.INVALID_END);
-            node.execInputPortHash = GetInputPortByName(IN_EXECUTION).ID;
-            node.execOutputPortHash = GetOutputPortByName(OUT_EXECUTION).ID;
+            node.execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID;
+            node.execOutputPortHash = GetOutputPortByName(IDialogueGraphNode.OUT_EXECUTION).ID;
             
             // Action link
             if (SupportsStartAction)
             {
-                IPort actionPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
+                IPort actionPort = GetOutputPortByName(IDialogueGraphNode.OUT_NODE_START)?.FirstConnectedPort;
                 
                 if (actionPort != null)
                     node.startNodeActionID = portMap.GetValueOrDefault(actionPort, IDialogueGraphNode.INVALID_END);
@@ -134,7 +127,7 @@ namespace CLogic.Dialogue.Editor
             
             if (SupportsEndAction)
             {
-                IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
+                IPort connectedPort = GetOutputPortByName(IDialogueGraphNode.OUT_NODE_END)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
                     node.endNodeActionID = portMap.GetValueOrDefault(connectedPort, IDialogueGraphNode.INVALID_END);
@@ -143,19 +136,19 @@ namespace CLogic.Dialogue.Editor
         
         protected void CreateDefaultExecutionPorts(IPortDefinitionContext context)
         {
-            context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
-            context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Single).Build();
+            context.AddInputPort<IDialogueGraphNode>(IDialogueGraphNode.IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
+            context.AddOutputPort<IDialogueGraphNode>(IDialogueGraphNode.OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Single).Build();
             
             if(!SupportsStartAction && !SupportsEndAction)
                 return;
             
-            if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
+            if (GetNodeOptionByName(IDialogueGraphNode.OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
                 if (SupportsStartAction)
-                    context.AddOutputPort<ActionNode>(OUT_NODE_START).WithDisplayName("Start").Build();
+                    context.AddOutputPort<ActionNode>(IDialogueGraphNode.OUT_NODE_START).WithDisplayName("Start").Build();
                 
                 if (SupportsEndAction)
-                    context.AddOutputPort<ActionNode>(OUT_NODE_END).WithDisplayName("End").Build();
+                    context.AddOutputPort<ActionNode>(IDialogueGraphNode.OUT_NODE_END).WithDisplayName("End").Build();
             }
         }
         
@@ -189,13 +182,13 @@ namespace CLogic.Dialogue.Editor
             if (output.GetNode() is not IDialogueGraphNode)
                 return null;
             
-            if(output.Name is OUT_NODE_START or OUT_NODE_END)
+            if(output.Name is IDialogueGraphNode.OUT_NODE_START or IDialogueGraphNode.OUT_NODE_END)
                 return input.GetNode() is ActionNode;
             
-            if (output.Name != OUT_EXECUTION)
+            if (output.Name != IDialogueGraphNode.OUT_EXECUTION)
                 return null;
             
-            return input.Name == IN_EXECUTION && output.Name == OUT_EXECUTION;
+            return input.Name == IDialogueGraphNode.IN_EXECUTION && output.Name == IDialogueGraphNode.OUT_EXECUTION;
         }
     }
 }

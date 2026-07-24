@@ -106,7 +106,7 @@ namespace CLogic.Dialogue.Editor
                     
                     if (node is IDialogueGraphNode and not StartNode) // Start node is a special node which doesn't need an id
                     { 
-                        portMap.Add(node.GetInputPortByName(DialogueNode<DialogueNodeData>.IN_EXECUTION), id);
+                        portMap.Add(node.GetInputPortByName(IDialogueGraphNode.IN_EXECUTION), id);
                         nodeMap.Add(node, id++);
                     }
                     
@@ -171,7 +171,7 @@ namespace CLogic.Dialogue.Editor
                         subgraphNodePort = inputPort.ID,
                         variableNodePort = variableNodeOutputPort.ID
                     };
-                    IPort subgraphStarterNodeInputPort = subgraphStarterNode.GetInputPortByName(DialogueNode<DialogueNodeData>.IN_EXECUTION);
+                    IPort subgraphStarterNodeInputPort = subgraphStarterNode.GetInputPortByName(IDialogueGraphNode.IN_EXECUTION);
                     targetGraph.subgraphWireReferences.Add(subgraphStarterNodeInputPort.ID, subgraphWireRef);
                 }
                 
