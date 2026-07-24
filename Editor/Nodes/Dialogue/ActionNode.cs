@@ -32,7 +32,7 @@ namespace CLogic.Dialogue.Editor
             base.OnValidate(graphLogger);
             
             if (BlockCount == 0)
-                graphLogger.LogWarning("Behavior node has no blocks", this);
+                graphLogger.LogWarning("No actions specified", this);
         }
         public bool? CanConnect(IPort output, IPort input) => output.Name is IDialogueGraphNode.OUT_NODE_START or IDialogueGraphNode.OUT_NODE_END;
     }
