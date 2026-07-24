@@ -196,6 +196,7 @@ namespace CLogic.Dialogue
         {
             if (node is SubGraphNodeData subGraphNodeData)
             {
+                CurrentProcessor = null;
                 ProcessSubGraph(subGraphNodeData); // Sub graph processing has precedence over all processing logic
                 return;
             }
