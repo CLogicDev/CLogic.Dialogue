@@ -8,7 +8,7 @@ namespace CLogic.Dialogue.Editor
 {
     #if ENABLE_CHOICE_NODE
     [Serializable, Node("Basic Nodes", "", "Choice Block")]
-    public class ChoiceNode : DialogueContextNode<BranchNodeData>
+    public class ChoiceNode : DialogueContextNode<ChoiceNodeData>
     {
         public override bool SupportExecution => false;
         
@@ -28,9 +28,9 @@ namespace CLogic.Dialogue.Editor
             context.AddInputPort<IDialogueGraphNode>(IDialogueGraphNode.IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
         }
         
-        public override BranchNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
+        public override ChoiceNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
-            BranchNodeData nodeData = new();
+            ChoiceNodeData nodeData = new();
             nodeData.execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID;
             ProcessChildBlocks(nodeData, graph, portMap);
             
