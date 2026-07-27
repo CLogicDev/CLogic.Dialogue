@@ -26,7 +26,7 @@ namespace CLogic.Dialogue.Editor
                 label = "Dialogue Settings",
                 guiHandler = (searchContext) =>
                 {
-                    DialogueSettings settings = DialogueSettings.GetOrCreateSettings();
+                    var settings = DialogueSettings.GetOrCreateSettings();
                     
                     SerializedObject so = new (settings);
                     

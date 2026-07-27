@@ -28,7 +28,7 @@ namespace CLogic.Dialogue
         public static void UpdateDefines(DefaultFeatures features)
         {
             #if UNITY_EDITOR
-            UnityEditor.Build.NamedBuildTarget target = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var target = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
             string currentDefines = PlayerSettings.GetScriptingDefineSymbols(target);
             List<string> listedDefines = currentDefines
                 .Split(';')
