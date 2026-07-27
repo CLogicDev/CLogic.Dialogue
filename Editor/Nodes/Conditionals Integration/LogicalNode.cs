@@ -34,7 +34,7 @@ namespace CLogic.Dialogue.Conditionals.Editor
             }
         }
         
-        protected override ConditionalEvaluator GetProvisionedDataInternal()
+        protected override ConditionalEvaluator CreateProvisionedData()
         {
             GetNodeOptionByName(OP_LOGICAL_TYPE).TryGetValue(out LogicalEvaluator.LogicalOperationType type);
             
