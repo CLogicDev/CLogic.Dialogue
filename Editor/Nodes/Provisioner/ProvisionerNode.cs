@@ -34,7 +34,7 @@ namespace CLogic.Dialogue.Editor
         
         public T1 GetProvisionedData<T1>()
         {
-            cache ??= GetProvisionedDataInternal();
+            cache ??= CreateProvisionedData();
 
             if(cache is T1 casted)
                 return casted;
@@ -42,7 +42,7 @@ namespace CLogic.Dialogue.Editor
             throw new InvalidCastException("Provisioned data is not of type " + typeof(T).Name);
         }
         
-        protected abstract T GetProvisionedDataInternal();
+        protected abstract T CreateProvisionedData();
         
         public virtual void OnValidate(GraphLogger graphLogger) {  }
     }
