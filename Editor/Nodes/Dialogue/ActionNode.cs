@@ -7,7 +7,7 @@ using CLogic.Dialogue;
 namespace CLogic.Dialogue.Editor
 {
     [Serializable, Node("Events", "", "Action Block")]
-    public class ActionNode : DialogueContextNode<ActionNodeData>
+    public class ActionNode : DialogueContextNode<ActionNodeData>, IConnectionValidator
     {
         public override bool SupportExecution => false;
         public override bool SupportStartAction => false;
@@ -15,17 +15,7 @@ namespace CLogic.Dialogue.Editor
         
         protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {
-            var portBuilder = context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead);
-            
-            #if UNITY_6000_6_OR_NEWER
-            portBuilder.WithCapacity(PortCapacity.Multi).Build();
-            #else
-            IPort port = portBuilder.Build();
-            PropertyInfo propertyInfo = port.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
-            Type portCapacityType = propertyInfo.PropertyType;
-            object multiCapacity = Enum.Parse(portCapacityType, "Multi");
-            propertyInfo.SetValue(port, multiCapacity);
-            #endif
+            context.AddInputPort<IDialogueGraphNode>(IDialogueGraphNode.IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).WithCapacity(PortCapacity.Multi).Build();
         }
         
         public override ActionNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
@@ -42,7 +32,8 @@ namespace CLogic.Dialogue.Editor
             base.OnValidate(graphLogger);
             
             if (BlockCount == 0)
-                graphLogger.LogWarning("Behavior node has no blocks", this);
+                graphLogger.LogWarning("No actions specified", this);
         }
+        public bool? CanConnect(IPort output, IPort input) => output.Name is IDialogueGraphNode.OUT_NODE_START or IDialogueGraphNode.OUT_NODE_END;
     }
 }

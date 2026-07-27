@@ -13,15 +13,8 @@ namespace CLogic.Dialogue.Editor
     /// Otherwise look into <see cref="IDialogueGraphNode"/>
     /// </summary>
     [Serializable]
-    public abstract class DialogueNode<T> : Node, IDialogueGraphNode where T : DialogueNodeData
+    public abstract class DialogueNode<T> : Node, IDialogueGraphNode, IConnectionValidator where T : DialogueNodeData
     {
-        public const string IN_EXECUTION = "In";
-        public const string OUT_EXECUTION = "Out";
-        
-        public const string OUT_NODE_END = "End";
-        public const string OUT_NODE_START = "Start";
-        
-        public const string OP_NODE_EVENTS = "UseEvents";
         
         public virtual bool SupportsStartAction => true;
         public virtual bool SupportsEndAction => true;
@@ -31,78 +24,14 @@ namespace CLogic.Dialogue.Editor
         
         public virtual void OnValidate(GraphLogger graphLogger)
         {
-            IPort outputPort = GetOutputPortByName(OUT_EXECUTION);
-            
-            if (outputPort != null)
-            {
-                List<IPort> connectedPorts = new();
-                
-                outputPort.GetConnectedPorts(connectedPorts);
-                
-                foreach (IPort port in connectedPorts)
-                {
-                    INode node = port?.GetNode();
-                    
-                    if (node is ActionNode)
-                        graphLogger.LogError("Action node cannot be used as execution output", this);
-                }
-                
-                switch (connectedPorts.Count)
-                {
-                    case 0:
-                        #if UNITY_6000_6_OR_NEWER
-                        graphLogger.Log("Node output not connected, the graph will end by default", this, new GraphLogAction("Add End Node", obj =>
-                        {
-                            Graph.UndoBeginRecordGraph("Add End Node");
-                            var endNode = new EndNode();
-                            endNode.Position = Position;
-                            endNode.Position += Vector2.right * 300;
-                            endNode.Position += Vector2.up * 32f;
-                            Graph.AddNode(endNode);
-                            Graph.Connect(outputPort, endNode.GetInputPort(0));
-                            Graph.UndoEndRecordGraph();
-                        }));
-                        #else
-                         graphLogger.Log("Node output not connected, the graph will end by default", this);
-                        #endif
-                    break;
-                    
-                    case > 1:
-                        graphLogger.LogError("Multiple execution output links are not allowed", this);
-                    break;
-                }
-                
-            }
-            
-            if(!SupportsStartAction || !SupportsEndAction)
-                return;
-            
-            if (!GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) || !shouldUseEvents)
-                return;
-            
-            if (SupportsStartAction)
-            {
-                IPort connectedPort = GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
-                
-                INode connectedNode = connectedPort.GetNode();
-                if (connectedNode is not null and not ActionNode)
-                    graphLogger.LogError("Start node must be connected to an action node", this);
-            }
-            
-            if (SupportsEndAction)
-            {
-                IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
-                
-                INode connectedNode = connectedPort.GetNode();
-                if (connectedNode is not null and not ActionNode)
-                    graphLogger.LogError("End node must be connected to an action node", this);
-            }
+            IDialogueGraphNode.ValidateExecution(graphLogger, this);
+            IDialogueGraphNode.ValidateActionLinks(graphLogger, this, SupportsStartAction, SupportsEndAction);
         }
         
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
             if (SupportsStartAction || SupportsEndAction)
-                context.AddOption<bool>(OP_NODE_EVENTS).WithDisplayName("Use Events").Build();
+                context.AddOption<bool>(IDialogueGraphNode.OP_NODE_EVENTS).WithDisplayName("Use Events").Build();
         }
         
         protected sealed override void OnDefinePorts(IPortDefinitionContext context)
@@ -115,67 +44,33 @@ namespace CLogic.Dialogue.Editor
         
         public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
-        public virtual void CreateNodeLink(T node, Dictionary<IPort, int> portMap)
+        public void CreateNodeLink(T node, Dictionary<IPort, int> portMap)
         {
-            // Execution link
-            IPort executionPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
-            
-            if (executionPort == null)
-                return;
-            
-            INode connectedNode = executionPort.GetNode();
-            node.nextNodeID = portMap.GetValueOrDefault(executionPort, IDialogueGraphNode.INVALID_END);
-            
-            // Action link
-            if (SupportsStartAction)
-            {
-                IPort actionPort = GetOutputPortByName( OUT_NODE_START)?.FirstConnectedPort;
-                
-                if (actionPort != null)
-                    node.startNodeActionID = portMap.GetValueOrDefault(actionPort, IDialogueGraphNode.INVALID_END);
-            }
-            
-            if (SupportsEndAction)
-            {
-                IPort connectedPort = GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
-                
-                if (connectedPort != null)
-                    node.endNodeActionID = portMap.GetValueOrDefault(connectedPort, IDialogueGraphNode.INVALID_END);
-            }
+            IDialogueGraphNode.CreateExecutionNodeLink(node, portMap, this);
+            IDialogueGraphNode.CreateActionNodeLink(node, portMap, this, SupportsStartAction, SupportsEndAction);
         }
         
         protected void CreateDefaultExecutionPorts(IPortDefinitionContext context)
         {
-            
-            #if UNITY_6000_6_OR_NEWER
-            context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
-            context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Single).Build();
-            #else
-            context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
-            var inputPort = context.AddInputPort<IDialogueGraphNode>(IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
-            
-            PropertyInfo propertyInfo = inputPort.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
-            Type portCapacityType = propertyInfo.PropertyType;
-            object multiCapacity = Enum.Parse(portCapacityType, "Multi");
-            propertyInfo.SetValue(inputPort, multiCapacity);
-            #endif
+            context.AddInputPort<IDialogueGraphNode>(IDialogueGraphNode.IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
+            context.AddOutputPort<IDialogueGraphNode>(IDialogueGraphNode.OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Single).Build();
             
             if(!SupportsStartAction && !SupportsEndAction)
                 return;
             
-            if (GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
+            if (GetNodeOptionByName(IDialogueGraphNode.OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
                 if (SupportsStartAction)
-                    context.AddOutputPort<ActionNode>(OUT_NODE_START).WithDisplayName("Start").Build();
+                    context.AddOutputPort<ActionNode>(IDialogueGraphNode.OUT_NODE_START).WithDisplayName("Start").Build();
                 
                 if (SupportsEndAction)
-                    context.AddOutputPort<ActionNode>(OUT_NODE_END).WithDisplayName("End").Build();
+                    context.AddOutputPort<ActionNode>(IDialogueGraphNode.OUT_NODE_END).WithDisplayName("End").Build();
             }
         }
         
         protected TValue GetPortValue<TValue>(IPort port) => IDialogueGraphNode.GetPortValue<TValue>(port);
         
-        DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap) => ProcessNodeAsset(graph, portMap);
+        public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap) => ProcessNodeAsset(graph, portMap);
         
         private void InitFinished()
         {
@@ -194,5 +89,22 @@ namespace CLogic.Dialogue.Editor
         // NOTE: Will not be called on a duplicated node
         protected virtual void OnFirstCreation()
         {}
+        
+        public virtual bool? CanConnect(IPort output, IPort input)
+        {
+            if (input.GetNode() is not IDialogueGraphNode)
+                return null;
+            
+            if (output.GetNode() is not IDialogueGraphNode)
+                return null;
+            
+            if(output.Name is IDialogueGraphNode.OUT_NODE_START or IDialogueGraphNode.OUT_NODE_END)
+                return input.GetNode() is ActionNode;
+            
+            if (output.Name != IDialogueGraphNode.OUT_EXECUTION)
+                return null;
+            
+            return input.Name == IDialogueGraphNode.IN_EXECUTION && output.Name == IDialogueGraphNode.OUT_EXECUTION;
+        }
     }
 }

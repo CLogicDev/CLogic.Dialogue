@@ -6,9 +6,9 @@ using Unity.GraphToolkit.Editor;
 namespace CLogic.Dialogue.Editor
 {
     [Serializable, Node("Basic Nodes", "", "Start Point")]
-    public class StartNode : Node, IDialogueGraphNode
+    public class StartNode : Node, IDialogueGraphNode, IConnectionValidator
     {
-        public const string OUT_START = "Start";
+        public const string OUT_START = "Entry";
         
         protected override void OnDefinePorts(IPortDefinitionContext context) => context.AddOutputPort<IDialogueGraphNode>(OUT_START).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
         
@@ -37,8 +37,13 @@ namespace CLogic.Dialogue.Editor
                 return null;
             
             graph.startNodeID = portMap[port];
+            graph.entryPortHash = GetOutputPortByName(OUT_START).ID;
             
             return null;
+        }
+        public bool? CanConnect(IPort output, IPort input)
+        {
+            return input.GetNode() is not ActionNode && input.Name is IDialogueGraphNode.IN_EXECUTION;
         }
     }
 }

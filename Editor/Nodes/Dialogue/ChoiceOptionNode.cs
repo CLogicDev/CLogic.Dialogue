@@ -8,7 +8,7 @@ namespace CLogic.Dialogue.Editor
 {
     #if ENABLE_CHOICE_OPTION_NODE
     [Serializable, UseWithContext(typeof(ChoiceNode)),Node("", "", "Choice Option")]
-    public class ChoiceOptionNode : DialogueBlockNode<ChoiceNodeData>
+    public class ChoiceOptionNode : DialogueBlockNode<ChoiceOptionData>
     {
         private const string IN_TEXT = "Text";
         private const string OUT_EXECUTION = "Out";
@@ -31,24 +31,21 @@ namespace CLogic.Dialogue.Editor
             #endif
         }
         
-        public override ChoiceNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
+        public override ChoiceOptionData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
-            ChoiceNodeData nodeData = new();
+            ChoiceOptionData optionData = new();
             
-            IPort connectedPort = GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
+            IDialogueGraphNode.CreateExecutionNodeLink(optionData, portMap, this);
             
-            if (connectedPort != null && portMap.TryGetValue(connectedPort, out int nodeID))
-                nodeData.nextNodeID = nodeID;
-            
-            nodeData.choiceText = GetPortValue<string>(GetInputPortByName(IN_TEXT));
+            optionData.choiceText = GetPortValue<string>(GetInputPortByName(IN_TEXT));
             
             #if CLOGIC_CONDITIONALS
-            nodeData.conditional = GetPortValue<Conditionals.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
+            optionData.conditional = GetPortValue<Conditionals.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
             #endif
             
-            CreateActionNodeLink(nodeData, portMap);
+            IDialogueGraphNode.CreateActionNodeLink(optionData, portMap, this, SupportStartAction, SupportEndAction);
             
-            return nodeData;
+            return optionData;
         }
         
         public override void OnValidate(GraphLogger graphLogger)

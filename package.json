@@ -1,9 +1,9 @@
 {
   "name": "dev.clogic.dialogue",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "displayName": "CLogic.Dialogue",
-  "description": "A logging utility for Unity by the CLogic team.",
-  "unity": "2019.1",
+  "description": "A graph-based dialogue system for creating branching conversations with extensible nodes and editor tooling.",
+  "unity": "6000.6",
   "documentationUrl": "https://docs.clogic.dev/CLogic.Systems/LoggingSystem",
   "licensesUrl": "https://github.com/CLogicDev/CLogic.Utils/blob/main/LICENSE",
   "keywords": [
@@ -12,7 +12,10 @@
   ],
   "author": {
     "name": "CLogic",
-    "email": "contact@clogic.dev",
-    "url": "https://clogic.dev"
+    "url": "https://clogic.dev",
+    "email": "contact@clogic.dev"
+  },
+  "dependencies": {
+    "dev.clogic.utils": "0.1.0"
   }
 }

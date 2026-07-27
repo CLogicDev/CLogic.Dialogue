@@ -48,7 +48,7 @@ namespace CLogic.Dialogue
             return false;
         }
         
-        public override void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director)
+        protected override void HandleCancellation(ConversationNodeData nodeData, DialogueDirector director)
         {
             dialogueTextIterator.StopWriting();
         }

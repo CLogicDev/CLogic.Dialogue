@@ -101,29 +101,34 @@ namespace CLogic.Dialogue
         }
         
         public DialogueHandle PlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
-        public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null)
+        public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null, bool callFinishCallback = true, bool createVisualizationContext = true)
         {
             if (!forced && IsPlaying)
                 return new DialogueHandle();
             
             if (IsPlaying)
-                EndDialogue();
-            
+                EndDialogue(callFinishCallback);
             CurrentDialogue = new DialogueHandle(this, true, graph, onFinish);
             nodes = graph.nodes;
             
             OnDialogueStart?.Invoke();
             
-            currentNode = GetNodeFromID(startIndex ?? graph.startNodeID);
-            ProcessNode(currentNode);
-
+            #if UNITY_EDITOR
+            if(createVisualizationContext)
+                SetupDebugContext(graph);
+            #endif
+            
+            GoToNode(startIndex ?? graph.startNodeID, true);
+            
+            #if UNITY_EDITOR
+            ShowVisualizationForNode(currentNode, CurrentProcessor);
+            #endif
             return CurrentDialogue;
         }
         
         // Not local function to allow access from sub graph handler
-        
-        [Button]
-        public void EndDialogue()
+        [Button(serializeParameters: false)]
+        public void EndDialogue(bool callFinishCallback = true)
         {
             if (!IsPlaying)
                 return;
@@ -131,8 +136,15 @@ namespace CLogic.Dialogue
             CurrentProcessor?.HandleCancellation(currentNode, this);
             currentNode = null;
             
-            CurrentDialogue.SetDialogueFinished();
-            OnDialogueEnd?.Invoke();
+            if (callFinishCallback)
+            {
+                #if UNITY_EDITOR
+                currentContext?.Dispose();
+                #endif
+                
+                CurrentDialogue.SetDialogueFinished();
+                OnDialogueEnd?.Invoke();
+            }
         }
         
         /// <summary>
@@ -171,6 +183,10 @@ namespace CLogic.Dialogue
             currentNodeID = nodeID;
             ProcessNode(currentNode);
             
+            #if UNITY_EDITOR
+            ShowExecutionPath(currentNode);
+            #endif
+            
             return true;
         }
         
@@ -180,6 +196,7 @@ namespace CLogic.Dialogue
         {
             if (node is SubGraphNodeData subGraphNodeData)
             {
+                CurrentProcessor = null;
                 ProcessSubGraph(subGraphNodeData); // Sub graph processing has precedence over all processing logic
                 return;
             }
