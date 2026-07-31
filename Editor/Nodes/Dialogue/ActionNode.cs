@@ -6,7 +6,7 @@ using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Events", "", "Action Block")]
+    [Serializable, Node("Events", "Packages/dev.clogic.dialogue/Icons/Action Block.svg", "Action Block")]
     public class ActionNode : DialogueContextNode<ActionNodeData>, IConnectionValidator
     {
         public override bool SupportExecution => false;
@@ -15,7 +15,7 @@ namespace CLogic.Dialogue.Editor
         
         protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {
-            context.AddInputPort<IDialogueGraphNode>(IDialogueGraphNode.IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).WithCapacity(PortCapacity.Multi).Build();
+            context.AddInputPort<ActionNode>(IDialogueGraphNode.IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).WithCapacity(PortCapacity.Multi).Build();
         }
         
         public override ActionNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)

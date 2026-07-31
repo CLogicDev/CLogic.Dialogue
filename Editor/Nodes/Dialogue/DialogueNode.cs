@@ -4,10 +4,37 @@ using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 using System.Reflection;
 using CLogic.Dialogue;
+using UnityEditor;
+using UnityEditor.Graphs;
 using UnityEngine;
+using Node = Unity.GraphToolkit.Editor.Node;
 
 namespace CLogic.Dialogue.Editor
 {
+    [DataTypeStyleMapper(typeof(DialogueEditorGraph))]
+    public class DialogueNodeStyleMapper : DataTypeStyleMapper//
+    {
+        public DialogueNodeStyleMapper()
+        {
+            var wireColor =  new Color32(39, 145, 217, 255);
+            var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/Icons/Output Icon.svg").image as Texture2D;
+            
+            Register(typeof(IDialogueGraphNode), icon, wireColor);
+        }
+    }
+    
+    [DataTypeStyleMapper(typeof(DialogueEditorGraph))]
+    public class DialogueNodeEventsStyleMapper : DataTypeStyleMapper
+    {
+        public DialogueNodeEventsStyleMapper()
+        {
+            var wireColor = new Color32(47, 101, 132, 255);
+            var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/Icons/Start Event.svg").image as Texture2D;
+            
+            Register(typeof(ActionNode), icon, wireColor);
+        }
+    }
+    
     /// <summary>
     /// Use when the node is part of the dialogue flow<br></br>
     /// Otherwise look into <see cref="IDialogueGraphNode"/>

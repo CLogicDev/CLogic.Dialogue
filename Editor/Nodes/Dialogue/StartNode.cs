@@ -5,7 +5,7 @@ using Unity.GraphToolkit.Editor;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Basic Nodes", "", "Start Point")]
+    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/Start Node.svg", "Start Point")]
     public class StartNode : Node, IDialogueGraphNode, IConnectionValidator
     {
         public const string OUT_START = "Entry";
