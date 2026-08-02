@@ -2,7 +2,6 @@
 using UnityEngine;
 using EditorAttributes;
 using System.Collections.Generic;
-using System.Linq;
 using CLogic.Utils;
 
 namespace CLogic.Dialogue
@@ -29,6 +28,7 @@ namespace CLogic.Dialogue
         private List<DialogueProcessor> bakedProcessors = new();
         private Dictionary<Type, IDialogueProcessor> nodeProcessors = new();
         private Dictionary<Type, IDialogueProcessor> nodeProcessorOverrides = new();
+        private static List<IDialogueProcessor> cachedStaticProcessors;
         
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
@@ -54,8 +54,6 @@ namespace CLogic.Dialogue
                 if (nodeProcessors == null || !nodeProcessorOverrides.ContainsKey(processor.NodeType))
                     nodeProcessors.Add(processor.NodeType, processor);
             }
-            
-            nodeProcessors.Add(typeof(ActionNodeData), new ActionProcessor()); // Action node processor is a special processor type
         }
         
         [Button("Bake Processors")]
@@ -97,6 +95,26 @@ namespace CLogic.Dialogue
                         yield return dialogueNodeProcessor;
                     }
                 }
+            }
+            
+            if(currentDepth > 0)
+                yield break;
+            
+            if(cachedStaticProcessors != null)
+                yield break;
+            
+            cachedStaticProcessors = new List<IDialogueProcessor>();
+            
+            var processorObject = new GameObject("Dialogue Processors");
+            foreach (Type type in StaticProcessorScanner.GetStaticProcessorTypes())
+            {
+                IDialogueProcessor processor;
+                if (typeof(MonoBehaviour).IsAssignableFrom(type))
+                    processor = (IDialogueProcessor)processorObject.AddComponent(type);
+                else
+                    processor = (IDialogueProcessor)Activator.CreateInstance(type);
+                
+                cachedStaticProcessors.Add(processor);
             }
         }
         
