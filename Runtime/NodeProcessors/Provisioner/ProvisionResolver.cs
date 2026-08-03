@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Unity.Scripting.LifecycleManagement;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Assemblies;
+namespace CLogic.Dialogue.Provisioner
+{
+    [AttributeUsage(AttributeTargets.Field)]
+    public sealed class ProvisionAttribute : Attribute
+    {
+        internal string portName;
+        public ProvisionAttribute(string inputPortName)
+        {
+            portName = inputPortName;
+        }
+    }
+    
+    internal static partial class ProvisionResolver
+    {
+        private static Dictionary<Type, List<ProvisionAttribute>> provisionedTypeCache = new();
+        private static Dictionary<ProvisionAttribute, FieldInfo> provisionedFields = new();
+        
+        [OnCodeInitializing]
+        private static void ScanForAttributes()
+        {
+            foreach (Type type in CurrentAssemblies.GetLoadedAssemblies().SelectMany(a => a.GetTypes()))
+            {
+                foreach (FieldInfo field in type.GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+                {
+                    var attribute = field.GetCustomAttribute<ProvisionAttribute>();
+                    
+                    if (attribute == null)
+                        continue;
+                    
+                    provisionedFields.Add(attribute, field);
+                    
+                    if(!provisionedTypeCache.TryGetValue(type, out List<ProvisionAttribute> provisionedTypes))
+                        provisionedTypes = provisionedTypeCache[type] = new List<ProvisionAttribute>();
+                    
+                    provisionedTypes.Add(attribute);
+                }
+            }
+        }
+        
+        internal static void ResolveProvisionsFor(DialogueNodeData nodeData, ProvisionerData provisionerData, DialogueDirector director)
+        {
+            List<ProvisionAttribute> dataToProvision = provisionedTypeCache[nodeData.GetType()];
+            
+            if(!director.TryGetProcessorForNode(provisionerData.GetType(), out IDialogueProcessor processor))
+                throw new ArgumentException($"{provisionerData.GetType()} does not have a processor");
+            
+            if(processor is not IDialogueProvisioner provisioner)
+                throw new ArgumentException($"{provisionerData.GetType()} is not a provisioner");
+            
+            foreach (ProvisionAttribute provisionAttribute in dataToProvision)
+            {
+                if(!provisionerData.linkedNodes[nodeData.nodeHash].Contains(provisionAttribute.portName))
+                    continue;
+                
+                FieldInfo fieldInfo = provisionedFields[provisionAttribute];
+                
+                //TODO: Determine if generic should be removed
+                fieldInfo.SetValue(nodeData, provisioner.GetProvisionedData<object>(provisionerData));
+            }
+        }
+    }
+}

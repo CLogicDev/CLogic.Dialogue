@@ -7,12 +7,7 @@ namespace CLogic.Dialogue
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class StaticProcessorAttribute : Attribute
     {
-        
-    }
-    
-    internal static class StaticProcessorScanner
-    {
-        public static IEnumerable<Type> GetStaticProcessorTypes()
+        internal static IEnumerable<Type> GetStaticProcessorTypes()
         {
             return CurrentAssemblies.GetLoadedAssemblies()
                     .SelectMany(a => a.GetTypes())

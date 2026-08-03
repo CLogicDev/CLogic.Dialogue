@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CLogic.Dialogue;
+using CLogic.Dialogue.Provisioner;
 using UnityEditor;
 
 namespace CLogic.Dialogue.Editor
@@ -57,6 +58,7 @@ namespace CLogic.Dialogue.Editor
         {
             nodeMap = new Dictionary<INode, int>(editorGraph.NodeCount);
             portMap = new Dictionary<IPort, int>(editorGraph.NodeCount);
+            
             List<IVariableNode> variableNodeBuffer = new(1); // Created outside to reduce heap allocations
             
             targetGraph.subgraphWireReferences = new Dictionary<Hash128, DialogueGraph.SubgraphWireReference>();
@@ -237,6 +239,7 @@ namespace CLogic.Dialogue.Editor
         private void ProcessNodes(DialogueEditorGraph editorGraph, DialogueGraph graph, AssetImportContext context)
         {
             var list = new List<(int id, DialogueNodeData data)>();
+            List<ProvisionerData> provisionedData = new();
             HashSet<ScriptableObject> savedProvisions = new();
             
             ProcessNodesRecursively(editorGraph.GetNodes());
@@ -248,6 +251,8 @@ namespace CLogic.Dialogue.Editor
             {
                 graph.nodes[i] = list[i].data;
             }
+            
+            graph.provisionerData = provisionedData.ToArray();
             return;
             
             void ProcessNodesRecursively(IEnumerable<INode> nodes)
@@ -257,10 +262,14 @@ namespace CLogic.Dialogue.Editor
                     if (node is IScriptableObjectProvisionerNode provisionerNode)
                     {
                         ScriptableObject so = provisionerNode.GetScriptableObject();
-                        if(savedProvisions.Add(so))
+                        if (savedProvisions.Add(so))
                             context.AddObjectToAsset("provision " + (savedProvisions.Count - 1), provisionerNode.GetScriptableObject());
                     }
-                    
+                    else if (node is IRuntimeProvisioner runtimeProvisioner)
+                    {
+                        provisionedData.Add(runtimeProvisioner.ProcessNode(graph, portMap));
+                    }
+                
                     if (node is ISubgraphNode subgraphNode)
                     {
                         if (IsAssetSubGraphNode(subgraphNode))

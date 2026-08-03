@@ -1,5 +1,6 @@
 ﻿using TMPro;
 using System;
+using CLogic.Dialogue.Provisioner;
 using CLogic.Utils.UI;
 using UnityEngine;
 
@@ -8,6 +9,9 @@ namespace CLogic.Dialogue
     [Serializable]
     public class ConversationNodeData : DialogueNodeData
     {
+        public const string IN_TEXT = "Text";
+        
+        [Provision(IN_TEXT)]
         public string text;
         public string characterName;
         public float textSpeed;

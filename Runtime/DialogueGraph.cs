@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using CLogic.Dialogue.Provisioner;
 
 namespace CLogic.Dialogue
 {
@@ -23,6 +24,9 @@ namespace CLogic.Dialogue
         
         [SerializeReference]
         public DialogueNodeData[] nodes;
+        
+        [SerializeReference]
+        public ProvisionerData[] provisionerData;
     }
     
     [Serializable]

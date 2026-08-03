@@ -167,11 +167,12 @@ namespace CLogic.Dialogue
             
             OnDialogueStart?.Invoke();
             
+            (provisionerLookup ??= new Dictionary<Hash128, ProvisionerData>()).Clear();
             foreach (ProvisionerData provisionerData in graph.provisionerData)
             {
                 foreach (var kvp in provisionerData.linkedNodes)
                 {
-                    this.provisionerLookup.Add(kvp.Key, provisionerData);
+                    provisionerLookup.Add(kvp.Key, provisionerData);
                 }
             }
             
