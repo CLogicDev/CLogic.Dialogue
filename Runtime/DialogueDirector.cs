@@ -2,10 +2,14 @@
 using UnityEngine;
 using EditorAttributes;
 using System.Collections.Generic;
+using System.Linq;
+using CLogic.Dialogue.Provisioner;
 using CLogic.Utils;
+using Unity.Scripting.LifecycleManagement;
 
 namespace CLogic.Dialogue
 {
+    [AutoStaticsCleanup]
     public partial class DialogueDirector : MonoBehaviour
     {
         [field: SerializeField]
@@ -28,7 +32,14 @@ namespace CLogic.Dialogue
         private List<DialogueProcessor> bakedProcessors = new();
         private Dictionary<Type, IDialogueProcessor> nodeProcessors = new();
         private Dictionary<Type, IDialogueProcessor> nodeProcessorOverrides = new();
+        
+        [NoAutoStaticsCleanup]
         private static List<IDialogueProcessor> cachedStaticProcessors;
+        [NoAutoStaticsCleanup]
+        private static Dictionary<Type, IDialogueProcessor> cachedStaticMonoProcessors;
+        private static GameObject monoProcessorsContainer;
+        
+        private Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
         
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
@@ -97,24 +108,49 @@ namespace CLogic.Dialogue
                 }
             }
             
-            if(currentDepth > 0)
+            if (currentDepth > 0)
                 yield break;
             
-            if(cachedStaticProcessors != null)
+            if (monoProcessorsContainer == null)
+                monoProcessorsContainer = new GameObject("Dialogue Processors");
+            
+            cachedStaticMonoProcessors ??= new Dictionary<Type, IDialogueProcessor>();
+            
+            foreach (Type cachedMonoType in cachedStaticMonoProcessors.Keys.ToArray())
+            {
+                var monoProcessor = cachedStaticMonoProcessors[cachedMonoType] as MonoBehaviour;
+                
+                if(monoProcessor == null)
+                    cachedStaticMonoProcessors[cachedMonoType] = (IDialogueProcessor)monoProcessorsContainer.AddComponent(cachedMonoType);
+                
+                yield return cachedStaticMonoProcessors[cachedMonoType];
+            }
+            
+            if (cachedStaticProcessors != null)
+            {
+                foreach (IDialogueProcessor cachedStaticProcessor in cachedStaticProcessors)
+                    yield return cachedStaticProcessor;
+                
                 yield break;
+            }
             
             cachedStaticProcessors = new List<IDialogueProcessor>();
             
-            var processorObject = new GameObject("Dialogue Processors");
-            foreach (Type type in StaticProcessorScanner.GetStaticProcessorTypes())
+            foreach (Type type in StaticProcessorAttribute.GetStaticProcessorTypes())
             {
                 IDialogueProcessor processor;
                 if (typeof(MonoBehaviour).IsAssignableFrom(type))
-                    processor = (IDialogueProcessor)processorObject.AddComponent(type);
+                {
+                    processor = (IDialogueProcessor)monoProcessorsContainer.AddComponent(type);
+                    cachedStaticMonoProcessors.Add(type, processor);
+                }
                 else
+                {
                     processor = (IDialogueProcessor)Activator.CreateInstance(type);
+                    cachedStaticProcessors.Add(processor);
+                }
                 
-                cachedStaticProcessors.Add(processor);
+                yield return processor;
             }
         }
         
@@ -130,6 +166,14 @@ namespace CLogic.Dialogue
             nodes = graph.nodes;
             
             OnDialogueStart?.Invoke();
+            
+            foreach (ProvisionerData provisionerData in graph.provisionerData)
+            {
+                foreach (var kvp in provisionerData.linkedNodes)
+                {
+                    this.provisionerLookup.Add(kvp.Key, provisionerData);
+                }
+            }
             
             #if UNITY_EDITOR
             if(createVisualizationContext)
@@ -229,6 +273,11 @@ namespace CLogic.Dialogue
             
             if (!fireAndForget)
                 CurrentProcessor = processor;
+            
+            if (provisionerLookup.TryGetValue(node.nodeHash, out ProvisionerData provisionerData))
+            {
+                ProvisionResolver.ResolveProvisionsFor(node, provisionerData, this);
+            }
             
             processor.ProcessNode(node, this);
         }
