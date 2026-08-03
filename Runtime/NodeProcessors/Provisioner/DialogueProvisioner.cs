@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Unity.GraphToolkit.Editor.GraphVisualization;
 using UnityEngine;
 namespace CLogic.Dialogue.Provisioner
 {
@@ -9,6 +8,10 @@ namespace CLogic.Dialogue.Provisioner
         public Type HandledType { get; }
         
         public T GetProvisionedData<T>(ProvisionerData nodeData);
+        
+        #if UNITY_EDITOR
+        public void PreviewProvision(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, Hash128 provisionedPortHash, object provision);
+        #endif
     }
     
     [Serializable]
@@ -41,12 +44,21 @@ namespace CLogic.Dialogue.Provisioner
         
         protected abstract TProvisionData CreateProvisionedData(TNodeData nodeData);
         
+        #if UNITY_EDITOR
+        public virtual void PreviewProvision(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, Hash128 provisionedPortHash, object provision)
+        {
+            ctx.GetPortReference(provisionedPortHash).SetPreview(provision.ToString());
+        }
+        #endif
+        
         #region Interface Contracts
         public Type NodeType => HandledType;
         public bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
         public void ProcessNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
         public void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
-        public void VisualizeNode(Context ctx, DialogueNodeData nodeData) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
+        #if UNITY_EDITOR
+        public void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
+        #endif
         #endregion
     }
 }

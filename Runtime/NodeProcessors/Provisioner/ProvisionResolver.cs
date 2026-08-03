@@ -11,7 +11,7 @@ namespace CLogic.Dialogue.Provisioner
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class ProvisionAttribute : Attribute
     {
-        internal string portName;
+        public string portName;
         public ProvisionAttribute(string inputPortName)
         {
             portName = inputPortName;
@@ -63,7 +63,13 @@ namespace CLogic.Dialogue.Provisioner
                 FieldInfo fieldInfo = provisionedFields[provisionAttribute];
                 
                 //TODO: Determine if generic should be removed
-                fieldInfo.SetValue(nodeData, provisioner.GetProvisionedData<object>(provisionerData));
+                object provision = provisioner.GetProvisionedData<object>(provisionerData);
+                fieldInfo.SetValue(nodeData, provision);
+                
+                #if UNITY_EDITOR
+                if(nodeData.provisionedPorts != null && nodeData.provisionedPorts.TryGetValue(provisionAttribute.portName, out Hash128 provisionedPort))
+                    provisioner.PreviewProvision(director.CurrentContext, provisionedPort, provision);
+                #endif
             }
         }
     }

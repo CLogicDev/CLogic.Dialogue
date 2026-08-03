@@ -202,7 +202,7 @@ namespace CLogic.Dialogue
             if (callFinishCallback)
             {
                 #if UNITY_EDITOR
-                currentContext?.Dispose();
+                CurrentContext?.Dispose();
                 #endif
                 
                 CurrentDialogue.SetDialogueFinished();

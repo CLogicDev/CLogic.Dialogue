@@ -24,7 +24,7 @@ namespace CLogic.Dialogue
                 dialogue = CurrentDialogue,
                 originatingID = currentNodeID,
                 #if UNITY_EDITOR
-                visualizationContext = currentContext
+                visualizationContext = CurrentContext
                 #endif
             });
             PlayDialogueGraph(subgraph.graph, HandleSubGraphFinished, callFinishCallback: false);
@@ -36,7 +36,7 @@ namespace CLogic.Dialogue
                 return;
             
             #if UNITY_EDITOR
-            currentContext = graph.visualizationContext;
+            CurrentContext = graph.visualizationContext;
             #endif
             
             PlayDialogueGraph(graph.dialogue.DialogueGraph, graph.finishCallback, true, graph.dialogue.DialogueGraph.nodes[graph.originatingID].nextNodeID, createVisualizationContext: false);

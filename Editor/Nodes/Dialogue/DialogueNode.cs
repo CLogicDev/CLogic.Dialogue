@@ -4,6 +4,7 @@ using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 using System.Reflection;
 using CLogic.Dialogue;
+using CLogic.Dialogue.Provisioner;
 using UnityEditor;
 using UnityEditor.Graphs;
 using UnityEngine;
@@ -97,7 +98,29 @@ namespace CLogic.Dialogue.Editor
         
         protected TValue GetPortValue<TValue>(IPort port) => IDialogueGraphNode.GetPortValue<TValue>(port);
         
-        public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap) => ProcessNodeAsset(graph, portMap);
+        public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap)
+        {
+            DialogueNodeData nodeData = ProcessNodeAsset(graph, portMap);
+            
+            if (nodeData == null)
+                return null;
+            
+            foreach (FieldInfo field in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+            {
+                var attribute = field.GetCustomAttribute<ProvisionAttribute>();
+                
+                if (attribute == null)
+                    continue;
+                
+                nodeData.provisionedPorts ??= new Dictionary<string, Hash128>();
+                
+                IPort provisionedPort = GetInputPortByName(attribute.portName);
+                
+                nodeData.provisionedPorts.Add(provisionedPort.Name, provisionedPort.ID);
+            }
+            
+            return nodeData;
+        }
         
         private void InitFinished()
         {

@@ -14,6 +14,9 @@ namespace CLogic.Dialogue
         public Hash128 execInputPortHash;
         public Hash128 execOutputPortHash;
         
+        [SerializeField]
+        public Dictionary<string, Hash128> provisionedPorts;
+        
         public int nextNodeID = -1;
         
         public int startNodeActionID = -1;
