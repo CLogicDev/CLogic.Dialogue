@@ -55,8 +55,10 @@ namespace CLogic.Dialogue.Editor
         public virtual void OnValidate(GraphLogger graphLogger) {  }
     }
     
+    /// <typeparam name="TNodeData">Type of data that will be passed to the runtime processor</typeparam>
+    /// <typeparam name="TProvision">Type of data that will be provisioned to the asking node</typeparam>
     [Serializable]
-    public abstract class RuntimeProvisionerNode<TNodeData, TProvisionData> : Node, IRuntimeProvisioner where TProvisionData : ProvisionerData, new()
+    public abstract class RuntimeProvisionerNode<TNodeData, TProvision> : Node, IRuntimeProvisioner where TProvision : ProvisionerData, new()
     {
         public Type HandledType => typeof(TNodeData);
         
@@ -71,7 +73,7 @@ namespace CLogic.Dialogue.Editor
         
         public ProvisionerData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
-            TProvisionData data = new();
+            TProvision data = new();
             
             List<IPort> provisionedPorts = new(1);
             
@@ -96,8 +98,8 @@ namespace CLogic.Dialogue.Editor
             return data;
         }
         
-        public abstract void ProcessNodeCore(ref TProvisionData provisionData, DialogueGraph graph, Dictionary<IPort, int> portMap);
+        public abstract void ProcessNodeCore(ref TProvision provisionData, DialogueGraph graph, Dictionary<IPort, int> portMap);
         
-        public void OnValidate(GraphLogger graphLogger) { }
+        public virtual void OnValidate(GraphLogger graphLogger) { }
     }
 }

@@ -22,12 +22,14 @@ namespace CLogic.Dialogue.Provisioner
         public Dictionary<Hash128, List<string>> linkedNodes;
     }
     
-    public abstract class DialogueProvisioner<TNodeData, TProvisionData> : MonoBehaviour, IDialogueProcessor, IDialogueProvisioner where TNodeData : ProvisionerData
+    /// <typeparam name="TNodeData">Type of data that will be passed to the runtime processor</typeparam>
+    /// <typeparam name="TProvision">Type of data that will be provisioned to the asking node</typeparam>
+    public abstract class DialogueProvisioner<TNodeData, TProvision> : MonoBehaviour, IDialogueProcessor, IDialogueProvisioner where TNodeData : ProvisionerData
     {
         public Type HandledType => typeof(TNodeData);
         
         public virtual bool SupportsCaching { get; protected set; } = true;
-        protected TProvisionData cache;
+        protected TProvision cache;
         
         public T1 GetProvisionedData<T1>(ProvisionerData nodeData)
         {
@@ -42,7 +44,7 @@ namespace CLogic.Dialogue.Provisioner
             throw new InvalidCastException("Provisioned data is not of type " + typeof(TNodeData).Name);
         }
         
-        protected abstract TProvisionData CreateProvisionedData(TNodeData nodeData);
+        protected abstract TProvision CreateProvisionedData(TNodeData nodeData);
         
         #if UNITY_EDITOR
         public virtual void PreviewProvision(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, Hash128 provisionedPortHash, object provision)
@@ -53,11 +55,11 @@ namespace CLogic.Dialogue.Provisioner
         
         #region Interface Contracts
         public Type NodeType => HandledType;
-        public bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
-        public void ProcessNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
-        public void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
+        public bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvision>)} cannot process nodes");
+        public void ProcessNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvision>)} cannot process nodes");
+        public void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvision>)} cannot process nodes");
         #if UNITY_EDITOR
-        public void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvisionData>)} cannot process nodes");
+        public void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData) => throw new Exception($"{nameof(DialogueProvisioner<TNodeData, TProvision>)} cannot process nodes");
         #endif
         #endregion
     }
