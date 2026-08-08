@@ -18,8 +18,11 @@ namespace CLogic.Dialogue.Provisioner
         }
     }
     
-    internal static partial class ProvisionResolver
+    [StaticProcessor]
+    internal partial class ProvisionResolver : DialoguePreProcessor<DialogueNodeData>
     {
+        public override int Priority => -1000;
+        
         private static Dictionary<Type, List<ProvisionAttribute>> provisionedTypeCache = new();
         private static Dictionary<ProvisionAttribute, FieldInfo> provisionedFields = new();
         
@@ -43,6 +46,12 @@ namespace CLogic.Dialogue.Provisioner
                     provisionedTypes.Add(attribute);
                 }
             }
+        }
+        
+        protected override void PreProcess(DialogueNodeData nodeData, DialogueDirector director)
+        {
+            if(director.provisionerLookup.TryGetValue(nodeData.nodeHash, out ProvisionerData provisionerData))
+                ResolveProvisionsFor(nodeData, provisionerData, director);
         }
         
         internal static void ResolveProvisionsFor(DialogueNodeData nodeData, ProvisionerData provisionerData, DialogueDirector director)

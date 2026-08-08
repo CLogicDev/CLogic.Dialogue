@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+
 namespace CLogic.Dialogue
 {
     public interface IDialoguePreProcessor
@@ -8,7 +9,7 @@ namespace CLogic.Dialogue
         
         public int Priority { get; }
         
-        public void PreProcess(DialogueNodeData nodeData, DialogueDirector director);
+        internal void PreProcessInternal(DialogueNodeData nodeData, DialogueDirector director);
     }
     
     public abstract class DialoguePreProcessor<T> : MonoBehaviour, IDialogueProcessor, IDialoguePreProcessor where T : DialogueNodeData
@@ -16,8 +17,7 @@ namespace CLogic.Dialogue
         public Type HandledType => typeof(T);
         public abstract int Priority { get; }
         
-        public void PreProcess(DialogueNodeData nodeData, DialogueDirector director) => PreProcess((T)nodeData, director);
-        
+        void IDialoguePreProcessor.PreProcessInternal(DialogueNodeData nodeData, DialogueDirector director) => PreProcess((T)nodeData, director);
         protected abstract void PreProcess(T nodeData, DialogueDirector director);
         
         #region Interface Contracts

@@ -8,7 +8,7 @@ namespace CLogic.Dialogue
         
         public int Priority { get; }
         
-        public void PostProcess(DialogueNodeData nodeData, DialogueDirector director);
+        internal void PostProcessInternal(DialogueNodeData nodeData, DialogueDirector director);
     }
     
     public abstract class DialoguePostProcessor<T> : MonoBehaviour, IDialogueProcessor, IDialoguePostProcessor where T : DialogueNodeData
@@ -16,8 +16,7 @@ namespace CLogic.Dialogue
         public Type HandledType => typeof(T);
         public abstract int Priority { get; }
         
-        public void PostProcess(DialogueNodeData nodeData, DialogueDirector director) => PostProcess((T)nodeData, director);
-        
+        void IDialoguePostProcessor.PostProcessInternal(DialogueNodeData nodeData, DialogueDirector director) => PostProcess((T)nodeData, director);
         protected abstract void PostProcess(T nodeData, DialogueDirector director);
         
         #region Interface Contracts
