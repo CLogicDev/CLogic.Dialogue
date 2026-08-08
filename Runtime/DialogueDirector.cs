@@ -32,6 +32,8 @@ namespace CLogic.Dialogue
         private List<DialogueProcessor> bakedProcessors = new();
         private Dictionary<Type, IDialogueProcessor> nodeProcessors = new();
         private Dictionary<Type, IDialogueProcessor> nodeProcessorOverrides = new();
+        private Dictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors = new();
+        private Dictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors = new();
         
         [NoAutoStaticsCleanup]
         private static List<IDialogueProcessor> cachedStaticProcessors;
@@ -60,10 +62,38 @@ namespace CLogic.Dialogue
             IEnumerable<IDialogueProcessor> processorProvider = IsUsingBakedProcessors ? bakedProcessors : DiscoverProcessors(transform);
             
             nodeProcessors.Clear();
+            nodePreProcessors.Clear();
+            nodePostProcessors.Clear();
             foreach (IDialogueProcessor processor in processorProvider)
             {
+                switch (processor)
+                {
+                    case IDialoguePreProcessor preProcessor:
+                        if(!nodePreProcessors.TryGetValue(preProcessor.HandledType, out List<IDialoguePreProcessor> preProcessors)) 
+                            preProcessors = nodePreProcessors[preProcessor.HandledType] = new List<IDialoguePreProcessor>();
+                        
+                        preProcessors.Add(preProcessor);
+                        continue;
+                    case IDialoguePostProcessor postProcessor:
+                        if(!nodePostProcessors.TryGetValue(postProcessor.HandledType, out List<IDialoguePostProcessor> postProcessors))
+                            postProcessors = nodePostProcessors[postProcessor.HandledType] = new List<IDialoguePostProcessor>();
+                        
+                        postProcessors.Add(postProcessor);
+                        continue;
+                }
+                
                 if (nodeProcessors == null || !nodeProcessorOverrides.ContainsKey(processor.NodeType))
                     nodeProcessors.Add(processor.NodeType, processor);
+            }
+            
+            foreach (List<IDialoguePreProcessor> preProcessors in nodePreProcessors.Values)
+            {
+                preProcessors.Sort((a, b) => a.Priority.CompareTo(b.Priority));
+            }
+            
+            foreach (List<IDialoguePostProcessor> postProcessors in nodePostProcessors.Values)
+            {
+                postProcessors.Sort((a, b) => a.Priority.CompareTo(b.Priority));
             }
         }
         
@@ -255,16 +285,16 @@ namespace CLogic.Dialogue
         
         public DialogueNodeData GetNodeFromID(int nodeID) => nodes[nodeID];
         
-        public void ProcessNode(DialogueNodeData node, bool fireAndForget = false)
+        public void ProcessNode(DialogueNodeData nodeData, bool fireAndForget = false)
         {
-            if (node is SubGraphNodeData subGraphNodeData)
+            if (nodeData is SubGraphNodeData subGraphNodeData)
             {
                 CurrentProcessor = null;
                 ProcessSubGraph(subGraphNodeData); // Sub graph processing has precedence over all processing logic
                 return;
             }
             
-            Type type = node.GetType();
+            Type type = nodeData.GetType();
             
             if(!TryGetProcessorForNode(type, out IDialogueProcessor processor))
             {
@@ -272,15 +302,32 @@ namespace CLogic.Dialogue
                 return;
             }
             
+            
             if (!fireAndForget)
                 CurrentProcessor = processor;
             
-            if (provisionerLookup.TryGetValue(node.nodeHash, out ProvisionerData provisionerData))
+            if (provisionerLookup.TryGetValue(nodeData.nodeHash, out ProvisionerData provisionerData))
             {
-                ProvisionResolver.ResolveProvisionsFor(node, provisionerData, this);
+                ProvisionResolver.ResolveProvisionsFor(nodeData, provisionerData, this);
             }
             
-            processor.ProcessNode(node, this);
+            if (nodePreProcessors.TryGetValue(nodeData.GetType(), out List<IDialoguePreProcessor> preProcessors))
+            {
+                foreach (var preProcessor in preProcessors)
+                {
+                    preProcessor.PreProcess(nodeData, this);
+                }
+            }
+            
+            processor.ProcessNode(nodeData, this);
+            
+            if (nodePostProcessors.TryGetValue(nodeData.GetType(), out List<IDialoguePostProcessor> postProcessors))
+            {
+                foreach (var postProcessor in postProcessors)
+                {
+                    postProcessor.PostProcess(nodeData, this);
+                }
+            }
         }
 
         public bool TryGetProcessorForNode<T>(Type type, out T processor) where T : IDialogueProcessor
