@@ -41,7 +41,7 @@ namespace CLogic.Dialogue
         private static Dictionary<Type, IDialogueProcessor> cachedStaticMonoProcessors;
         private static GameObject monoProcessorsContainer;
         
-        private Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
+        internal Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
         
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
@@ -296,38 +296,32 @@ namespace CLogic.Dialogue
             
             Type type = nodeData.GetType();
             
-            if(!TryGetProcessorForNode(type, out IDialogueProcessor processor))
+            if(!TryGetProcessorForNode(type, out IDialogueProcessor nodeProcessor))
             {
                 Integrations.LogError($"No processor for type {type}");
                 return;
             }
             
-            
             if (!fireAndForget)
-                CurrentProcessor = processor;
+                CurrentProcessor = nodeProcessor;
             
-            if (provisionerLookup.TryGetValue(nodeData.nodeHash, out ProvisionerData provisionerData))
-            {
-                ProvisionResolver.ResolveProvisionsFor(nodeData, provisionerData, this);
-            }
+            if (nodePreProcessors.TryGetValue(typeof(DialogueNodeData), out var globalPreProcessors))
+                foreach (var processor in globalPreProcessors)
+                    processor.PreProcessInternal(nodeData, this);
             
-            if (nodePreProcessors.TryGetValue(nodeData.GetType(), out List<IDialoguePreProcessor> preProcessors))
-            {
-                foreach (var preProcessor in preProcessors)
-                {
-                    preProcessor.PreProcess(nodeData, this);
-                }
-            }
+            if (nodePreProcessors.TryGetValue(nodeData.GetType(), out var preProcessors))
+                foreach (var processor in preProcessors)
+                    processor.PreProcessInternal(nodeData, this);
             
-            processor.ProcessNode(nodeData, this);
+            nodeProcessor.ProcessNode(nodeData, this);
             
-            if (nodePostProcessors.TryGetValue(nodeData.GetType(), out List<IDialoguePostProcessor> postProcessors))
-            {
-                foreach (var postProcessor in postProcessors)
-                {
-                    postProcessor.PostProcess(nodeData, this);
-                }
-            }
+            if (nodePostProcessors.TryGetValue(typeof(DialogueNodeData), out var globalPostProcessors))
+                foreach (var processor in globalPostProcessors)
+                    processor.PostProcessInternal(nodeData, this);
+            
+            if (nodePostProcessors.TryGetValue(nodeData.GetType(), out var postProcessors))
+                foreach (var processor in postProcessors)
+                    processor.PostProcessInternal(nodeData, this);
         }
 
         public bool TryGetProcessorForNode<T>(Type type, out T processor) where T : IDialogueProcessor
