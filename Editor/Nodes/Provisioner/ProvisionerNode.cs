@@ -55,12 +55,12 @@ namespace CLogic.Dialogue.Editor
         public virtual void OnValidate(GraphLogger graphLogger) {  }
     }
     
-    /// <typeparam name="TNodeData">Type of data that will be passed to the runtime processor</typeparam>
-    /// <typeparam name="TProvision">Type of data that will be provisioned to the asking node</typeparam>
+    /// <typeparam name="TIn">Type of data that will be passed to the runtime processor</typeparam>
+    /// <typeparam name="TOut">Type of data that will be provisioned to the asking node</typeparam>
     [Serializable]
-    public abstract class RuntimeProvisionerNode<TNodeData, TProvision> : Node, IRuntimeProvisioner where TProvision : ProvisionerData, new()
+    public abstract class RuntimeProvisionerNode<TIn, TOut> : Node, IRuntimeProvisioner where TOut : ProvisionerData, new()
     {
-        public Type HandledType => typeof(TNodeData);
+        public Type HandledType => typeof(TIn);
         
         public T1 GetProvisionedData<T1>() => default;
         
@@ -68,12 +68,12 @@ namespace CLogic.Dialogue.Editor
         {
             base.OnDefinePorts(context);
             
-            context.AddOutputPort<TNodeData>(IProvisionerNode.OUT_PROVISION).WithDisplayName("Provision").Build();
+            context.AddOutputPort<TIn>(IProvisionerNode.OUT_PROVISION).WithDisplayName("Provision").Build();
         }
         
         public ProvisionerData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
-            TProvision data = new();
+            TOut data = new();
             
             List<IPort> provisionedPorts = new(1);
             
@@ -98,7 +98,7 @@ namespace CLogic.Dialogue.Editor
             return data;
         }
         
-        public abstract void ProcessNodeCore(ref TProvision provisionData, DialogueGraph graph, Dictionary<IPort, int> portMap);
+        public abstract void ProcessNodeCore(ref TOut provisionData, DialogueGraph graph, Dictionary<IPort, int> portMap);
         
         public virtual void OnValidate(GraphLogger graphLogger) { }
     }

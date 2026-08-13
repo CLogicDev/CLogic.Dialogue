@@ -17,9 +17,6 @@ namespace CLogic.Dialogue
         
         public int maxDiscoveryDepth = 2;
         
-        [field: SerializeField]
-        public List<DialogueProcessor> processorOverrides { get; private set; } = new();
-        
         private DialogueNodeData currentNode;
         public IDialogueProcessor CurrentProcessor { get; private set; }
         
@@ -28,17 +25,14 @@ namespace CLogic.Dialogue
         [NonSerialized]
         private DialogueNodeData[] nodes;
         
-        [SerializeField, ShowField(nameof(IsUsingBakedProcessors))]
-        private List<DialogueProcessor> bakedProcessors = new();
         private Dictionary<Type, IDialogueProcessor> nodeProcessors = new();
-        private Dictionary<Type, IDialogueProcessor> nodeProcessorOverrides = new();
         private Dictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors = new();
         private Dictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors = new();
         
         [NoAutoStaticsCleanup]
-        private static List<IDialogueProcessor> cachedStaticProcessors;
+        private static List<IDialogueProcessor> cachedSingletonProcessors;
         [NoAutoStaticsCleanup]
-        private static Dictionary<Type, IDialogueProcessor> cachedStaticMonoProcessors;
+        private static Dictionary<Type, IDialogueProcessor> cachedSingletonMonoProcessors;
         private static GameObject monoProcessorsContainer;
         
         internal Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
@@ -49,140 +43,139 @@ namespace CLogic.Dialogue
         [ShowInInspector]
         public bool IsPlaying => currentNode != null;
         
-        [ReadOnly, ShowInInspector]
-        public bool IsUsingBakedProcessors => bakedProcessors.Count > 0;
+        private void Awake() => ResolveProcessors();
         
-        private void Awake()
+        #region Processor Resolution
+        private void ResolveProcessors()
         {
-            foreach (DialogueProcessor processor in processorOverrides)
-            {
-                nodeProcessorOverrides.Add(processor.NodeType, processor);
-            }
+            IEnumerable<IDialogueProcessor> childProcessors = DiscoverProcessorsInHierarchy(transform);
+            IEnumerable<IDialogueProcessor> singletonProcessors = DiscoverSingletonProcessors();
             
-            IEnumerable<IDialogueProcessor> processorProvider = IsUsingBakedProcessors ? bakedProcessors : DiscoverProcessors(transform);
+            IEnumerable<IDialogueProcessor> processors = childProcessors.Concat(singletonProcessors);
             
             nodeProcessors.Clear();
             nodePreProcessors.Clear();
             nodePostProcessors.Clear();
-            foreach (IDialogueProcessor processor in processorProvider)
+            
+            foreach (IDialogueProcessor processor in processors)
             {
                 switch (processor)
                 {
                     case IDialoguePreProcessor preProcessor:
-                        if(!nodePreProcessors.TryGetValue(preProcessor.HandledType, out List<IDialoguePreProcessor> preProcessors)) 
+                        if(!nodePreProcessors.TryGetValue(preProcessor.HandledType, out List<IDialoguePreProcessor> preProcessors))
                             preProcessors = nodePreProcessors[preProcessor.HandledType] = new List<IDialoguePreProcessor>();
                         
                         preProcessors.Add(preProcessor);
-                        continue;
+                        break;
                     case IDialoguePostProcessor postProcessor:
                         if(!nodePostProcessors.TryGetValue(postProcessor.HandledType, out List<IDialoguePostProcessor> postProcessors))
                             postProcessors = nodePostProcessors[postProcessor.HandledType] = new List<IDialoguePostProcessor>();
                         
                         postProcessors.Add(postProcessor);
-                        continue;
+                        break;
+                    
+                    default:
+                        nodeProcessors.Add(processor.NodeType, processor);
+                        break;
+                }
+            }
+            
+            Dictionary<Type, List<IDialoguePreProcessor>> resolvedPreProcessors = new();
+            Dictionary<Type, List<IDialoguePostProcessor>> resolvedPostProcessors = new();
+            
+            foreach (Type nodeType in nodeProcessors.Keys)
+            {
+                List<IDialoguePreProcessor> preProcessors = new();
+                List<IDialoguePostProcessor> postProcessors = new();
+                
+                foreach (var kvp in nodePreProcessors)
+                {
+                    if (kvp.Key.IsAssignableFrom(nodeType))
+                        preProcessors.AddRange(kvp.Value);
                 }
                 
-                if (nodeProcessors == null || !nodeProcessorOverrides.ContainsKey(processor.NodeType))
-                    nodeProcessors.Add(processor.NodeType, processor);
-            }
-            
-            foreach (List<IDialoguePreProcessor> preProcessors in nodePreProcessors.Values)
-            {
+                foreach (var kvp in nodePostProcessors)
+                {
+                    if (kvp.Key.IsAssignableFrom(nodeType))
+                        postProcessors.AddRange(kvp.Value);
+                }
+                
                 preProcessors.Sort((a, b) => a.Priority.CompareTo(b.Priority));
-            }
-            
-            foreach (List<IDialoguePostProcessor> postProcessors in nodePostProcessors.Values)
-            {
                 postProcessors.Sort((a, b) => a.Priority.CompareTo(b.Priority));
-            }
-        }
-        
-        [Button("Bake Processors")]
-        public void BakeProcessors()
-        {
-            bakedProcessors.Clear();
-            foreach (IDialogueProcessor processor in DiscoverProcessors(transform))
-            {
-                if (!nodeProcessorOverrides.ContainsKey(processor.NodeType))
-                    bakedProcessors.Add(processor as DialogueProcessor); // If processors are discovered they must implement DialogueNodeProcessor
-            }
-        }
-        
-        public IEnumerable<IDialogueProcessor> DiscoverProcessors(Transform parent, int currentDepth = 0)
-        {
-            //Check parent components
-            foreach (IDialogueProcessor dialogueNodeProcessor in parent.GetComponents<IDialogueProcessor>())
-            {
-                yield return dialogueNodeProcessor;
+                
+                resolvedPreProcessors[nodeType] = preProcessors;
+                resolvedPostProcessors[nodeType] = postProcessors;
             }
             
-            //Don't check children is depth is exceeded
+            nodePreProcessors = resolvedPreProcessors;
+            nodePostProcessors = resolvedPostProcessors;
+        }
+        
+        private IEnumerable<IDialogueProcessor> DiscoverProcessorsInHierarchy(Transform parent, int currentDepth = 0)
+        {
+            foreach (IDialogueProcessor dialogueNodeProcessor in parent.GetComponents<IDialogueProcessor>())
+                yield return dialogueNodeProcessor;
+            
             if (currentDepth >= maxDiscoveryDepth)
                 yield break;
             
             foreach (Transform child in parent)
             {
-                //Check child components
-                foreach (IDialogueProcessor dialogueNodeProcessor in child.GetComponents<IDialogueProcessor>())
-                {
-                    yield return dialogueNodeProcessor;
-                }
-                
-                //Recursively check nested children
                 foreach (Transform nestedChild in child)
                 {
-                    foreach (IDialogueProcessor dialogueNodeProcessor in DiscoverProcessors(nestedChild, currentDepth + 2)) // Depth is +2 since child is checked then the nested child
+                    foreach (IDialogueProcessor dialogueNodeProcessor in DiscoverProcessorsInHierarchy(nestedChild, currentDepth + 1))
                     {
                         yield return dialogueNodeProcessor;
                     }
                 }
             }
-            
-            if (currentDepth > 0)
-                yield break;
-            
+        }
+        
+        private IEnumerable<IDialogueProcessor> DiscoverSingletonProcessors()
+        {
             if (monoProcessorsContainer == null)
                 monoProcessorsContainer = new GameObject("Dialogue Processors");
             
-            cachedStaticMonoProcessors ??= new Dictionary<Type, IDialogueProcessor>();
+            cachedSingletonMonoProcessors ??= new Dictionary<Type, IDialogueProcessor>();
             
-            foreach (Type cachedMonoType in cachedStaticMonoProcessors.Keys.ToArray())
+            foreach (Type cachedMonoType in cachedSingletonMonoProcessors.Keys.ToArray())
             {
-                var monoProcessor = cachedStaticMonoProcessors[cachedMonoType] as MonoBehaviour;
+                var monoProcessor = cachedSingletonMonoProcessors[cachedMonoType] as MonoBehaviour;
                 
                 if(monoProcessor == null)
-                    cachedStaticMonoProcessors[cachedMonoType] = (IDialogueProcessor)monoProcessorsContainer.AddComponent(cachedMonoType);
+                    cachedSingletonMonoProcessors[cachedMonoType] = (IDialogueProcessor)monoProcessorsContainer.AddComponent(cachedMonoType);
                 
-                yield return cachedStaticMonoProcessors[cachedMonoType];
+                yield return cachedSingletonMonoProcessors[cachedMonoType];
             }
             
-            if (cachedStaticProcessors != null)
+            if (cachedSingletonProcessors != null)
             {
-                foreach (IDialogueProcessor cachedStaticProcessor in cachedStaticProcessors)
+                foreach (IDialogueProcessor cachedStaticProcessor in cachedSingletonProcessors)
                     yield return cachedStaticProcessor;
                 
                 yield break;
             }
             
-            cachedStaticProcessors = new List<IDialogueProcessor>();
+            cachedSingletonProcessors = new List<IDialogueProcessor>();
             
-            foreach (Type type in StaticProcessorAttribute.GetStaticProcessorTypes())
+            foreach (Type type in SingletonProcessorAttribute.GetSingletonProcessorTypes())
             {
                 IDialogueProcessor processor;
                 if (typeof(MonoBehaviour).IsAssignableFrom(type))
                 {
                     processor = (IDialogueProcessor)monoProcessorsContainer.AddComponent(type);
-                    cachedStaticMonoProcessors.Add(type, processor);
+                    cachedSingletonMonoProcessors.Add(type, processor);
                 }
                 else
                 {
                     processor = (IDialogueProcessor)Activator.CreateInstance(type);
-                    cachedStaticProcessors.Add(processor);
+                    cachedSingletonProcessors.Add(processor);
                 }
                 
                 yield return processor;
             }
         }
+        #endregion
         
         public DialogueHandle PlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
         public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null, bool callFinishCallback = true, bool createVisualizationContext = true)
@@ -219,7 +212,6 @@ namespace CLogic.Dialogue
             return CurrentDialogue;
         }
         
-        // Not local function to allow access from sub graph handler
         [Button(serializeParameters: false)]
         public void EndDialogue(bool callFinishCallback = true)
         {
@@ -305,28 +297,18 @@ namespace CLogic.Dialogue
             if (!fireAndForget)
                 CurrentProcessor = nodeProcessor;
             
-            if (nodePreProcessors.TryGetValue(typeof(DialogueNodeData), out var globalPreProcessors))
-                foreach (var processor in globalPreProcessors)
-                    processor.PreProcessInternal(nodeData, this);
-            
-            if (nodePreProcessors.TryGetValue(nodeData.GetType(), out var preProcessors))
-                foreach (var processor in preProcessors)
-                    processor.PreProcessInternal(nodeData, this);
+            foreach (IDialoguePreProcessor processor in nodePreProcessors[type])
+                processor.PreProcessInternal(nodeData, this);
             
             nodeProcessor.ProcessNode(nodeData, this);
             
-            if (nodePostProcessors.TryGetValue(typeof(DialogueNodeData), out var globalPostProcessors))
-                foreach (var processor in globalPostProcessors)
-                    processor.PostProcessInternal(nodeData, this);
-            
-            if (nodePostProcessors.TryGetValue(nodeData.GetType(), out var postProcessors))
-                foreach (var processor in postProcessors)
-                    processor.PostProcessInternal(nodeData, this);
+            foreach (IDialoguePostProcessor processor in nodePostProcessors[type])
+                processor.PostProcessInternal(nodeData, this);
         }
 
         public bool TryGetProcessorForNode<T>(Type type, out T processor) where T : IDialogueProcessor
         {
-            if(nodeProcessorOverrides.TryGetValue(type, out IDialogueProcessor rawProcessor) || nodeProcessors.TryGetValue(type, out rawProcessor))
+            if(nodeProcessors.TryGetValue(type, out IDialogueProcessor rawProcessor))
             {
                 processor = (T)rawProcessor;
                 return true;

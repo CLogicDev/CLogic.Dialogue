@@ -8,7 +8,7 @@ namespace CLogic.Dialogue
     public class ActionNodeData : ContextNodeData
     {}
     
-    [StaticProcessor]
+    [SingletonProcessor]
     public class ActionProcessor : IDialogueProcessor
     {
         public Type NodeType => typeof(ActionNodeData);

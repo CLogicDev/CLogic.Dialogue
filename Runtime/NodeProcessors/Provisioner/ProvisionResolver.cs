@@ -18,7 +18,7 @@ namespace CLogic.Dialogue.Provisioner
         }
     }
     
-    [StaticProcessor]
+    [SingletonProcessor]
     internal partial class ProvisionResolver : DialoguePreProcessor<DialogueNodeData>
     {
         public override int Priority => -1000;
