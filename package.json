@@ -4,8 +4,8 @@
   "displayName": "CLogic.Dialogue",
   "description": "A graph-based dialogue system for creating branching conversations with extensible nodes and editor tooling.",
   "unity": "6000.6",
-  "documentationUrl": "https://docs.clogic.dev/CLogic.Systems/LoggingSystem",
-  "licensesUrl": "https://github.com/CLogicDev/CLogic.Utils/blob/main/LICENSE",
+  "documentationUrl": "https://docs.clogic.dev/manuals/dev.clogic.dialogue/index.html",
+  "licensesUrl": "https://docs.clogic.dev/manuals/dev.clogic.dialogue/index.html",
   "keywords": [
     "CLogic",
     "Dialogue"
