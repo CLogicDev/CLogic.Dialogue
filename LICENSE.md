@@ -20,7 +20,7 @@ By copying, modifying, building, distributing, or otherwise exercising rights gr
 
 5. **"Distribute"** means to provide, publish, transmit, sublicense, share, or otherwise make a copy of the Software or a Modification available to another person or entity, whether publicly or privately.
 
-6. **"Project"** means any game, application, service, plugin, tool, prototype, demonstration, audiovisual work, or other product or undertaking that uses, incorporates, is developed with, or depends upon the Software.
+6. **"Project"** means any game, application, service, plugin, tool, prototype, demonstration, audiovisual work, or other product or undertaking that uses, incorporates, is developed with, or depends upon the Software. A Project must have a material purpose or functionality independent of making the Software or a Modification available to others for use, modification, integration, development, or redistribution. A distribution does not become a Project merely because the Software or a Modification is bundled, wrapped, combined, or packaged with demonstrations, sample content, templates, launchers, interfaces, documentation, or other material where the primary purpose or practical effect of the distribution is to provide the Software or a Modification as a reusable development component, development resource, substitute product, or competing product.
 
 7. **"Non-Commercial Purpose"** means a purpose that is personal, educational, academic, experimental, or charitable; is not undertaken for or on behalf of an employer, client, or for-profit entity; and does not otherwise constitute Commercial Use. A Project does not cease to qualify merely because the user receives incidental personal, educational, reputational, or employability benefits from it.
 
@@ -114,25 +114,56 @@ If an Authorized Commercial License expires, terminates, is refunded, is revoked
 
 ## 7. Redistribution and Modifications
 
-You may Distribute the Software or a Modification only if all of the following conditions are met:
+Subject to Sections 4, 6, and 8, You may Distribute the Software or a Modification only as permitted by this Section.
 
-1. the distribution and the recipient's intended use are non-commercial;
-2. You provide a complete copy of this license and retain all copyright, attribution, and proprietary notices;
-3. You clearly identify that the Software is licensed by CLogic, state that it is source-available rather than open source, and do not imply endorsement by or affiliation with the Licensor;
-4. for a Modification, You prominently state that You changed the Software, identify the material changes, and provide the date of the changes;
-5. You license the Software and every Modification of it under this license only, without additional terms that restrict or purport to expand the rights granted here;
-6. You do not charge a fee, require payment, condition access on a donation or subscription, or receive compensation for the Software, a Modification, or access to either, except reimbursement of the reasonable direct cost of physical media;
-7. if You Distribute object code, You also make the Corresponding Source available under this license, at no charge, through the same channel or through a durable, publicly accessible link stated with the object-code distribution; and
-8. You do not present the Software or a Modification as an independently developed substitute asset, marketplace product, or competing commercial offering.
+1. **Embedded distribution in a Non-Commercial Project.** You may Distribute object code containing the Software or a Modification as an embedded or incorporated part of a Non-Commercial Project if all of the following conditions are met:
 
-You may distribute object code containing the Software as an embedded part of a Non-Commercial Project without licensing unrelated parts of that Project under this license. However, any Software source code or Modifications to the Software that You distribute remain governed by this license, and the Corresponding Source requirement above applies to those portions only.
+   a. the Project and the distribution qualify for a Non-Commercial Purpose and do not constitute Commercial Use;
+
+   b. the Software or Modification is supplied only as part of the Project for the ordinary use or operation of that Project and is not supplied, presented, packaged, documented, or otherwise made available for use as a separate development resource or reusable component;
+
+   c. the Project has a material purpose or functionality independent of making the Software or a Modification available to others for use, modification, integration, development, or redistribution;
+
+   d. the distribution is not, in substance, a distribution of the Software or a Modification for other developers to use, modify, integrate, develop with, or redistribute; and
+
+   e. You provide a complete copy of this license with the Project and retain all copyright, attribution, and proprietary notices applicable to the Software to the extent those notices are contained in or accompany the distributed copy.
+
+   For a distribution satisfying this paragraph, You are not required to disclose or identify modifications made to the Software, make the Corresponding Source available, disclose the source code of the Project, or license portions of the Project that are not the Software or a Modification under this license.
+
+   An object-code file does not cease to qualify under this paragraph merely because the Software or a Modification is technically contained in a DLL, assembly, executable, archive, or other object-code file required for the ordinary operation of the Project, provided that the file is supplied solely as part of the Project and is not presented, packaged, documented, or distributed for separate development or reuse.
+
+2. **Redistribution of the Software or a Modification for development or reuse.** Any distribution of the Software or a Modification that does not qualify under paragraph 1, including a distribution in source-code form or a distribution intended, presented, packaged or documented for other developers to use, modify, integrate, develop with, or redistribute, is permitted only if all of the following conditions are met. Such distributions include, without limitation, source repositories and forks, Unity packages, development libraries, reusable DLLs or assemblies, frameworks, toolkits, assets, packages, templates, software-development components, and similar development-oriented distributions.
+
+   a. the distribution is non-commercial and You do not knowingly Distribute the Software or Modification for a recipient's Commercial Use;
+
+   b. You provide a complete copy of this license and retain all copyright, attribution, and proprietary notices;
+
+   c. You clearly identify the Software as originating from the Licensor under the CLogic trade name, state that it is source-available rather than open source, and do not imply endorsement by or affiliation with the Licensor;
+
+   d. for a Modification, You prominently state that You changed the Software, identify the material changes, and provide the date of the changes;
+
+   e. You license the Software and every Modification of it under this license only, without additional terms that restrict or purport to expand the rights granted here;
+
+   f. You do not charge a fee, require payment, condition access on a donation or subscription, or receive compensation for the Software, a Modification, or access to either, except reimbursement of the reasonable direct cost of physical media;
+
+   g. if You Distribute the Software or a Modification in object-code form, You also make the Corresponding Source available under this license, at no charge, through the same channel or through a durable, publicly accessible link stated with the object-code distribution; and
+
+   h. You do not rebrand, market, package, or present the Software or a Modification as independently developed, or as an independently developed substitute for or competing product to the Software, including as another dialogue system, Unity asset, library, framework, development tool, package, template, toolkit, or similar development product.
+
+   Paragraph 2(h) does not prohibit a bona fide source-code fork, mirror, or development repository that otherwise complies with this Section and clearly identifies the Software's origin and the distributor's modifications. Such a distribution is not prohibited merely because a recipient could use the compliant fork instead of obtaining the same version directly from the Licensor.
+
+3. **Characterization of a distribution.** The substance, presentation, packaging, documentation, functionality, and reasonably apparent purpose of a distribution determine whether paragraph 1 or paragraph 2 applies. Merely describing, naming, structuring, or wrapping a distribution as a "Project," game, application, demonstration, plugin, tool, or other product does not cause paragraph 1 to apply where the distribution is, in substance, making the Software or a Modification available for development, reuse, integration, modification, or redistribution.
+
+4. Nothing in this Section permits Commercial Use. A distribution that constitutes Commercial Use is not authorized by this Section merely because it would otherwise satisfy paragraph 1 or paragraph 2 and requires an Authorized Commercial License except to the limited extent expressly provided by Section 6.
+
+Recipients of a permitted distribution receive rights in the Software and Modifications only as provided by the license applicable to their use. Nothing in this Section grants rights in unrelated portions of a Project, requires those portions to be licensed under this license, or permits the Software or a Modification to be relicensed under other terms.
 
 ## 8. Restrictions
 
 Except to the extent an applicable law expressly prohibits a restriction, You may not:
 
 1. engage in Commercial Use without an Authorized Commercial License;
-2. sell, rent, lease, sublicense, monetize, or commercially redistribute the Software or a Modification as a standalone product or as part of a competing tool, asset, framework, package, template, or service;
+2. sell, rent, lease, sublicense, monetize, or commercially redistribute the Software or a Modification as a standalone product or as part of a competing tool, asset, framework, package, template, library, or service; or rebrand, package, market, or present the Software or a Modification, whether commercially or non-commercially, as independently developed or as an independently developed substitute for or competing dialogue system, tool, asset, framework, development library, package, template, toolkit, or similar development product. A bona fide source-code fork, mirror, or development repository that complies with Section 7.2 and clearly identifies the Software's origin and the distributor's modifications is not prohibited merely because a recipient could use that compliant distribution instead of obtaining the same version directly from the Licensor;
 3. remove, obscure, falsify, or alter copyright notices, license notices, attribution, authorship information, or other proprietary notices;
 4. represent that this license is approved by the Open Source Initiative or that the Software is open-source software;
 5. use CLogic's or the Licensor's names, logos, trade names, or trademarks except for accurate factual identification and legally required attribution;
