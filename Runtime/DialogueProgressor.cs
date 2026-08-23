@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using EditorAttributes;
 using UnityEngine.InputSystem;
 
 namespace CLogic.Dialogue
