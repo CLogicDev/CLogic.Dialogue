@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using EditorAttributes;
 using System.Collections.Generic;
 using System.Linq;
 using CLogic.Dialogue.Provisioner;
@@ -40,7 +39,6 @@ namespace CLogic.Dialogue
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
         
-        [ShowInInspector]
         public bool IsPlaying => currentNode != null;
         
         private void Awake() => ResolveProcessors();
@@ -212,7 +210,6 @@ namespace CLogic.Dialogue
             return CurrentDialogue;
         }
         
-        [Button(serializeParameters: false)]
         public void EndDialogue(bool callFinishCallback = true)
         {
             if (!IsPlaying)
