@@ -3,7 +3,6 @@
     "rootNamespace": "CLogic.Dialogue.Editor",
     "references": [
         "GUID:1a5ce730afcd98d4d91f6a091725bb81",
-        "GUID:796dbfd4c20d116479214ebdfefb9f6b",
         "GUID:743432685a1859d48b828bbf3716c2d0",
         "GUID:c521dbdf32fe8f847b29afbfcbe81a3b",
         "GUID:ab2be06f3aab2c84f99fe2868d754b73"
