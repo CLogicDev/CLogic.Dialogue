@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using CLogic.Conditionals;
+using CLogic.Conditional;
 using CLogic.Dialogue.Editor;
 using Unity.GraphToolkit.Editor;
 using UnityEngine;

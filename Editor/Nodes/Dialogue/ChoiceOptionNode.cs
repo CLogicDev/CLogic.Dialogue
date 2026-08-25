@@ -27,7 +27,7 @@ namespace CLogic.Dialogue.Editor
             base.OnDefinePorts(context);
             
             #if CLOGIC_CONDITIONALS
-            context.AddInputPort<Conditionals.ConditionalEvaluator>(IN_CONDITIONAL).Build();
+            context.AddInputPort<Conditional.ConditionalEvaluator>(IN_CONDITIONAL).Build();
             #endif
         }
         
@@ -40,7 +40,7 @@ namespace CLogic.Dialogue.Editor
             optionData.choiceText = GetPortValue<string>(GetInputPortByName(IN_TEXT));
             
             #if CLOGIC_CONDITIONALS
-            optionData.conditional = GetPortValue<Conditionals.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
+            optionData.conditional = GetPortValue<Conditional.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
             #endif
             
             IDialogueGraphNode.CreateActionNodeLink(optionData, portMap, this, SupportStartAction, SupportEndAction);

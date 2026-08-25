@@ -70,7 +70,7 @@ namespace CLogic.Dialogue.Editor
                 if(blockNode is not ChoiceOptionNode choiceNode)
                     continue;
 
-                if(IDialogueGraphNode.TryGetPortValue<Conditionals.ConditionalEvaluator>(choiceNode.GetInputPortByName(ChoiceOptionNode.IN_CONDITIONAL), out _))
+                if(IDialogueGraphNode.TryGetPortValue<Conditional.ConditionalEvaluator>(choiceNode.GetInputPortByName(ChoiceOptionNode.IN_CONDITIONAL), out _))
                 {
                     hasConditionalSet = true;
                 }

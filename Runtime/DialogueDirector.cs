@@ -16,9 +16,9 @@ namespace CLogic.Dialogue
         
         public int maxDiscoveryDepth = 2;
         
-        private DialogueNodeData currentNode;
         public IDialogueProcessor CurrentProcessor { get; private set; }
         
+        private DialogueNodeData currentNode;
         private int currentNodeID;
         
         [NonSerialized]
@@ -314,7 +314,6 @@ namespace CLogic.Dialogue
             Integrations.LogError($"No processor for type {type}");
             processor = default;
             return false;
-
         }
     }
 }

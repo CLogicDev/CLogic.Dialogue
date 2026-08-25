@@ -20,7 +20,7 @@ namespace CLogic.Dialogue
         public string choiceText;
         
         #if CLOGIC_CONDITIONALS
-        public Conditionals.ConditionalEvaluator conditional;
+        public Conditional.ConditionalEvaluator conditional;
         #endif
         
     }
