@@ -37,5 +37,5 @@ See [Architecture]([architecture.md](https://docs.clogic.dev/manuals/dev.clogic.
 ## License & Usage
 
 The CLogic Dialogue System is source-available, **not open-source** and free for **non-commercial** use.
-For **commercial**use, you are required to purchase a license through the [Unity Asset Store](https://assetstore.unity.com/packages/package/6367127).
+For **commercial** use, you are required to purchase a license through the [Unity Asset Store](https://assetstore.unity.com/packages/package/6367127).
 See the [License](https://github.com/CLogicDev/CLogic.Dialogue/blob/dev/LICENSE.md) for more info.
