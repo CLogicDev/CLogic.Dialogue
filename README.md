@@ -17,7 +17,7 @@ without having to fight the system. As such, many classes are intended to be ove
 your project's needs. You are encouraged and expected to extend the system. The list of out-of-the-box
 features is deliberately small to avoid making it 'one case fits all' since all projects have different needs.
 
-See [Extending The Dialogue System](<Extending The Dialogue System/preface.md>)
+See [Extending The Dialogue System](https://docs.clogic.dev/manuals/dev.clogic.dialogue/Extending%20The%20Dialogue%20System/preface.html)
 
 Quick overview of features
 - Quick setup requiring only one script (the dialogue director) with ready made nodes for
@@ -30,9 +30,9 @@ Quick overview of features
 - Easily extend with custom nodes and processor using powerful templates
 - Make use of subgraphs and asset subgraphs to organize and reuse dialogues
 
-See [Getting Started](getting-started.md) to get started with using the dialogue system.
+See [Getting Started]([getting-started.md](https://docs.clogic.dev/manuals/dev.clogic.dialogue/getting-started.html)) to get started with using the dialogue system.
 
-See [Architecture](architecture.md) for more details on the architecture of the dialogue system.
+See [Architecture]([architecture.md](https://docs.clogic.dev/manuals/dev.clogic.dialogue/architecture.html)) for more details on the architecture of the dialogue system.
 
 ## License & Usage
 
