@@ -12,7 +12,9 @@ namespace CLogic.Dialogue
         public const string DEFINE_CHOICE_NODE = "ENABLE_CHOICE_NODE";
         public const string DEFINE_CHOICE_OPTION_NODE = "ENABLE_CHOICE_OPTION_NODE";
         
-        public bool conversationNode, choiceNode, choiceOptionNode = true;
+        public bool conversationNode = true;
+        public bool choiceNode = true;
+        public bool choiceOptionNode = true;
     }
     
     public class DialogueSettings : SettingsSo<DialogueSettings>
