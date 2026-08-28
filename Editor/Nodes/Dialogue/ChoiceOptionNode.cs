@@ -13,7 +13,7 @@ namespace CLogic.Dialogue.Editor
         private const string IN_TEXT = "Text";
         private const string OUT_EXECUTION = "Out";
         
-        #if CLOGIC_CONDITIONALS
+        #if CLOGIC_CONDITIONAL
         public const string IN_CONDITIONAL = "Conditional";
         #endif
         
@@ -26,7 +26,7 @@ namespace CLogic.Dialogue.Editor
             
             base.OnDefinePorts(context);
             
-            #if CLOGIC_CONDITIONALS
+            #if CLOGIC_CONDITIONAL
             context.AddInputPort<Conditional.ConditionalEvaluator>(IN_CONDITIONAL).Build();
             #endif
         }
@@ -39,7 +39,7 @@ namespace CLogic.Dialogue.Editor
             
             optionData.choiceText = GetPortValue<string>(GetInputPortByName(IN_TEXT));
             
-            #if CLOGIC_CONDITIONALS
+            #if CLOGIC_CONDITIONAL
             optionData.conditional = GetPortValue<Conditional.ConditionalEvaluator>(GetInputPortByName(IN_CONDITIONAL));
             #endif
             

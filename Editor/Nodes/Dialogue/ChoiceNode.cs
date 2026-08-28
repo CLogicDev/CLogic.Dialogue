@@ -18,7 +18,7 @@ namespace CLogic.Dialogue.Editor
         {
             base.OnDefineOptions(context);
 
-            #if CLOGIC_CONDITIONALS
+            #if CLOGIC_CONDITIONAL
             context.AddOption<bool>(OP_AUTO_CHOICE).WithDisplayName("Is Auto Choice").Build();
             #endif
         }
@@ -34,7 +34,7 @@ namespace CLogic.Dialogue.Editor
             nodeData.execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID;
             ProcessChildBlocks(nodeData, graph, portMap);
             
-            #if CLOGIC_CONDITIONALS
+            #if CLOGIC_CONDITIONAL
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
             
             nodeData.isAutoChoice = isAutoChoice;
@@ -52,7 +52,7 @@ namespace CLogic.Dialogue.Editor
                 graphLogger.LogError("Choice node needs at least one branch output", this);
             }
             
-            #if CLOGIC_CONDITIONALS
+            #if CLOGIC_CONDITIONAL
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
             
             if(!isAutoChoice)

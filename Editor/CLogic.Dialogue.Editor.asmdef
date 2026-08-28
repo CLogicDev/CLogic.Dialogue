@@ -18,14 +18,9 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "dev.clogic.conditionals",
+            "name": "dev.clogic.conditional",
             "expression": "",
-            "define": "CLOGIC_CONDITIONALS"
-        },
-        {
-            "name": "dev.clogic.utils",
-            "expression": "",
-            "define": "IGNORE_UTILS_DLL"
+            "define": "CLOGIC_CONDITIONAL"
         }
     ],
     "noEngineReferences": false

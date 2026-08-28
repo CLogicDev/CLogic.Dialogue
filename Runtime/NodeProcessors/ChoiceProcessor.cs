@@ -9,7 +9,7 @@ namespace CLogic.Dialogue
     [Serializable]
     public class ChoiceNodeData : ContextNodeData
     {
-        #if CLOGIC_CONDITIONALS
+        #if CLOGIC_CONDITIONAL
         public bool isAutoChoice;
         #endif
     }
@@ -19,7 +19,7 @@ namespace CLogic.Dialogue
     {
         public string choiceText;
         
-        #if CLOGIC_CONDITIONALS
+        #if CLOGIC_CONDITIONAL
         public Conditional.ConditionalEvaluator conditional;
         #endif
         
@@ -34,7 +34,7 @@ namespace CLogic.Dialogue
         
         protected override void ProcessNode(ChoiceNodeData nodeData, DialogueDirector director)
         {
-            #if CLOGIC_CONDITIONALS
+            #if CLOGIC_CONDITIONAL
             if(nodeData.isAutoChoice)
             {
                 HandleAutoChoice(nodeData, director);
@@ -61,7 +61,7 @@ namespace CLogic.Dialogue
                 
                 button.onClick.AddListener(() => SelectChoice(choiceNode, director, dialogueNode));
                 
-                #if CLOGIC_CONDITIONALS
+                #if CLOGIC_CONDITIONAL
                 button.interactable = choiceNode.conditional == null || choiceNode.conditional.Evaluate();
                 #endif
                 
@@ -69,7 +69,7 @@ namespace CLogic.Dialogue
             }
         }
         
-        #if CLOGIC_CONDITIONALS
+        #if CLOGIC_CONDITIONAL
         private void HandleAutoChoice(ChoiceNodeData dialogueNode, DialogueDirector director)
         {
             int selectedIndex = -1;

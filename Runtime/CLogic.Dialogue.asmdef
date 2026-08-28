@@ -20,9 +20,9 @@
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "dev.clogic.conditionals",
+            "name": "dev.clogic.conditional",
             "expression": "",
-            "define": "CLOGIC_CONDITIONALS"
+            "define": "CLOGIC_CONDITIONAL"
         },
         {
             "name": "com.cysharp.unitask",
