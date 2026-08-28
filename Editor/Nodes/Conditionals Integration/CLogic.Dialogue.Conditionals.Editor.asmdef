@@ -14,13 +14,13 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [
-        "CLOGIC_CONDITIONALS"
+        "CLOGIC_CONDITIONAL"
     ],
     "versionDefines": [
         {
-            "name": "dev.clogic.conditionals",
+            "name": "dev.clogic.conditional",
             "expression": "",
-            "define": "CLOGIC_CONDITIONALS"
+            "define": "CLOGIC_CONDITIONAL"
         }
     ],
     "noEngineReferences": false
