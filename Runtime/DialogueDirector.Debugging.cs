@@ -14,7 +14,6 @@ namespace CLogic.Dialogue
         
         private void SetupDebugContext(DialogueGraph graph)
         {
-            Debug.Log("SetupDebugContext");
             CurrentContext = Registry.CreateVisualizationContext(graph.graphHash);
         }
         
