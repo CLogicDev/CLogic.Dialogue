@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using System;
 using CLogic.Dialogue.Provisioner;
-using CLogic.Utils.UI;
+using CLogic.Dialogue.Extras;
 using UnityEngine;
 
 namespace CLogic.Dialogue
