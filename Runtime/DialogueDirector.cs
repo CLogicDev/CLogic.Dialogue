@@ -119,12 +119,9 @@ namespace CLogic.Dialogue
             
             foreach (Transform child in parent)
             {
-                foreach (Transform nestedChild in child)
+                foreach (IDialogueProcessor dialogueNodeProcessor in DiscoverProcessorsInHierarchy(child, currentDepth + 1))
                 {
-                    foreach (IDialogueProcessor dialogueNodeProcessor in DiscoverProcessorsInHierarchy(nestedChild, currentDepth + 1))
-                    {
-                        yield return dialogueNodeProcessor;
-                    }
+                    yield return dialogueNodeProcessor;
                 }
             }
         }
