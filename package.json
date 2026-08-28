@@ -15,8 +15,5 @@
     "url": "https://clogic.dev",
     "email": "contact@clogic.dev"
   },
-  "dependencies": {
-    "dev.clogic.utils": "https://github.com/CLogicDev/CLogic.Utils.git"
-  },
   "unityRelease": "0b1"
 }
