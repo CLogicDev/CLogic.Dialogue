@@ -31,26 +31,37 @@ namespace CLogic.Dialogue
         {
             #if UNITY_EDITOR
             var target = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            
             string currentDefines = PlayerSettings.GetScriptingDefineSymbols(target);
+            
             List<string> listedDefines = currentDefines
-                .Split(';')
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .ToList();
+                    .Split(';')
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .ToList();
             
             AddOrRemove(DefaultFeatures.DEFINE_CONVERSATION_NODE, features.conversationNode);
             AddOrRemove(DefaultFeatures.DEFINE_CHOICE_NODE, features.choiceNode);
             AddOrRemove(DefaultFeatures.DEFINE_CHOICE_OPTION_NODE, features.choiceOptionNode);
             
-            PlayerSettings.SetScriptingDefineSymbols(target, string.Join(";", listedDefines));
+            string newDefines = string.Join(";", listedDefines);
+            
+            // Avoid triggering a recompile when nothing has changed.
+            if (newDefines != currentDefines)
+                PlayerSettings.SetScriptingDefineSymbols(target, newDefines);
             
             return;
-
+            
             void AddOrRemove(string define, bool exists)
             {
-                if(exists)
-                    listedDefines.Add(define);
+                if (exists)
+                {
+                    if (!listedDefines.Contains(define))
+                        listedDefines.Add(define);
+                }
                 else
+                {
                     listedDefines.Remove(define);
+                }
             }
             #endif
         }
