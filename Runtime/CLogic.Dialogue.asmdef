@@ -1,0 +1,34 @@
+{
+    "name": "CLogic.Dialogue",
+    "rootNamespace": "CLogic.Dialogue",
+    "references": [
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:c521dbdf32fe8f847b29afbfcbe81a3b",
+        "GUID:469a165fb75484b4d8ddb2d20708801c",
+        "GUID:76d9caaf8c921d048ae46a50a53a69b6",
+        "GUID:743432685a1859d48b828bbf3716c2d0",
+        "GUID:ab2be06f3aab2c84f99fe2868d754b73",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "dev.clogic.conditional",
+            "expression": "",
+            "define": "CLOGIC_CONDITIONAL"
+        },
+        {
+            "name": "com.cysharp.unitask",
+            "expression": "",
+            "define": "CLOGIC_UNITASK"
+        }
+    ],
+    "noEngineReferences": false
+}

@@ -1,0 +1,103 @@
+using System;
+using Unity.GraphToolkit.Editor;
+using System.Collections.Generic;
+using System.Reflection;
+using CLogic.Dialogue;
+
+namespace CLogic.Dialogue.Editor
+{
+    #if ENABLE_CHOICE_NODE
+    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/Choice Block.svg", "Choice Block")]
+    public class ChoiceNode : DialogueContextNode<ChoiceNodeData>
+    {
+        public override bool SupportExecution => false;
+        
+        private const string OP_AUTO_CHOICE = "AutoChoice";
+        
+        protected override void OnDefineOptions(IOptionDefinitionContext context)
+        {
+            base.OnDefineOptions(context);
+
+            #if CLOGIC_CONDITIONAL
+            context.AddOption<bool>(OP_AUTO_CHOICE).WithDisplayName("Is Auto Choice").Build();
+            #endif
+        }
+
+        protected override void DefineDialoguePorts(IPortDefinitionContext context)
+        {
+            context.AddInputPort<IDialogueGraphNode>(IDialogueGraphNode.IN_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).WithCapacity(PortCapacity.Multi).Build();
+        }
+        
+        public override ChoiceNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
+        {
+            ChoiceNodeData nodeData = new();
+            nodeData.execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID;
+            ProcessChildBlocks(nodeData, graph, portMap);
+            
+            #if CLOGIC_CONDITIONAL
+            GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
+            
+            nodeData.isAutoChoice = isAutoChoice;
+            #endif
+            
+            return nodeData;
+        }
+        
+        public override void OnValidate(GraphLogger graphLogger)
+        {
+            base.OnValidate(graphLogger);
+            
+            if (BlockCount == 0)
+            {
+                graphLogger.LogError("Choice node needs at least one branch output", this);
+            }
+            
+            #if CLOGIC_CONDITIONAL
+            GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
+            
+            if(!isAutoChoice)
+                return;
+            
+            if(BlockCount == 1)
+                return;
+            
+            bool hasConditionalSet = false;
+            
+            List<ChoiceOptionNode> emptyConditionalNode = new();
+            
+            foreach (BlockNode blockNode in BlockNodes)
+            {
+                if(blockNode is not ChoiceOptionNode choiceNode)
+                    continue;
+
+                if(IDialogueGraphNode.TryGetPortValue<Conditional.ConditionalEvaluator>(choiceNode.GetInputPortByName(ChoiceOptionNode.IN_CONDITIONAL), out _))
+                {
+                    hasConditionalSet = true;
+                }
+                else
+                {
+                    emptyConditionalNode.Add(choiceNode);
+                }
+            }
+
+            if(!hasConditionalSet)
+            {
+                graphLogger.LogError("Auto choice behaviour needs at least one conditional set to function. Defaulting to normal choice logic", this);
+            }
+            else
+            {
+                foreach (ChoiceOptionNode choiceNode in emptyConditionalNode)
+                {
+                    graphLogger.LogWarning("An empty conditional in an auto choice block will be considered to always return false", choiceNode);
+                }
+            }
+            #endif
+        }
+        
+        protected override void OnFirstCreation()
+        {
+            CreateBlockNode<ChoiceOptionNode>();
+        }
+    }
+    #endif
+}
