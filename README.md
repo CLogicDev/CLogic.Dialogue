@@ -30,9 +30,9 @@ Quick overview of features
 - Easily extend with custom nodes and processor using powerful templates
 - Make use of subgraphs and asset subgraphs to organize and reuse dialogues
 
-See [Getting Started]([getting-started.md](https://docs.clogic.dev/manuals/dev.clogic.dialogue/getting-started.html)) to get started with using the dialogue system.
+See [Getting Started](https://docs.clogic.dev/manuals/dev.clogic.dialogue/getting-started.html) to get started with using the dialogue system.
 
-See [Architecture]([architecture.md](https://docs.clogic.dev/manuals/dev.clogic.dialogue/architecture.html)) for more details on the architecture of the dialogue system.
+See [Architecture](https://docs.clogic.dev/manuals/dev.clogic.dialogue/architecture.html) for more details on the architecture of the dialogue system.
 
 ## License & Usage
 
