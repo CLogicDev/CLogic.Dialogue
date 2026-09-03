@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Unity.Scripting.LifecycleManagement;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assemblies;
 namespace CLogic.Dialogue.Provisioner
@@ -23,8 +22,7 @@ namespace CLogic.Dialogue.Provisioner
     {
         public override int Priority => -1000;
         
-        private static Dictionary<Type, List<ProvisionAttribute>> provisionedTypeCache = new();
-        private static Dictionary<ProvisionAttribute, FieldInfo> provisionedFields = new();
+        private static Dictionary<Type, List<(ProvisionAttribute, FieldInfo)>> provisionedTypeCache = new();
         
         [OnCodeInitializing]
         private static void ScanForAttributes()
@@ -38,12 +36,10 @@ namespace CLogic.Dialogue.Provisioner
                     if (attribute == null)
                         continue;
                     
-                    provisionedFields.Add(attribute, field);
+                    if(!provisionedTypeCache.TryGetValue(type, out List<(ProvisionAttribute, FieldInfo)> provisionedTypes))
+                        provisionedTypes = provisionedTypeCache[type] = new List<(ProvisionAttribute, FieldInfo)>();
                     
-                    if(!provisionedTypeCache.TryGetValue(type, out List<ProvisionAttribute> provisionedTypes))
-                        provisionedTypes = provisionedTypeCache[type] = new List<ProvisionAttribute>();
-                    
-                    provisionedTypes.Add(attribute);
+                    provisionedTypes.Add((attribute, field));
                 }
             }
         }
@@ -56,7 +52,7 @@ namespace CLogic.Dialogue.Provisioner
         
         internal static void ResolveProvisionsFor(DialogueNodeData nodeData, ProvisionerData provisionerData, DialogueDirector director)
         {
-            List<ProvisionAttribute> dataToProvision = provisionedTypeCache[nodeData.GetType()];
+            List<(ProvisionAttribute, FieldInfo)> dataToProvision = provisionedTypeCache[nodeData.GetType()];
             
             if(!director.TryGetProcessorForNode(provisionerData.GetType(), out IDialogueProcessor processor))
                 throw new ArgumentException($"{provisionerData.GetType()} does not have a processor");
@@ -64,19 +60,20 @@ namespace CLogic.Dialogue.Provisioner
             if(processor is not IDialogueProvisioner provisioner)
                 throw new ArgumentException($"{provisionerData.GetType()} is not a provisioner");
             
-            foreach (ProvisionAttribute provisionAttribute in dataToProvision)
+            foreach ((ProvisionAttribute, FieldInfo) attributeData in dataToProvision)
             {
-                if(!provisionerData.linkedNodes[nodeData.nodeHash].Contains(provisionAttribute.portName))
+                ProvisionAttribute attribute = attributeData.Item1;
+                if(!provisionerData.linkedNodes[nodeData.nodeHash].Contains(attribute.portName))
                     continue;
-                
-                FieldInfo fieldInfo = provisionedFields[provisionAttribute];
+
+                FieldInfo fieldInfo = attributeData.Item2;
                 
                 //TODO: Determine if generic should be removed
                 object provision = provisioner.GetProvisionedData<object>(provisionerData);
                 fieldInfo.SetValue(nodeData, provision);
                 
                 #if UNITY_EDITOR
-                if(nodeData.provisionedPorts != null && nodeData.provisionedPorts.TryGetValue(provisionAttribute.portName, out Hash128 provisionedPort))
+                if(nodeData.provisionedPorts != null && nodeData.provisionedPorts.TryGetValue(attribute.portName, out Hash128 provisionedPort))
                     provisioner.PreviewProvision(director.CurrentContext, provisionedPort, provision);
                 #endif
             }
