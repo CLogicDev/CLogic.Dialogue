@@ -246,7 +246,13 @@ namespace CLogic.Dialogue
         {
             if(!forced && !CurrentProcessor.CanProgressNode(currentNode, this))
                 return false;
-            
+
+            if(currentNode != null)
+            {
+                foreach (IDialoguePostProcessor processor in nodePostProcessors[currentNode.GetType()])
+                    processor.PostProcessInternal(currentNode, this);
+            }
+
             switch (nodeID)
             {
                 case -1:
@@ -295,9 +301,6 @@ namespace CLogic.Dialogue
                 processor.PreProcessInternal(nodeData, this);
             
             nodeProcessor.ProcessNode(nodeData, this);
-            
-            foreach (IDialoguePostProcessor processor in nodePostProcessors[type])
-                processor.PostProcessInternal(nodeData, this);
         }
 
         public bool TryGetProcessorForNode<T>(Type type, out T processor) where T : IDialogueProcessor
