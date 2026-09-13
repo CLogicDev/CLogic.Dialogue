@@ -31,6 +31,8 @@ namespace CLogic.Dialogue
         private GameObject choiceButtonPrefab;
         [SerializeField]
         private RectTransform choiceContainer;
+
+        public ChoiceOptionData LastSelectedChoice { get; private set; }
         
         protected override void ProcessNode(ChoiceNodeData nodeData, DialogueDirector director)
         {
@@ -98,6 +100,8 @@ namespace CLogic.Dialogue
         private void SelectChoice(ChoiceOptionData choice, DialogueDirector director, ChoiceNodeData choiceNodeData)
         {
             DestroyChoiceButtons();
+
+            LastSelectedChoice = choice;
             
             if(choice.startNodeActionID != -1)
                 director.ProcessNode(director.GetNodeFromID(choice.startNodeActionID), true);
