@@ -16,6 +16,9 @@ namespace CLogic.Dialogue.Editor
         public bool? CanConnect(IPort output, IPort input);
     }
     
+    /// <summary>
+    /// Graph used in the editor. To run dialogues you should instead use <see cref="DialogueGraph"/>
+    /// </summary>
     [Serializable, Graph(ASSET_EXTENSION, GraphOptions.SupportsSubgraphs)]
     public partial class DialogueEditorGraph : Graph
     {
@@ -24,7 +27,7 @@ namespace CLogic.Dialogue.Editor
         [MenuItem("Assets/Create/CLogic/Dialogue Graph/New Graph", priority = 1)]
         private static void CreateAssetFile() => GraphDatabase.PromptInProjectBrowserToCreateNewAsset<DialogueEditorGraph>();
         
-        public override void OnGraphChanged(GraphLogger graphLogger)
+        public sealed override void OnGraphChanged(GraphLogger graphLogger)
         {
             IEnumerable<INode> nodes = GetNodes();
             
@@ -46,11 +49,9 @@ namespace CLogic.Dialogue.Editor
             
             if (IsSubGraphInstance)
                 ValidateSubGraph(graphLogger);
-            
-            
         }
         
-        public override bool IsConnectionAllowed(IPort output, IPort input)
+        public sealed override bool IsConnectionAllowed(IPort output, IPort input)
         {
             INode inputNode = input.GetNode();
             INode outputNode = output.GetNode();
@@ -71,5 +72,6 @@ namespace CLogic.Dialogue.Editor
                 return validator.CanConnect(output, input);
             }
         }
+        
     }
 }

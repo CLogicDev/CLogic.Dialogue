@@ -11,7 +11,7 @@ namespace CLogic.Dialogue.Editor
         
         public bool IsSubGraphInstance { get; private set; } = false;
         
-        protected override void OnDefineSubgraphNodeOptions(Node.IOptionDefinitionContext context)
+        protected sealed override void OnDefineSubgraphNodeOptions(Node.IOptionDefinitionContext context)
         {
             context.AddOption<bool>(OP_EXPAND_SUBGRAPH).WithDisplayName("Expand Into Parent Graph").Build();
             

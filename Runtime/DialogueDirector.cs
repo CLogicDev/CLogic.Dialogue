@@ -11,14 +11,13 @@ namespace CLogic.Dialogue
     [AutoStaticsCleanup]
     public partial class DialogueDirector : MonoBehaviour
     {
-        [field: SerializeField]
-        public DialogueHandle CurrentDialogue { get; private set; }
-        
         public int maxDiscoveryDepth = 2;
+        
+        public DialogueHandle CurrentDialogue { get; private set; }
         
         public IDialogueProcessor CurrentProcessor { get; private set; }
         
-        private DialogueNodeData currentNode;
+        public DialogueNodeData CurrentNode { get; private set; }
         private int currentNodeID;
         
         [NonSerialized]
@@ -39,7 +38,7 @@ namespace CLogic.Dialogue
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
         
-        public bool IsPlaying => currentNode != null;
+        public bool IsPlaying => CurrentNode != null;
         
         private void Awake() => ResolveProcessors();
         
@@ -202,7 +201,7 @@ namespace CLogic.Dialogue
             GoToNode(startIndex ?? graph.startNodeID, true);
             
             #if UNITY_EDITOR
-            ShowVisualizationForNode(currentNode, CurrentProcessor);
+            ShowVisualizationForNode(CurrentNode, CurrentProcessor);
             #endif
             return CurrentDialogue;
         }
@@ -212,8 +211,8 @@ namespace CLogic.Dialogue
             if (!IsPlaying)
                 return;
             
-            CurrentProcessor?.HandleCancellation(currentNode, this);
-            currentNode = null;
+            CurrentProcessor?.HandleCancellation(CurrentNode, this);
+            CurrentNode = null;
             
             if (callFinishCallback)
             {
@@ -230,27 +229,21 @@ namespace CLogic.Dialogue
         /// Tries to go to the next node
         /// </summary>
         /// <returns>Whether the director could go to the next node</returns>
-        public bool GoToNextNode(bool forced = false)
-        {
-            if(forced)
-                return GoToNode(currentNode.nextNodeID, true);
-            
-            return IsPlaying && GoToNode(currentNode.nextNodeID);
-        }
-
+        public bool GoToNextNode(bool forced = false) => IsPlaying && GoToNode(CurrentNode.nextNodeID, forced);
+        
         /// <summary>
         /// Tries to go to a specific node
         /// </summary>
         /// <returns>Whether the director could go to that node</returns>
         public bool GoToNode(int nodeID, bool forced = false)
         {
-            if(!forced && !CurrentProcessor.CanProgressNode(currentNode, this))
+            if(!forced && !CurrentProcessor.CanProgressNode(CurrentNode, this))
                 return false;
 
-            if(currentNode != null)
+            if(CurrentNode != null)
             {
-                foreach (IDialoguePostProcessor processor in nodePostProcessors[currentNode.GetType()])
-                    processor.PostProcessInternal(currentNode, this);
+                foreach (IDialoguePostProcessor processor in nodePostProcessors[CurrentNode.GetType()])
+                    processor.PostProcessInternal(CurrentNode, this);
             }
 
             switch (nodeID)
@@ -264,12 +257,12 @@ namespace CLogic.Dialogue
                     return false;
             }
             
-            currentNode = GetNodeFromID(nodeID);
+            CurrentNode = GetNodeFromID(nodeID);
             currentNodeID = nodeID;
-            ProcessNode(currentNode);
+            ProcessNode(CurrentNode);
             
             #if UNITY_EDITOR
-            ShowExecutionPath(currentNode);
+            ShowExecutionPath(CurrentNode);
             #endif
             
             return true;
@@ -315,5 +308,7 @@ namespace CLogic.Dialogue
             processor = default;
             return false;
         }
+        
+        public T GetProcessorForNode<T>(Type type) => (T)nodeProcessors[type];
     }
 }

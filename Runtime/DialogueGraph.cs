@@ -1,10 +1,15 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using CLogic.Dialogue.Provisioner;
 
+[assembly: InternalsVisibleTo("CLogic.Dialogue.Editor")]
 namespace CLogic.Dialogue
 {
+    /// <summary>
+    /// Runtime equivalent of the editor graph used for playing dialogues using the <see cref="DialogueDirector"/>
+    /// </summary>
     public class DialogueGraph : ScriptableObject
     {
         [Serializable]
@@ -30,7 +35,7 @@ namespace CLogic.Dialogue
     }
     
     [Serializable]
-    public class SubGraphNodeData : DialogueNodeData
+    internal class SubGraphNodeData : DialogueNodeData
     {
         public DialogueGraph graph;
     }

@@ -15,11 +15,10 @@ namespace CLogic.Dialogue.Editor
         }
     }
     
-    public static class DialogueSettingsProvider
+    internal static class DialogueSettingsProvider
     {
-        
         [SettingsProvider]
-        public static SettingsProvider CreateProvider()
+        private static SettingsProvider CreateProvider()
         {
             SettingsProvider provider = new ("Project/CLogic/Dialogue Settings", SettingsScope.Project)
             {

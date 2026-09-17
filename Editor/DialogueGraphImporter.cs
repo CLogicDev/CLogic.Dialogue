@@ -12,7 +12,7 @@ using UnityEditor;
 namespace CLogic.Dialogue.Editor
 {
     [ScriptedImporter(1, DialogueEditorGraph.ASSET_EXTENSION)]
-    public class DialogueGraphImporter : ScriptedImporter
+    internal class DialogueGraphImporter : ScriptedImporter
     {
         private Dictionary<INode, int> nodeMap;
         private Dictionary<IPort, int> portMap;
