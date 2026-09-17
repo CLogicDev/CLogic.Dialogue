@@ -172,7 +172,21 @@ namespace CLogic.Dialogue
         }
         #endregion
         
+        /// <summary>
+        /// Plays a given graph. Intended for use using Unity Events
+        /// </summary>
+        public void UPlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
+        
+        /// <inheritdoc cref="PlayDialogueGraph(CLogic.Dialogue.DialogueGraph, Action, bool, int?, bool, bool)"/>
         public DialogueHandle PlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
+        
+        /// <summary>
+        /// Plays a given graph
+        /// </summary>
+        /// <param name="graph">The graph to play</param>
+        /// <param name="onFinish">Callback when the end node is reached</param>
+        /// <param name="forced">Whether to play even is another graph is already playing. This will override the previous graph</param>
+        /// <returns></returns>
         public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null, bool callFinishCallback = true, bool createVisualizationContext = true)
         {
             if (!forced && IsPlaying)
