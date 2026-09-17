@@ -20,12 +20,12 @@ namespace CLogic.Dialogue
         public DialogueNodeData CurrentNode { get; private set; }
         private int currentNodeID;
         
-        [NonSerialized]
-        private DialogueNodeData[] nodes;
+        [NonSerialized] private DialogueNodeData[] nodes;
         
-        private Dictionary<Type, IDialogueProcessor> nodeProcessors = new();
-        private Dictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors = new();
-        private Dictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors = new();
+        private IReadOnlyDictionary<Type, IDialogueProcessor> nodeProcessors;
+        
+        [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors;
+        [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors;
         
         [NoAutoStaticsCleanup]
         private static List<IDialogueProcessor> cachedSingletonProcessors;
@@ -48,31 +48,31 @@ namespace CLogic.Dialogue
             IEnumerable<IDialogueProcessor> childProcessors = DiscoverProcessorsInHierarchy(transform);
             IEnumerable<IDialogueProcessor> singletonProcessors = DiscoverSingletonProcessors();
             
-            IEnumerable<IDialogueProcessor> processors = childProcessors.Concat(singletonProcessors);
+            IEnumerable<IDialogueProcessor> resolvedProcessors = childProcessors.Concat(singletonProcessors);
             
-            nodeProcessors.Clear();
-            nodePreProcessors.Clear();
-            nodePostProcessors.Clear();
+            Dictionary<Type, IDialogueProcessor> processors = new();
+            Dictionary<Type, List<IDialoguePreProcessor>> preProcessors = new();
+            Dictionary<Type, List<IDialoguePostProcessor>> postProcessors = new();
             
-            foreach (IDialogueProcessor processor in processors)
+            foreach (IDialogueProcessor processor in resolvedProcessors)
             {
                 switch (processor)
                 {
                     case IDialoguePreProcessor preProcessor:
-                        if(!nodePreProcessors.TryGetValue(preProcessor.HandledType, out List<IDialoguePreProcessor> preProcessors))
-                            preProcessors = nodePreProcessors[preProcessor.HandledType] = new List<IDialoguePreProcessor>();
+                        if(!preProcessors.TryGetValue(preProcessor.HandledType, out List<IDialoguePreProcessor> preProcessorList))
+                            preProcessorList = preProcessors[preProcessor.HandledType] = new List<IDialoguePreProcessor>();
                         
-                        preProcessors.Add(preProcessor);
+                        preProcessorList.Add(preProcessor);
                         break;
                     case IDialoguePostProcessor postProcessor:
-                        if(!nodePostProcessors.TryGetValue(postProcessor.HandledType, out List<IDialoguePostProcessor> postProcessors))
-                            postProcessors = nodePostProcessors[postProcessor.HandledType] = new List<IDialoguePostProcessor>();
+                        if(!postProcessors.TryGetValue(postProcessor.HandledType, out List<IDialoguePostProcessor> postProcessorList))
+                            postProcessorList = postProcessors[postProcessor.HandledType] = new List<IDialoguePostProcessor>();
                         
-                        postProcessors.Add(postProcessor);
+                        postProcessorList.Add(postProcessor);
                         break;
                     
                     default:
-                        nodeProcessors.Add(processor.NodeType, processor);
+                        processors.Add(processor.NodeType, processor);
                         break;
                 }
             }
@@ -80,30 +80,31 @@ namespace CLogic.Dialogue
             Dictionary<Type, List<IDialoguePreProcessor>> resolvedPreProcessors = new();
             Dictionary<Type, List<IDialoguePostProcessor>> resolvedPostProcessors = new();
             
-            foreach (Type nodeType in nodeProcessors.Keys)
+            foreach (Type nodeType in processors.Keys)
             {
-                List<IDialoguePreProcessor> preProcessors = new();
-                List<IDialoguePostProcessor> postProcessors = new();
+                List<IDialoguePreProcessor> preProcessorSort = new();
+                List<IDialoguePostProcessor> postProcessorSort = new();
                 
-                foreach (var kvp in nodePreProcessors)
+                foreach (var kvp in preProcessors)
                 {
                     if (kvp.Key.IsAssignableFrom(nodeType))
-                        preProcessors.AddRange(kvp.Value);
+                        preProcessorSort.AddRange(kvp.Value);
                 }
                 
-                foreach (var kvp in nodePostProcessors)
+                foreach (var kvp in postProcessors)
                 {
                     if (kvp.Key.IsAssignableFrom(nodeType))
-                        postProcessors.AddRange(kvp.Value);
+                        postProcessorSort.AddRange(kvp.Value);
                 }
                 
-                preProcessors.Sort((a, b) => a.Priority.CompareTo(b.Priority));
-                postProcessors.Sort((a, b) => a.Priority.CompareTo(b.Priority));
+                preProcessorSort.Sort((a, b) => a.Priority.CompareTo(b.Priority));
+                postProcessorSort.Sort((a, b) => a.Priority.CompareTo(b.Priority));
                 
-                resolvedPreProcessors[nodeType] = preProcessors;
-                resolvedPostProcessors[nodeType] = postProcessors;
+                resolvedPreProcessors[nodeType] = preProcessorSort;
+                resolvedPostProcessors[nodeType] = postProcessorSort;
             }
             
+            nodeProcessors = processors;
             nodePreProcessors = resolvedPreProcessors;
             nodePostProcessors = resolvedPostProcessors;
         }
@@ -304,7 +305,6 @@ namespace CLogic.Dialogue
                 return true;
             }
 
-            Integrations.LogError($"No processor for type {type}");
             processor = default;
             return false;
         }
