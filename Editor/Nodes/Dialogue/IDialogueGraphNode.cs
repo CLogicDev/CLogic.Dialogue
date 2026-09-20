@@ -18,8 +18,6 @@ namespace CLogic.Dialogue.Editor
         
         public const string OP_NODE_EVENTS = "UseEvents";
         
-        public const int INVALID_END = -1;
-        public const int GRACEFUL_END = -2;
         
         public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
@@ -143,7 +141,7 @@ namespace CLogic.Dialogue.Editor
             if (executionPort == null)
                 return;
             
-            nodeData.nextNodeID = portMap.GetValueOrDefault(executionPort, INVALID_END);
+            nodeData.nextNodeID = portMap.GetValueOrDefault(executionPort, DialogueGraph.GRACEFUL_END);
             nodeData.execInputPortHash = origin.GetInputPortByName(IN_EXECUTION)?.ID ?? new Hash128();
             nodeData.execOutputPortHash = origin.GetOutputPortByName(OUT_EXECUTION)?.ID ?? new Hash128();
         }
@@ -155,7 +153,7 @@ namespace CLogic.Dialogue.Editor
                 IPort actionPort = origin.GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
                 
                 if (actionPort != null)
-                    nodeData.startNodeActionID = portMap.GetValueOrDefault(actionPort, INVALID_END);
+                    nodeData.startNodeActionID = portMap.GetValueOrDefault(actionPort, DialogueGraph.GRACEFUL_END);
             }
             
             if (supportsEndAction)
@@ -163,7 +161,7 @@ namespace CLogic.Dialogue.Editor
                 IPort connectedPort = origin.GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
                 
                 if (connectedPort != null)
-                    nodeData.endNodeActionID = portMap.GetValueOrDefault(connectedPort, INVALID_END);
+                    nodeData.endNodeActionID = portMap.GetValueOrDefault(connectedPort, DialogueGraph.INVALID_END);
             }
         }
         

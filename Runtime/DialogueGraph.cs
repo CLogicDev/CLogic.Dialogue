@@ -12,6 +12,9 @@ namespace CLogic.Dialogue
     /// </summary>
     public class DialogueGraph : ScriptableObject
     {
+        public const int INVALID_END = -1;
+        public const int GRACEFUL_END = -2;
+        
         [Serializable]
         public struct SubgraphWireReference
         {
