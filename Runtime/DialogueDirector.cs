@@ -79,7 +79,8 @@ namespace CLogic.Dialogue
             Dictionary<Type, List<IDialoguePreProcessor>> resolvedPreProcessors = new();
             Dictionary<Type, List<IDialoguePostProcessor>> resolvedPostProcessors = new();
             
-            foreach (Type nodeType in processors.Keys)
+            //
+            foreach (Type nodeType in processors.Keys.Append(typeof(SubGraphNodeData)))
             {
                 List<IDialoguePreProcessor> preProcessorSort = new();
                 List<IDialoguePostProcessor> postProcessorSort = new();
@@ -186,17 +187,30 @@ namespace CLogic.Dialogue
         /// <param name="onFinish">Callback when the end node is reached</param>
         /// <param name="forced">Whether to play even is another graph is already playing. This will override the previous graph</param>
         /// <returns></returns>
-        public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null, bool callFinishCallback = true, bool createVisualizationContext = true)
+        public DialogueHandle PlayDialogueGraph(DialogueGraph graph, Action onFinish, bool forced = true, int? startIndex = null)
         {
             if (!forced && IsPlaying)
                 return new DialogueHandle();
             
             if (IsPlaying)
-                EndDialogue(callFinishCallback);
+                EndDialogue();
             CurrentDialogue = new DialogueHandle(this, true, graph, onFinish);
-            nodes = graph.nodes;
+            
+            LoadGraph(graph, true);
             
             OnDialogueStart?.Invoke();
+            
+            GoToNode(startIndex ?? graph.startNodeID, true);
+            
+            #if UNITY_EDITOR
+            ShowVisualizationForNode(CurrentNode, CurrentProcessor);
+            #endif
+            return CurrentDialogue;
+        }
+        
+        internal void LoadGraph(DialogueGraph graph, bool createVisualizationContext = true)
+        {
+            nodes = graph.nodes;
             
             (provisionerLookup ??= new Dictionary<Hash128, ProvisionerData>()).Clear();
             foreach (ProvisionerData provisionerData in graph.provisionerData)
@@ -211,32 +225,31 @@ namespace CLogic.Dialogue
             if(createVisualizationContext)
                 SetupDebugContext(graph);
             #endif
-            
-            GoToNode(startIndex ?? graph.startNodeID, true);
-            
-            #if UNITY_EDITOR
-            ShowVisualizationForNode(CurrentNode, CurrentProcessor);
-            #endif
-            return CurrentDialogue;
         }
         
-        public void EndDialogue(bool callFinishCallback = true)
+        public void EndDialogue(bool endGracefully = true)
         {
             if (!IsPlaying)
                 return;
             
-            CurrentProcessor?.HandleCancellation(CurrentNode, this);
+            if(!endGracefully)
+                CurrentProcessor?.HandleCancellation(CurrentNode, this);
             CurrentNode = null;
             
-            if (callFinishCallback)
+            #if UNITY_EDITOR
+            CurrentContext?.Dispose();
+            
+            if (CurrentDialogue.executionFrames != null)
             {
-                #if UNITY_EDITOR
-                CurrentContext?.Dispose();
-                #endif
-                
-                CurrentDialogue.SetDialogueFinished();
-                OnDialogueEnd?.Invoke();
+                while (CurrentDialogue.executionFrames.TryPop(out SubGraph subGraph))
+                {
+                    subGraph.visualizationContext?.Dispose();
+                }
             }
+            #endif
+                
+            CurrentDialogue.SetDialogueFinished();
+            OnDialogueEnd?.Invoke();
         }
         
         /// <summary>
@@ -264,10 +277,16 @@ namespace CLogic.Dialogue
             {
                 case -1:
                     Integrations.LogWarning("Abrupt graph ending detected. Please ensure end nodes are properly linked where the graph ends");
-                    EndDialogue();
+                    if(IsInSubGraph)
+                        HandleSubGraphFinished();
+                    else
+                        EndDialogue(false);
                     return false;
                 case -2:
-                    EndDialogue();
+                    if(IsInSubGraph)
+                        HandleSubGraphFinished();
+                    else
+                        EndDialogue();
                     return false;
             }
             
@@ -294,11 +313,13 @@ namespace CLogic.Dialogue
         {
             if (nodeData is SubGraphNodeData subGraphNodeData)
             {
-                CurrentProcessor = null;
+                // Subgraph change execution frame, so post processing needs to happen before
+                foreach (IDialoguePostProcessor processor in nodePostProcessors[CurrentNode.GetType()])
+                    processor.PostProcessInternal(CurrentNode, this);
+                
                 ProcessSubGraph(subGraphNodeData); // Sub graph processing has precedence over all processing logic
                 return;
             }
-            //
             Type type = nodeData.GetType();
             
             if(!TryGetProcessorForNode(type, out IDialogueProcessor nodeProcessor))

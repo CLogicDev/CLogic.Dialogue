@@ -34,7 +34,7 @@ namespace CLogic.Dialogue
         
         private void ShowExecutionPath(DialogueNodeData newNode)
         {
-            Hash128 outputPort = previousNode?.execOutputPortHash ?? CurrentDialogue.DialogueGraph.entryPortHash; // Null when processing the entry node
+            Hash128 outputPort = previousNode?.execOutputPortHash ?? CurrentDialogue.CurrentGraph.entryPortHash; // Null when processing the entry node
             previousNode = newNode;
             Hash128 inputPort = newNode.execInputPortHash;
             
@@ -52,7 +52,7 @@ namespace CLogic.Dialogue
             WireReference wire;
             
             // Wire goes into a subgraph
-            if (CurrentDialogue.DialogueGraph.subgraphWireReferences.TryGetValue(inputPort, out DialogueGraph.SubgraphWireReference intoSubgraphWireRef))
+            if (CurrentDialogue.CurrentGraph.subgraphWireReferences.TryGetValue(inputPort, out DialogueGraph.SubgraphWireReference intoSubgraphWireRef))
             {
                 WireReference parentGraphWire = CurrentContext.GetWireReference(outputPort, intoSubgraphWireRef.subgraphNodePort);
                 WireReference subgraphEntryWire = CurrentContext.GetWireReference(intoSubgraphWireRef.variableNodePort, inputPort);
@@ -62,7 +62,7 @@ namespace CLogic.Dialogue
                 CurrentContext.Motion.Play(subgraphEntryWire);
             }
             // Wire comes out from a subgraph
-            else if (CurrentDialogue.DialogueGraph.subgraphWireReferences.TryGetValue(outputPort, out DialogueGraph.SubgraphWireReference outOfSubgraphWireRef))
+            else if (CurrentDialogue.CurrentGraph.subgraphWireReferences.TryGetValue(outputPort, out DialogueGraph.SubgraphWireReference outOfSubgraphWireRef))
             {
                 WireReference parentGraphWire = CurrentContext.GetWireReference(outOfSubgraphWireRef.subgraphNodePort, inputPort);
                 WireReference subgraphEntryWire = CurrentContext.GetWireReference(outputPort, outOfSubgraphWireRef.variableNodePort);
