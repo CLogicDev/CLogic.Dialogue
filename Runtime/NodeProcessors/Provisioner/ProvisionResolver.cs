@@ -54,7 +54,7 @@ namespace CLogic.Dialogue.Provisioner
         {
             List<(ProvisionAttribute, FieldInfo)> dataToProvision = provisionedTypeCache[nodeData.GetType()];
             
-            if(!director.TryGetProcessorForNode(provisionerData.GetType(), out IDialogueProcessor processor))
+            if(!director.nodeProcessors.TryGetValue(provisionerData.GetType(), out IDialogueProcessor processor))
                 throw new ArgumentException($"{provisionerData.GetType()} does not have a processor");
             
             if(processor is not IDialogueProvisioner provisioner)

@@ -1,10 +1,16 @@
 ﻿using System;
 namespace CLogic.Dialogue
 {
-    public interface IDialogueProcessor
+    public interface IDialogueProcessorBase
     {
+        /// <summary>
+        /// The type that this processor handles
+        /// </summary>
         public Type NodeType { get; }
-        
+    }
+    
+    public interface IDialogueProcessor : IDialogueProcessorBase
+    {
         /// <summary>
         /// Called when the director requests to move to the next node
         /// </summary>

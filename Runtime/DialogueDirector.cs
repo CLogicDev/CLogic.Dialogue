@@ -22,15 +22,14 @@ namespace CLogic.Dialogue
         
         [NonSerialized] private DialogueNodeData[] nodes;
         
-        private IReadOnlyDictionary<Type, IDialogueProcessor> nodeProcessors;
-        
+        [NonSerialized] public IReadOnlyDictionary<Type, IDialogueProcessor> nodeProcessors;
         [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors;
         [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors;
         
         [NoAutoStaticsCleanup]
-        private static List<IDialogueProcessor> cachedSingletonProcessors;
+        private static List<IDialogueProcessorBase> cachedSingletonProcessors;
         [NoAutoStaticsCleanup]
-        private static Dictionary<Type, IDialogueProcessor> cachedSingletonMonoProcessors;
+        private static Dictionary<Type, IDialogueProcessorBase> cachedSingletonMonoProcessors;
         private static GameObject monoProcessorsContainer;
         
         internal Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
@@ -45,34 +44,34 @@ namespace CLogic.Dialogue
         #region Processor Resolution
         private void ResolveProcessors()
         {
-            IEnumerable<IDialogueProcessor> childProcessors = DiscoverProcessorsInHierarchy(transform);
-            IEnumerable<IDialogueProcessor> singletonProcessors = DiscoverSingletonProcessors();
+            IEnumerable<IDialogueProcessorBase> childProcessors = DiscoverProcessorsInHierarchy(transform);
+            IEnumerable<IDialogueProcessorBase> singletonProcessors = DiscoverSingletonProcessors();
             
-            IEnumerable<IDialogueProcessor> resolvedProcessors = childProcessors.Concat(singletonProcessors);
+            IEnumerable<IDialogueProcessorBase> resolvedProcessors = childProcessors.Concat(singletonProcessors);
             
             Dictionary<Type, IDialogueProcessor> processors = new();
             Dictionary<Type, List<IDialoguePreProcessor>> preProcessors = new();
             Dictionary<Type, List<IDialoguePostProcessor>> postProcessors = new();
             
-            foreach (IDialogueProcessor processor in resolvedProcessors)
+            foreach (IDialogueProcessorBase processor in resolvedProcessors)
             {
                 switch (processor)
                 {
                     case IDialoguePreProcessor preProcessor:
-                        if(!preProcessors.TryGetValue(preProcessor.HandledType, out List<IDialoguePreProcessor> preProcessorList))
-                            preProcessorList = preProcessors[preProcessor.HandledType] = new List<IDialoguePreProcessor>();
+                        if(!preProcessors.TryGetValue(preProcessor.NodeType, out List<IDialoguePreProcessor> preProcessorList))
+                            preProcessorList = preProcessors[preProcessor.NodeType] = new List<IDialoguePreProcessor>();
                         
                         preProcessorList.Add(preProcessor);
                         break;
                     case IDialoguePostProcessor postProcessor:
-                        if(!postProcessors.TryGetValue(postProcessor.HandledType, out List<IDialoguePostProcessor> postProcessorList))
-                            postProcessorList = postProcessors[postProcessor.HandledType] = new List<IDialoguePostProcessor>();
+                        if(!postProcessors.TryGetValue(postProcessor.NodeType, out List<IDialoguePostProcessor> postProcessorList))
+                            postProcessorList = postProcessors[postProcessor.NodeType] = new List<IDialoguePostProcessor>();
                         
                         postProcessorList.Add(postProcessor);
                         break;
                     
                     default:
-                        processors.Add(processor.NodeType, processor);
+                        processors.Add(processor.NodeType, (IDialogueProcessor)processor);
                         break;
                 }
             }
@@ -111,8 +110,8 @@ namespace CLogic.Dialogue
         
         private IEnumerable<IDialogueProcessor> DiscoverProcessorsInHierarchy(Transform parent, int currentDepth = 0)
         {
-            foreach (IDialogueProcessor dialogueNodeProcessor in parent.GetComponents<IDialogueProcessor>())
-                yield return dialogueNodeProcessor;
+            foreach (IDialogueProcessor processor in parent.GetComponents<IDialogueProcessor>())
+                yield return processor;
             
             if (currentDepth >= maxDiscoveryDepth)
                 yield break;
@@ -126,44 +125,44 @@ namespace CLogic.Dialogue
             }
         }
         
-        private IEnumerable<IDialogueProcessor> DiscoverSingletonProcessors()
+        private IEnumerable<IDialogueProcessorBase> DiscoverSingletonProcessors()
         {
             if (monoProcessorsContainer == null)
                 monoProcessorsContainer = new GameObject("Dialogue Processors");
             
-            cachedSingletonMonoProcessors ??= new Dictionary<Type, IDialogueProcessor>();
+            cachedSingletonMonoProcessors ??= new Dictionary<Type, IDialogueProcessorBase>();
             
             foreach (Type cachedMonoType in cachedSingletonMonoProcessors.Keys.ToArray())
             {
                 var monoProcessor = cachedSingletonMonoProcessors[cachedMonoType] as MonoBehaviour;
                 
                 if(monoProcessor == null)
-                    cachedSingletonMonoProcessors[cachedMonoType] = (IDialogueProcessor)monoProcessorsContainer.AddComponent(cachedMonoType);
+                    cachedSingletonMonoProcessors[cachedMonoType] = (IDialogueProcessorBase)monoProcessorsContainer.AddComponent(cachedMonoType);
                 
                 yield return cachedSingletonMonoProcessors[cachedMonoType];
             }
             
             if (cachedSingletonProcessors != null)
             {
-                foreach (IDialogueProcessor cachedStaticProcessor in cachedSingletonProcessors)
+                foreach (IDialogueProcessorBase cachedStaticProcessor in cachedSingletonProcessors)
                     yield return cachedStaticProcessor;
                 
                 yield break;
             }
             
-            cachedSingletonProcessors = new List<IDialogueProcessor>();
+            cachedSingletonProcessors = new List<IDialogueProcessorBase>();
             
             foreach (Type type in SingletonProcessorAttribute.GetSingletonProcessorTypes())
             {
-                IDialogueProcessor processor;
+                IDialogueProcessorBase processor;
                 if (typeof(MonoBehaviour).IsAssignableFrom(type))
                 {
-                    processor = (IDialogueProcessor)monoProcessorsContainer.AddComponent(type);
+                    processor = (IDialogueProcessorBase)monoProcessorsContainer.AddComponent(type);
                     cachedSingletonMonoProcessors.Add(type, processor);
                 }
                 else
                 {
-                    processor = (IDialogueProcessor)Activator.CreateInstance(type);
+                    processor = (IDialogueProcessorBase)Activator.CreateInstance(type);
                     cachedSingletonProcessors.Add(processor);
                 }
                 
@@ -285,6 +284,12 @@ namespace CLogic.Dialogue
         
         public DialogueNodeData GetNodeFromID(int nodeID) => nodes[nodeID];
         
+        /// <summary>
+        /// Calls the appropriate processor for the given node. 
+        /// </summary>
+        /// <param name="nodeData">The node to process</param>
+        /// <param name="fireAndForget">Does not make the processor the active one if set</param>
+        /// <exception cref="ArgumentException">The given node had no processor</exception>
         public void ProcessNode(DialogueNodeData nodeData, bool fireAndForget = false)
         {
             if (nodeData is SubGraphNodeData subGraphNodeData)
@@ -293,14 +298,11 @@ namespace CLogic.Dialogue
                 ProcessSubGraph(subGraphNodeData); // Sub graph processing has precedence over all processing logic
                 return;
             }
-            
+            //
             Type type = nodeData.GetType();
             
             if(!TryGetProcessorForNode(type, out IDialogueProcessor nodeProcessor))
-            {
-                Integrations.LogError($"No processor for type {type}");
-                return;
-            }
+                throw new ArgumentException($"No processor for type {type}", nameof(nodeData));
             
             if (!fireAndForget)
                 CurrentProcessor = nodeProcessor;
@@ -310,19 +312,31 @@ namespace CLogic.Dialogue
             
             nodeProcessor.ProcessNode(nodeData, this);
         }
-
+        
+        /// <summary>
+        /// Attempts to retrieve the processor for a given node
+        /// </summary>
+        /// <param name="type">The type of the node to retrieve the processor for</param>
+        /// <param name="processor">Instance of the processor if found</param>
+        /// <typeparam name="T">The type of the processor handling the given node</typeparam>
+        /// <returns>Whether the processor could be found</returns>
         public bool TryGetProcessorForNode<T>(Type type, out T processor) where T : IDialogueProcessor
         {
             if(nodeProcessors.TryGetValue(type, out IDialogueProcessor rawProcessor))
             {
-                processor = (T)rawProcessor;
+                processor = (T)rawProcessor; 
                 return true;
             }
-
+            
             processor = default;
             return false;
         }
         
+        /// <summary>
+        /// Retrieves the processor for a given node
+        /// </summary>
+        /// <typeparam name="T">The type of the processor handling the given node</typeparam>
+        /// <returns>Instance of the processor found</returns>
         public T GetProcessorForNode<T>(Type type) => (T)nodeProcessors[type];
     }
 }

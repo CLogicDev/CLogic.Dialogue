@@ -13,7 +13,7 @@ namespace CLogic.Dialogue
                     .SelectMany(a => a.GetTypes())
                     .Where(t => !t.IsAbstract)
                     .Where(t => t.IsDefined(typeof(SingletonProcessorAttribute), false))
-                    .Where(t => typeof(IDialogueProcessor).IsAssignableFrom(t));
+                    .Where(t => typeof(IDialogueProcessorBase).IsAssignableFrom(t));
         }
     }
 }
