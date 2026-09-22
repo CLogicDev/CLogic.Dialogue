@@ -4,11 +4,31 @@ using UnityEngine;
 
 namespace CLogic.Dialogue.Editor
 {
+    public enum ValidationType
+    {
+        /// <summary>
+        /// Node is always validated when the graph changes
+        /// </summary>
+        Always,
+        
+        /// <summary>
+        /// Node is validated only when it has been changed
+        /// </summary>
+        OnChanged
+    }
+    
+    public interface IDialogueGraphNodeBase
+    {
+        public ValidationType ValidationType => ValidationType.OnChanged;
+        
+        public void OnValidate(GraphLogger graphLogger);
+    }
+    
     /// <summary>
     /// Use when the node is not directly part of the flow of dialogue, i.e. values that need to be evaluated at runtime <br></br>
     /// Otherwise look into <see cref="DialogueNode{T}"/>
     /// </summary>
-    public interface IDialogueGraphNode
+    public interface IDialogueGraphNode : IDialogueGraphNodeBase
     {
         public const string IN_EXECUTION = "In";
         public const string OUT_EXECUTION = "Out";
@@ -21,7 +41,6 @@ namespace CLogic.Dialogue.Editor
         
         public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap);
         
-        public void OnValidate(GraphLogger graphLogger);
         
         public static bool TryGetPortValue<TValue>(IPort port, out TValue value)
         {

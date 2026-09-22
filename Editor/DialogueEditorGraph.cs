@@ -34,11 +34,21 @@ namespace CLogic.Dialogue.Editor
             int connectedStartNodes = 0;
             foreach (INode node in nodes)
             {
-                if (node is IDialogueGraphNode dialogueNode)
-                    dialogueNode.OnValidate(graphLogger);
-                
-                if(node is IProvisionerNode provisionerNode)
-                    provisionerNode.OnValidate(graphLogger);
+                if (node is IDialogueGraphNodeBase dialogueNode)
+                {
+                    switch (dialogueNode.ValidationType)
+                    {
+                        case ValidationType.Always:
+                            dialogueNode.OnValidate(graphLogger);
+                        break;
+                        case ValidationType.OnChanged:
+                            if (graphLogger.GraphChanges.ChangedNodes.Any(n => n.Node == node))
+                                dialogueNode.OnValidate(graphLogger);
+                        break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
                 
                 if (node is StartNode && node.GetOutputPortByName(StartNode.OUT_START).IsConnected)
                     connectedStartNodes++;

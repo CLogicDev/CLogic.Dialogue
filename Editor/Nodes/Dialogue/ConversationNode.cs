@@ -2,6 +2,7 @@
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 using CLogic.Dialogue;
+using UnityEngine;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -47,6 +48,12 @@ namespace CLogic.Dialogue.Editor
             node.skippable = GetPortValue<bool>(GetInputPortByName(IN_SKIPPABLE));
             
             return node;
+        }
+        
+        public override void OnValidate(GraphLogger graphLogger)
+        {
+            base.OnValidate(graphLogger);
+            Debug.Log("Validating node... " + ID);
         }
     }
     #endif
