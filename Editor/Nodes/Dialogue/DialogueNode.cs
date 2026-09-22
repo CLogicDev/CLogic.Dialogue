@@ -50,6 +50,9 @@ namespace CLogic.Dialogue.Editor
         [field: SerializeField]
         public bool IsFirstCreation { get; protected set; } = true;
         
+        public TValue GetInputPortValue<TValue>(string portName) => IDialogueGraphNode.GetPortValue<TValue>(GetInputPortByName(portName));
+        public bool TryGetPortValue<TValue>(IPort port, out TValue value) => IDialogueGraphNode.TryGetPortValue(port, out value);
+        
         public virtual void OnValidate(GraphLogger graphLogger)
         {
             IDialogueGraphNode.ValidateExecution(graphLogger, this);

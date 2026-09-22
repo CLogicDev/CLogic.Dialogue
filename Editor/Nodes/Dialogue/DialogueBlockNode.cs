@@ -13,6 +13,9 @@ namespace CLogic.Dialogue.Editor
         public virtual bool SupportStartAction => true;
         public virtual bool SupportEndAction => true;
         
+        public TValue GetInputPortValue<TValue>(string portName) => IDialogueGraphNode.GetPortValue<TValue>(GetInputPortByName(portName));
+        public bool TryGetPortValue<TValue>(IPort port, out TValue value) => IDialogueGraphNode.TryGetPortValue(port, out value);
+        
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
             if (SupportStartAction || SupportEndAction)
