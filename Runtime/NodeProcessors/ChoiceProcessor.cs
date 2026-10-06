@@ -9,22 +9,21 @@ namespace CLogic.Dialogue
     [Serializable]
     public class ChoiceNodeData : ContextNodeData
     {
-        #if CLOGIC_CONDITIONAL
+#if CLOGIC_CONDITIONAL
         public bool isAutoChoice;
-        #endif
+#endif
     }
-    
+
     [Serializable]
     public class ChoiceOptionData : BlockNodeData
     {
         public string choiceText;
-        
-        #if CLOGIC_CONDITIONAL
+
+#if CLOGIC_CONDITIONAL
         public Conditional.ConditionalEvaluator conditional;
-        #endif
-        
+#endif
     }
-    
+
     public class ChoiceProcessor : DialogueProcessor<ChoiceNodeData>
     {
         [SerializeField]
@@ -33,17 +32,17 @@ namespace CLogic.Dialogue
         private RectTransform choiceContainer;
 
         public ChoiceOptionData LastSelectedChoice { get; private set; }
-        
+
         protected override void ProcessNode(ChoiceNodeData nodeData, DialogueDirector director)
         {
-            #if CLOGIC_CONDITIONAL
-            if(nodeData.isAutoChoice)
+#if CLOGIC_CONDITIONAL
+            if (nodeData.isAutoChoice)
             {
                 HandleAutoChoice(nodeData, director);
                 return;
             }
-            #endif
-            
+#endif
+
             HandleChoice(nodeData, director);
         }
 
@@ -52,37 +51,37 @@ namespace CLogic.Dialogue
             foreach (DialogueNodeData dialogueNodeData in dialogueNode.childBlocks)
             {
                 var choiceNode = dialogueNodeData as ChoiceOptionData;
-                
+
                 GameObject buttonObject = Instantiate(choiceButtonPrefab, choiceContainer);
                 buttonObject.SetActive(false); // Fixes delay with interactable state
-                
+
                 var button = buttonObject.GetComponent<Button>();
                 var buttonText = buttonObject.GetComponentInChildren<TMP_Text>();
-                
+
                 buttonText.text = choiceNode.choiceText;
-                
+
                 button.onClick.AddListener(() => SelectChoice(choiceNode, director, dialogueNode));
-                
-                #if CLOGIC_CONDITIONAL
+
+#if CLOGIC_CONDITIONAL
                 button.interactable = choiceNode.conditional == null || choiceNode.conditional.Evaluate();
-                #endif
-                
+#endif
+
                 buttonObject.SetActive(true);
             }
         }
-        
-        #if CLOGIC_CONDITIONAL
+
+#if CLOGIC_CONDITIONAL
         private void HandleAutoChoice(ChoiceNodeData dialogueNode, DialogueDirector director)
         {
             int selectedIndex = -1;
-            for(int i = 0; i < dialogueNode.childBlocks.Count; i++)
+            for (int i = 0; i < dialogueNode.childBlocks.Count; i++)
             {
                 DialogueNodeData blockNodeData = dialogueNode.childBlocks[i];
                 var choiceNode = (ChoiceOptionData)blockNodeData;
-                if(!choiceNode.conditional)
+                if (!choiceNode.conditional)
                     continue;
 
-                if(selectedIndex != -1)
+                if (selectedIndex != -1)
                 {
                     Integrations.LogWarning($"[Dialogue] Auto choice has multiple valid branches. Choice {selectedIndex} and {i} are both valid. Defaulting to normal choice logic");
                     HandleChoice(dialogueNode, director);
@@ -90,26 +89,26 @@ namespace CLogic.Dialogue
                 }
                 selectedIndex = i;
             }
-            
+
             SelectChoice((ChoiceOptionData)dialogueNode.childBlocks[selectedIndex], director, dialogueNode);
         }
-        #endif
-        
+#endif
+
         protected override bool CanProgressNode(ChoiceNodeData nodeData, DialogueDirector director) => false;
-        
+
         private void SelectChoice(ChoiceOptionData choice, DialogueDirector director, ChoiceNodeData choiceNodeData)
         {
             DestroyChoiceButtons();
 
             LastSelectedChoice = choice;
-            
-            if(choice.startNodeActionID != -1)
+
+            if (choice.startNodeActionID != -1)
                 director.ProcessNode(director.GetNodeFromID(choice.startNodeActionID), true);
-            
+
             choiceNodeData.execOutputPortHash = choice.execOutputPortHash;
             director.GoToNode(choice.nextNodeID, true);
         }
-        
+
         private void DestroyChoiceButtons()
         {
             foreach (Transform choiceButton in choiceContainer)
@@ -117,7 +116,7 @@ namespace CLogic.Dialogue
                 Destroy(choiceButton.gameObject);
             }
         }
-        
+
         protected override void HandleCancellation(ChoiceNodeData nodeData, DialogueDirector director) => DestroyChoiceButtons();
     }
 }

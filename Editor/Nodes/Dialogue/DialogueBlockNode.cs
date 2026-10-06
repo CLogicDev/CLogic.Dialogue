@@ -1,51 +1,52 @@
 ﻿using System;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
-using System.Linq;
-using CLogic.Dialogue;
 
 namespace CLogic.Dialogue.Editor
 {
+    /// <summary>
+    /// Base class for creating custom dialogue block nodes.
+    /// </summary>
+    /// <typeparam name="T">The type of the dialogue node data</typeparam>
     [Serializable]
     public abstract class DialogueBlockNode<T> : BlockNode, IDialogueGraphNode where T : DialogueNodeData
     {
-        
         public virtual bool SupportStartAction => true;
         public virtual bool SupportEndAction => true;
-        
+
         public TValue GetInputPortValue<TValue>(string portName) => IDialogueGraphNode.GetPortValue<TValue>(GetInputPortByName(portName));
         public bool TryGetPortValue<TValue>(IPort port, out TValue value) => IDialogueGraphNode.TryGetPortValue(port, out value);
-        
+
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
             if (SupportStartAction || SupportEndAction)
                 context.AddOption<bool>(IDialogueGraphNode.OP_NODE_EVENTS).WithDisplayName("Use Events").ShowInInspectorOnly().Build();
         }
-        
+
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
-            if(!SupportStartAction && !SupportEndAction)
+            if (!SupportStartAction && !SupportEndAction)
                 return;
-            
+
             if (GetNodeOptionByName(IDialogueGraphNode.OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) && shouldUseEvents)
             {
                 if (SupportStartAction)
                     context.AddOutputPort<ActionNode>(IDialogueGraphNode.OUT_NODE_START).WithDisplayName("Start").Build();
-                
+
                 if (SupportEndAction)
                     context.AddOutputPort<ActionNode>(IDialogueGraphNode.OUT_NODE_END).WithDisplayName("End").Build();
             }
         }
-        
+
         public virtual void OnValidate(GraphLogger graphLogger)
         {
             IDialogueGraphNode.ValidateActionLinks(graphLogger, this, SupportStartAction, SupportEndAction);
         }
-        
+
         public abstract T ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap);
-        
+
         protected TValue GetPortValue<TValue>(IPort port) => IDialogueGraphNode.GetPortValue<TValue>(port);
-        
+
         DialogueNodeData IDialogueGraphNode.ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap) => ProcessNodeAsset(graph, portMap);
     }
 }
