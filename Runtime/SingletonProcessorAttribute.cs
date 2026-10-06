@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.Assemblies;
+
 namespace CLogic.Dialogue
 {
+    /// <summary>
+    /// Marks a dialogue processor as a singleton, creating a single shared instance of it.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public sealed class SingletonProcessorAttribute : Attribute
     {
