@@ -35,4 +35,6 @@ namespace CLogic.Dialogue.Editor
 
         public bool? CanConnect(IPort output, IPort input) => output.Name is IDialogueGraphNode.OUT_NODE_START or IDialogueGraphNode.OUT_NODE_END;
     }
+
+    public class ActionNodeView : DialogueNodeView<ActionNode> { }
 }
