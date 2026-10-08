@@ -11,9 +11,10 @@ namespace CLogic.Dialogue.Editor
 
         public override void OnViewBuilt()
         {
-            Material dottedborderMaterial = new(Shader.Find("CLogic/DialogueSystem/S_DottedBorder"));
-
-            externalNodeBorder = View.Root.Q<VisualElement>(className: "ge-graph-element__dynamic-border");
+            Material borderMaterial = new(Shader.Find("CLogic/DialogueSystem/S_DottedBorder"))
+            {
+                hideFlags = HideFlags.HideAndDontSave // Prevents the material from being removed when exiting play mode
+            };
 
             dottedBorder = new VisualElement
             {
@@ -39,12 +40,23 @@ namespace CLogic.Dialogue.Editor
                     marginRight = 10f,
                     marginTop = 10f,
                     zIndex = -10,
-                    unityMaterial = dottedborderMaterial
+                    display = DisplayStyle.None,
+                    unityMaterial = borderMaterial
                 }
             };
 
+            externalNodeBorder = View.Root.Q<VisualElement>(className: "ge-graph-element__dynamic-border");
             externalNodeBorder.Add(dottedBorder);
         }
+
+        public override void OnViewAttached()
+        {
+            DialogueDebugState.CurrentNodeChanged += UpdateHighlight;
+
+            UpdateHighlight(DialogueDebugState.CurrentNodeID);
+        }
+
+        public override void OnViewDetached() => DialogueDebugState.CurrentNodeChanged -= UpdateHighlight;
 
         public override void OnCullingChanged(bool cullingEnabled)
         {
@@ -62,5 +74,7 @@ namespace CLogic.Dialogue.Editor
                     externalNodeBorder.Add(dottedBorder);
             }
         }
+
+        private void UpdateHighlight(Hash128 nodeHash) => dottedBorder.style.display = nodeHash == Node.ID ? DisplayStyle.Flex : DisplayStyle.None;
     }
 }

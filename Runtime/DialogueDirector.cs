@@ -38,6 +38,7 @@ namespace CLogic.Dialogue
 
         internal Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
 
+        public event Action OnDialogueProgress;
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
 
@@ -202,9 +203,9 @@ namespace CLogic.Dialogue
 
             LoadGraph(graph, true);
 
-            OnDialogueStart?.Invoke();
-
             GoToNode(startIndex ?? graph.startNodeID, true);
+
+            OnDialogueStart?.Invoke();
 
 #if UNITY_EDITOR
             ShowVisualizationForNode(CurrentNode, CurrentProcessor);
@@ -297,6 +298,8 @@ namespace CLogic.Dialogue
             CurrentNode = GetNodeFromID(nodeID);
             currentNodeID = nodeID;
             ProcessNode(CurrentNode);
+
+            OnDialogueProgress?.Invoke();
 
 #if UNITY_EDITOR
             ShowExecutionPath(CurrentNode);
