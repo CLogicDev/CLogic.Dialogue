@@ -4,6 +4,11 @@ using Unity.GraphToolkit.Editor;
 
 namespace CLogic.Dialogue.Editor
 {
+    /// <summary>
+    /// A custom NodeView for Dialogue Nodes that adds a dotted border to highlight the currently executing node in the dialogue graph. <br></br>
+    /// Inherit from this class to ensure that the dotted border is added to your custom node view.
+    /// </summary>
+    /// <typeparam name="T">The node to attach the view to</typeparam>
     public class DialogueNodeView<T> : NodeView<T> where T : Node
     {
         private VisualElement dottedBorder;

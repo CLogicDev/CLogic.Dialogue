@@ -55,6 +55,6 @@ namespace CLogic.Dialogue.Editor
         }
     }
 
-    public class BlockerNodeView : DialogueNodeView<ConversationNode> { }
+    public class ConversationNodeView : DialogueNodeView<ConversationNode> { }
 #endif
 }
