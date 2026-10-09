@@ -38,13 +38,25 @@ namespace CLogic.Dialogue
 
         internal Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
 
-        public event Action OnDialogueProgress;
+        [NoAutoStaticsCleanup]
+        internal static event Action<DialogueDirector> OnDirectorInitalized;
+
+        [NoAutoStaticsCleanup]
+        internal static event Action<DialogueDirector> OnDirectorDestroyed;
+
         public event Action OnDialogueStart;
+        public event Action OnDialogueProgress;
         public event Action OnDialogueEnd;
 
         public bool IsPlaying => CurrentNode != null;
 
-        private void Awake() => ResolveProcessors();
+        private void Awake()
+        {
+            ResolveProcessors();
+            OnDirectorInitalized?.Invoke(this);
+        }
+
+        private void OnDestroy() => OnDirectorDestroyed?.Invoke(this);
 
         #region Processor Resolution
         private void ResolveProcessors()

@@ -56,12 +56,11 @@ namespace CLogic.Dialogue.Editor
 
         public override void OnViewAttached()
         {
-            DialogueDebugState.CurrentNodeChanged += UpdateHighlight;
-
-            UpdateHighlight(DialogueDebugState.CurrentNodeID);
+            DialogueDebugState.OnActiveNodesChanged += UpdateHighlight;
+            UpdateHighlight();
         }
 
-        public override void OnViewDetached() => DialogueDebugState.CurrentNodeChanged -= UpdateHighlight;
+        public override void OnViewDetached() => DialogueDebugState.OnActiveNodesChanged -= UpdateHighlight;
 
         public override void OnCullingChanged(bool cullingEnabled)
         {
@@ -80,6 +79,6 @@ namespace CLogic.Dialogue.Editor
             }
         }
 
-        private void UpdateHighlight(Hash128 nodeHash) => dottedBorder.style.display = nodeHash == Node.ID ? DisplayStyle.Flex : DisplayStyle.None;
+        private void UpdateHighlight() => dottedBorder.style.display = DialogueDebugState.IsNodeActive(Node.ID) ? DisplayStyle.Flex : DisplayStyle.None;
     }
 }

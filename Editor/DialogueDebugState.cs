@@ -1,82 +1,87 @@
 using System;
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 using Unity.Scripting.LifecycleManagement;
-using Object = UnityEngine.Object;
 
 namespace CLogic.Dialogue.Editor
 {
     [InitializeOnLoad, NoAutoStaticsCleanup]
     internal static class DialogueDebugState
     {
-        private static DialogueDirector director;
+        public static List<DialogueDirector> ActiveDirectors = new();
+        private static Dictionary<DialogueDirector, Hash128> ActiveNodeIDs = new();
+        private static Dictionary<DialogueDirector, (Action OnUpdate, Action OnClear)> DirectorCallbacks = new();
 
-        public static Hash128 CurrentNodeID { get; private set; }
+        public static event Action OnActiveNodesChanged;
 
-        public static event Action<Hash128> CurrentNodeChanged;
-
-        static DialogueDebugState() => EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
-
-        private static void OnPlayModeStateChanged(PlayModeStateChange state)
+        static DialogueDebugState()
         {
-            switch (state)
+            DialogueDirector.OnDirectorInitalized += OnDirectorInitalized;
+            DialogueDirector.OnDirectorDestroyed += OnDirectorDestroyed;
+        }
+
+        public static bool IsNodeActive(Hash128 nodeID) => ActiveNodeIDs.ContainsValue(nodeID);
+
+        private static void OnDirectorInitalized(DialogueDirector director) => AttachToDirector(director);
+
+        private static void OnDirectorDestroyed(DialogueDirector director)
+        {
+            DetachFromDirector(director);
+            ClearCurrentNode(director);
+        }
+
+        private static void AttachToDirector(DialogueDirector director)
+        {
+            if (DirectorCallbacks.ContainsKey(director))
+                return;
+
+            // Cache the callbacks for unsubscribing when detaching
+            DirectorCallbacks.Add(director, (UpdateNode, ClearNode));
+
+            director.OnDialogueProgress += UpdateNode;
+            director.OnDialogueEnd += ClearNode;
+
+            if (!ActiveDirectors.Contains(director))
+                ActiveDirectors.Add(director);
+
+            UpdateCurrentNode(director);
+
+            void UpdateNode() => UpdateCurrentNode(director);
+            void ClearNode() => ClearCurrentNode(director);
+        }
+
+        private static void DetachFromDirector(DialogueDirector director)
+        {
+            if (DirectorCallbacks.TryGetValue(director, out var callbacks))
             {
-                case PlayModeStateChange.EnteredPlayMode:
-                    AttachToDirector();
-                    break;
+                director.OnDialogueProgress -= callbacks.OnUpdate;
+                director.OnDialogueEnd -= callbacks.OnClear;
 
-                case PlayModeStateChange.ExitingPlayMode:
-                    DetachFromDirector();
-                    ClearCurrentNode();
-                    break;
+                DirectorCallbacks.Remove(director);
             }
+
+            ActiveDirectors.Remove(director);
         }
 
-        private static void AttachToDirector()
+        private static void UpdateCurrentNode(DialogueDirector director)
         {
-            DetachFromDirector();
+            if (director == null || director.CurrentNode == null)
+            {
+                ActiveNodeIDs.Remove(director);
+            }
+            else
+            {
+                ActiveNodeIDs[director] = director.CurrentNode.nodeHash;
+            }
 
-            director = Object.FindAnyObjectByType<DialogueDirector>();
-
-            if (director == null)
-                return;
-
-            director.OnDialogueStart += UpdateCurrentNode;
-            director.OnDialogueProgress += UpdateCurrentNode;
-            director.OnDialogueEnd += ClearCurrentNode;
-
-            UpdateCurrentNode();
+            OnActiveNodesChanged?.Invoke();
         }
 
-        private static void DetachFromDirector()
+        private static void ClearCurrentNode(DialogueDirector director)
         {
-            if (director == null)
-                return;
-
-            director.OnDialogueStart -= UpdateCurrentNode;
-            director.OnDialogueProgress -= UpdateCurrentNode;
-            director.OnDialogueEnd -= ClearCurrentNode;
-
-            director = null;
-        }
-
-        private static void UpdateCurrentNode()
-        {
-            if (director == null)
-                return;
-
-            SetCurrentNode(director.CurrentNode.nodeHash);
-        }
-
-        private static void ClearCurrentNode() => SetCurrentNode(default);
-
-        private static void SetCurrentNode(Hash128 nodeID)
-        {
-            if (CurrentNodeID == nodeID)
-                return;
-
-            CurrentNodeID = nodeID;
-            CurrentNodeChanged?.Invoke(CurrentNodeID);
+            if (ActiveNodeIDs.Remove(director))
+                OnActiveNodesChanged?.Invoke();
         }
     }
 }
