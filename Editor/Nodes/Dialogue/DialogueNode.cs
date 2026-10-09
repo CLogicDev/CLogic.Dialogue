@@ -5,7 +5,6 @@ using System.Reflection;
 using CLogic.Dialogue.Provisioner;
 using UnityEditor;
 using UnityEngine;
-using Node = Unity.GraphToolkit.Editor.Node;
 
 namespace CLogic.Dialogue.Editor
 {
