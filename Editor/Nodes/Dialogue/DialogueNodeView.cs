@@ -56,11 +56,18 @@ namespace CLogic.Dialogue.Editor
 
         public override void OnViewAttached()
         {
-            DialogueDebugState.OnActiveNodesChanged += UpdateHighlight;
-            UpdateHighlight();
+            DialogueDirector.OnActiveNodeChanged += UpdateActiveNode;
         }
-
-        public override void OnViewDetached() => DialogueDebugState.OnActiveNodesChanged -= UpdateHighlight;
+        private void UpdateActiveNode(DialogueDirector director)
+        {
+            // Consider adding support for subgraph as well when possible
+            if(Node.Graph.ID != director.CurrentDialogue.MainGraph.graphHash)
+                return;
+            
+            dottedBorder.style.display = director.CurrentNode.nodeHash == Node.ID ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+        
+        public override void OnViewDetached() => DialogueDirector.OnActiveNodeChanged -= UpdateActiveNode;
 
         public override void OnCullingChanged(bool cullingEnabled)
         {
@@ -78,7 +85,5 @@ namespace CLogic.Dialogue.Editor
                     externalNodeBorder.Add(dottedBorder);
             }
         }
-
-        private void UpdateHighlight() => dottedBorder.style.display = DialogueDebugState.IsNodeActive(Node.ID) ? DisplayStyle.Flex : DisplayStyle.None;
     }
 }
