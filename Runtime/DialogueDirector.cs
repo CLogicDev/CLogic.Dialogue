@@ -39,11 +39,13 @@ namespace CLogic.Dialogue
         internal Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
 
         [NoAutoStaticsCleanup]
-        internal static event Action<DialogueDirector> OnActiveNodeChanged;
+        internal static event Action<DialogueDirector> OnDirectorInitalized;
 
+        [NoAutoStaticsCleanup]
+        internal static event Action<DialogueDirector> OnDirectorDestroyed;
 
-        public event Action OnDialogueStart;
         public event Action OnDialogueProgress;
+        public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
 
         public bool IsPlaying => CurrentNode != null;
@@ -51,8 +53,10 @@ namespace CLogic.Dialogue
         private void Awake()
         {
             ResolveProcessors();
+            OnDirectorInitalized?.Invoke(this);
         }
 
+        private void OnDestroy() => OnDirectorDestroyed?.Invoke(this);
 
         #region Processor Resolution
         private void ResolveProcessors()
@@ -305,9 +309,7 @@ namespace CLogic.Dialogue
 
             CurrentNode = GetNodeFromID(nodeID);
             currentNodeID = nodeID;
-            
-            OnActiveNodeChanged?.Invoke(this);
-            
+
             ProcessNode(CurrentNode);
 
             OnDialogueProgress?.Invoke();

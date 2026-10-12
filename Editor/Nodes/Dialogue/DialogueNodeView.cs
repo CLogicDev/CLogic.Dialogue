@@ -21,7 +21,7 @@ namespace CLogic.Dialogue.Editor
                 hideFlags = HideFlags.HideAndDontSave // Prevents the material from being removed when exiting play mode
             };
 
-            dottedBorder = new VisualElement
+            dottedBorder = new VisualElement()
             {
                 name = "DottedBorder",
                 pickingMode = PickingMode.Ignore,
@@ -56,18 +56,11 @@ namespace CLogic.Dialogue.Editor
 
         public override void OnViewAttached()
         {
-            DialogueDirector.OnActiveNodeChanged += UpdateActiveNode;
+            DialogueDebugState.OnActiveNodesChanged += UpdateHighlight;
+            UpdateHighlight();
         }
-        private void UpdateActiveNode(DialogueDirector director)
-        {
-            // Consider adding support for subgraph as well when possible
-            if(Node.Graph.ID != director.CurrentDialogue.MainGraph.graphHash)
-                return;
-            
-            dottedBorder.style.display = director.CurrentNode.nodeHash == Node.ID ? DisplayStyle.Flex : DisplayStyle.None;
-        }
-        
-        public override void OnViewDetached() => DialogueDirector.OnActiveNodeChanged -= UpdateActiveNode;
+
+        public override void OnViewDetached() => DialogueDebugState.OnActiveNodesChanged -= UpdateHighlight;
 
         public override void OnCullingChanged(bool cullingEnabled)
         {
@@ -85,5 +78,7 @@ namespace CLogic.Dialogue.Editor
                     externalNodeBorder.Add(dottedBorder);
             }
         }
+
+        private void UpdateHighlight() => dottedBorder.style.display = DialogueDebugState.IsNodeActive(Node.ID) ? DisplayStyle.Flex : DisplayStyle.None;
     }
 }
