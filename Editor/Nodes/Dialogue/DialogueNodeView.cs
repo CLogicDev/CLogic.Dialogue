@@ -11,12 +11,13 @@ namespace CLogic.Dialogue.Editor
     /// <typeparam name="T">The node to attach the view to</typeparam>
     public class DialogueNodeView<T> : NodeView<T> where T : Node
     {
+        private Material borderMaterial;
         private VisualElement dottedBorder;
         private VisualElement externalNodeBorder;
 
         public override void OnViewBuilt()
         {
-            Material borderMaterial = new(Shader.Find("CLogic/DialogueSystem/S_DottedBorder"))
+            borderMaterial = new Material(Shader.Find("CLogic/DialogueSystem/S_DottedBorder"))
             {
                 hideFlags = HideFlags.HideAndDontSave // Prevents the material from being removed when exiting play mode
             };
@@ -52,6 +53,18 @@ namespace CLogic.Dialogue.Editor
 
             externalNodeBorder = View.Root.Q<VisualElement>(className: "ge-graph-element__dynamic-border");
             externalNodeBorder.Add(dottedBorder);
+
+            //dottedBorder.RegisterCallback<GeometryChangedEvent>((callback) =>
+            //{
+            //    float height = dottedBorder.resolvedStyle.height;
+            //
+            //    if (height <= 0f)
+            //        return;
+            //
+            //    borderMaterial.SetFloat("_TileScale", height / 100f * 0.4f);
+            //
+            //    Debug.Log(height / 100f * 0.4f);
+            //});
         }
 
         public override void OnViewAttached()
