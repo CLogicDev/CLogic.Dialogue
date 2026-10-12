@@ -10,20 +10,20 @@ namespace CLogic.Dialogue.Editor
         /// Node is always validated when the graph changes
         /// </summary>
         Always,
-        
+
         /// <summary>
         /// Node is validated only when it has been changed
         /// </summary>
         OnChanged
     }
-    
+
     public interface IDialogueGraphNodeBase
     {
         public ValidationType ValidationType => ValidationType.OnChanged;
-        
+
         public void OnValidate(GraphLogger graphLogger);
     }
-    
+
     /// <summary>
     /// Use when the node is not directly part of the flow of dialogue, i.e. values that need to be evaluated at runtime <br></br>
     /// Otherwise look into <see cref="DialogueNode{T}"/>
@@ -32,19 +32,17 @@ namespace CLogic.Dialogue.Editor
     {
         public const string IN_EXECUTION = "In";
         public const string OUT_EXECUTION = "Out";
-        
+
         public const string OUT_NODE_END = "End";
         public const string OUT_NODE_START = "Start";
-        
+
         public const string OP_NODE_EVENTS = "UseEvents";
-        
-        
+
         public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap);
-        
-        
+
         public static bool TryGetPortValue<TValue>(IPort port, out TValue value)
         {
-            if(port == null)
+            if (port == null)
             {
                 value = default;
                 return false;
@@ -65,19 +63,19 @@ namespace CLogic.Dialogue.Editor
                         constantNode.TryGetValue(out value);
                         return true;
                     }
-                    
+
                     case IProvisionerNode provisionerNode when typeof(TValue).IsAssignableFrom(provisionerNode.HandledType):
                     {
-                       value = provisionerNode.GetProvisionedData<TValue>();
-                       return true;
+                        value = provisionerNode.GetProvisionedData<TValue>();
+                        return true;
                     }
                 }
                 value = default;
                 return false;
             }
-            
+
             bool hasInlinedValue = port.TryGetValue(out value) && value != null;
-            
+
             return hasInlinedValue;
         }
 
@@ -86,20 +84,20 @@ namespace CLogic.Dialogue.Editor
             TryGetPortValue(port, out TValue value);
             return value;
         }
-        
+
         #region Validations
-        
+
         public static void ValidateExecution(GraphLogger graphLogger, INode origin)
         {
             IPort outputPort = origin.GetOutputPortByName(OUT_EXECUTION);
-            
+
             if (outputPort == null)
                 return;
-            
+
             List<IPort> connectedPorts = new();
-            
+
             outputPort.GetConnectedPorts(connectedPorts);
-            
+
             switch (connectedPorts.Count)
             {
                 case 0:
@@ -114,76 +112,76 @@ namespace CLogic.Dialogue.Editor
                         origin.Graph.Connect(outputPort, endNode.GetInputPort(0));
                         origin.Graph.UndoEndRecordGraph();
                     }));
-                break;
-                
+                    break;
+
                 case > 1:
                     graphLogger.LogError("Multiple execution output links are not allowed", origin);
-                break;
+                    break;
             }
         }
-        
+
         public static void ValidateActionLinks(GraphLogger graphLogger, INode origin, bool supportsStartAction, bool supportsEndAction)
         {
-            if(!supportsStartAction && !supportsEndAction)
+            if (!supportsStartAction && !supportsEndAction)
                 return;
-            
+
             if (!origin.GetNodeOptionByName(OP_NODE_EVENTS).TryGetValue(out bool shouldUseEvents) || !shouldUseEvents)
                 return;
-            
+
             if (supportsStartAction)
             {
                 IPort connectedPort = origin.GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
-                
+
                 INode connectedNode = connectedPort.GetNode();
                 if (connectedNode is not null and not ActionNode)
                     graphLogger.LogError("Start node must be connected to an action node", origin);
             }
-            
+
             if (supportsEndAction)
             {
                 IPort connectedPort = origin.GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
-                
+
                 INode connectedNode = connectedPort.GetNode();
                 if (connectedNode is not null and not ActionNode)
                     graphLogger.LogError("End node must be connected to an action node", origin);
             }
         }
-        
+
         #endregion
-        
+
         #region Node Linkages
-        
+
         public static void CreateExecutionNodeLink(DialogueNodeData nodeData, Dictionary<IPort, int> portMap, INode origin)
         {
             IPort executionPort = origin.GetOutputPortByName(OUT_EXECUTION)?.FirstConnectedPort;
-            
+
             if (executionPort == null)
                 return;
-            
+
             nodeData.nextNodeID = portMap.GetValueOrDefault(executionPort, DialogueGraph.GRACEFUL_END);
             nodeData.execInputPortHash = origin.GetInputPortByName(IN_EXECUTION)?.ID ?? new Hash128();
             nodeData.execOutputPortHash = origin.GetOutputPortByName(OUT_EXECUTION)?.ID ?? new Hash128();
         }
-        
+
         public static void CreateActionNodeLink(DialogueNodeData nodeData, Dictionary<IPort, int> portMap, INode origin, bool supportsStartAction, bool supportsEndAction)
         {
             if (supportsStartAction)
             {
                 IPort actionPort = origin.GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
-                
+
                 if (actionPort != null)
                     nodeData.startNodeActionID = portMap.GetValueOrDefault(actionPort, DialogueGraph.GRACEFUL_END);
             }
-            
+
             if (supportsEndAction)
             {
                 IPort connectedPort = origin.GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
-                
+
                 if (connectedPort != null)
                     nodeData.endNodeActionID = portMap.GetValueOrDefault(connectedPort, DialogueGraph.INVALID_END);
             }
         }
-        
+
         #endregion
     }
 }

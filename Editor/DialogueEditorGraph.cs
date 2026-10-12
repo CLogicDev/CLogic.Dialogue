@@ -3,7 +3,6 @@ using UnityEditor;
 using System.Linq;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -15,22 +14,22 @@ namespace CLogic.Dialogue.Editor
     {
         public bool? CanConnect(IPort output, IPort input);
     }
-    
+
     /// <summary>
-    /// Graph used in the editor. To run dialogues you should instead use <see cref="DialogueGraph"/>
+    /// The editor representation of a dialogue graph.
     /// </summary>
     [Serializable, Graph(ASSET_EXTENSION, GraphOptions.SupportsSubgraphs)]
     public partial class DialogueEditorGraph : Graph
     {
         public const string ASSET_EXTENSION = "cdg";
-        
+
         [MenuItem("Assets/Create/CLogic/Dialogue Graph/New Graph", priority = 1)]
         private static void CreateAssetFile() => GraphDatabase.PromptInProjectBrowserToCreateNewAsset<DialogueEditorGraph>();
-        
+
         public sealed override void OnGraphChanged(GraphLogger graphLogger)
         {
             IEnumerable<INode> nodes = GetNodes();
-            
+
             int connectedStartNodes = 0;
             foreach (INode node in nodes)
             {
@@ -40,48 +39,47 @@ namespace CLogic.Dialogue.Editor
                     {
                         case ValidationType.Always:
                             dialogueNode.OnValidate(graphLogger);
-                        break;
+                            break;
                         case ValidationType.OnChanged:
                             if (graphLogger.GraphChanges.ChangedNodes.Any(n => n.Node == node))
                                 dialogueNode.OnValidate(graphLogger);
-                        break;
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
                 }
-                
+
                 if (node is StartNode && node.GetOutputPortByName(StartNode.OUT_START).IsConnected)
                     connectedStartNodes++;
             }
-            
+
             if (connectedStartNodes > 1)
                 graphLogger.LogError("Multiple connected start nodes detected. Only one connected start node should exist", this);
-            
+
             if (IsSubGraphInstance)
                 ValidateSubGraph(graphLogger);
         }
-        
+
         public sealed override bool IsConnectionAllowed(IPort output, IPort input)
         {
             INode inputNode = input.GetNode();
             INode outputNode = output.GetNode();
-            
+
             bool? canInputConnect = ValidateForNode(inputNode);
             bool? canOutputConnect = ValidateForNode(outputNode);
-            
-            if(!canInputConnect.HasValue && !canOutputConnect.HasValue)
+
+            if (!canInputConnect.HasValue && !canOutputConnect.HasValue)
                 return base.IsConnectionAllowed(output, input);
-            
+
             return (canInputConnect ?? true) && (canOutputConnect ?? true);
-            
+
             bool? ValidateForNode(INode node)
             {
                 if (node is not IConnectionValidator validator)
                     return null;
-                
+
                 return validator.CanConnect(output, input);
             }
         }
-        
     }
 }

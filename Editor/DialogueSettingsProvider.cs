@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEngine;
+
 namespace CLogic.Dialogue.Editor
 {
     public class BuildTargetChangedHandler : IActiveBuildTargetChanged
@@ -14,26 +14,26 @@ namespace CLogic.Dialogue.Editor
             DialogueSettings.UpdateDefines(DialogueSettings.GetOrCreateSettings().features);
         }
     }
-    
+
     internal static class DialogueSettingsProvider
     {
         [SettingsProvider]
         private static SettingsProvider CreateProvider()
         {
-            SettingsProvider provider = new ("Project/CLogic/Dialogue Settings", SettingsScope.Project)
+            SettingsProvider provider = new("Project/CLogic/Dialogue Settings", SettingsScope.Project)
             {
                 label = "Dialogue Settings",
                 guiHandler = (searchContext) =>
                 {
                     var settings = DialogueSettings.GetOrCreateSettings();
-                    
-                    SerializedObject so = new (settings);
-                    
+
+                    SerializedObject so = new(settings);
+
                     SerializedProperty featuresProperty = so.FindProperty(nameof(DialogueSettings.features));
                     featuresProperty.isExpanded = true;
 
                     EditorGUILayout.PropertyField(featuresProperty, true);
-                    
+
                     so.ApplyModifiedProperties();
 
                     if (GUI.changed)
