@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using UnityEngine;
 using System.Linq;
 using System.Reflection;
-using Unity.Scripting.LifecycleManagement;
-using UnityEngine;
 using UnityEngine.Assemblies;
+using System.Collections.Generic;
+using Unity.Scripting.LifecycleManagement;
 
 namespace CLogic.Dialogue.Provisioner
 {
@@ -15,13 +15,11 @@ namespace CLogic.Dialogue.Provisioner
     public sealed class ProvisionAttribute : Attribute
     {
         public string portName;
-        public ProvisionAttribute(string inputPortName)
-        {
-            portName = inputPortName;
-        }
+
+        public ProvisionAttribute(string inputPortName) => portName = inputPortName;
     }
 
-    [SingletonProcessor]
+    [SingletonProcessor, NoAutoStaticsCleanup]
     internal partial class ProvisionResolver : DialoguePreProcessor<DialogueNodeData>
     {
         public override int Priority => -1000;
@@ -31,7 +29,7 @@ namespace CLogic.Dialogue.Provisioner
         [OnCodeInitializing]
         private static void ScanForAttributes()
         {
-            foreach (Type type in CurrentAssemblies.GetLoadedAssemblies().SelectMany(a => a.GetTypes()))
+            foreach (Type type in CurrentAssemblies.GetLoadedAssemblies().SelectMany((assembly) => assembly.GetTypes()))
             {
                 foreach (FieldInfo field in type.GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 {
@@ -67,6 +65,7 @@ namespace CLogic.Dialogue.Provisioner
             foreach ((ProvisionAttribute, FieldInfo) attributeData in dataToProvision)
             {
                 ProvisionAttribute attribute = attributeData.Item1;
+
                 if (!provisionerData.linkedNodes[nodeData.nodeHash].Contains(attribute.portName))
                     continue;
 

@@ -1,8 +1,8 @@
 using System;
 using UnityEditor;
 using UnityEngine;
-using Unity.Scripting.LifecycleManagement;
 using System.Collections.Generic;
+using Unity.Scripting.LifecycleManagement;
 
 namespace CLogic.Dialogue.Editor
 {

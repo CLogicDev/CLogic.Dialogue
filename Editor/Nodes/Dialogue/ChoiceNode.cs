@@ -28,8 +28,11 @@ namespace CLogic.Dialogue.Editor
 
         public override ChoiceNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
-            ChoiceNodeData nodeData = new();
-            nodeData.execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID;
+            ChoiceNodeData nodeData = new()
+            {
+                execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID
+            };
+
             ProcessChildBlocks(nodeData, graph, portMap);
 
 #if CLOGIC_CONDITIONAL
@@ -46,9 +49,7 @@ namespace CLogic.Dialogue.Editor
             base.OnValidate(graphLogger);
 
             if (BlockCount == 0)
-            {
                 graphLogger.LogError("Choice node needs at least one branch output", this);
-            }
 
 #if CLOGIC_CONDITIONAL
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
@@ -85,17 +86,12 @@ namespace CLogic.Dialogue.Editor
             else
             {
                 foreach (ChoiceOptionNode choiceNode in emptyConditionalNode)
-                {
                     graphLogger.LogWarning("An empty conditional in an auto choice block will be considered to always return false", choiceNode);
-                }
             }
 #endif
         }
 
-        protected override void OnFirstCreation()
-        {
-            CreateBlockNode<ChoiceOptionNode>();
-        }
+        protected override void OnFirstCreation() => CreateBlockNode<ChoiceOptionNode>();
     }
 
     public class ChoiceNodeView : DialogueNodeView<ChoiceNode> { }

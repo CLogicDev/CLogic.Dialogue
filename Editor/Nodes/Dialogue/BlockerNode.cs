@@ -14,6 +14,7 @@ namespace CLogic.Dialogue.Editor
             CreateDefaultExecutionPorts(context);
             context.AddInputPort<BlockerNodeData.BlockType>(IN_BLOCK_TYPE).WithDisplayName("Block Type").WithDefaultValue(BlockerNodeData.BlockType.Block).Build();
         }
+
         public override T ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             T data = new()

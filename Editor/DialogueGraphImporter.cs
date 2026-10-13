@@ -1,11 +1,11 @@
 ﻿using System;
 using UnityEngine;
+using UnityEditor;
+using System.Reflection;
 using Unity.GraphToolkit.Editor;
 using UnityEditor.AssetImporters;
 using System.Collections.Generic;
-using System.Reflection;
 using CLogic.Dialogue.Provisioner;
-using UnityEditor;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -35,6 +35,7 @@ namespace CLogic.Dialogue.Editor
             void SetVariableStartNode()
             {
                 List<IVariableNode> nodeBuffer = new(1);
+
                 foreach (IVariable variable in editorGraph.GetVariables())
                 {
                     if (variable.VariableKind != VariableKind.Input)
@@ -65,10 +66,7 @@ namespace CLogic.Dialogue.Editor
 
             // Prevents asset subgraphs from ending abruptly
             MapAssetSubGraphEndPoint();
-
             MapNodesRecursively(editorGraph.GetNodes());
-
-            return;
 
             void MapAssetSubGraphEndPoint()
             {
@@ -85,8 +83,7 @@ namespace CLogic.Dialogue.Editor
                     if (variableNodeBuffer.Count <= 0)
                         return;
 
-                    // Output node should
-                    // be considered as a graceful exit
+                    // Output node should be considered as a graceful exit
                     portMap.Add(variableNodeBuffer[0].GetInputPort(0), DialogueGraph.GRACEFUL_END);
                 }
 
@@ -100,9 +97,7 @@ namespace CLogic.Dialogue.Editor
                         continue;
 
                     if (node is EndNode)
-                    {
                         portMap.Add(node.GetInputPort(0), DialogueGraph.GRACEFUL_END);
-                    }
 
                     if (node is IDialogueGraphNode and not StartNode) // Start node is a special node which doesn't need an id
                     {
@@ -113,13 +108,16 @@ namespace CLogic.Dialogue.Editor
                     if (node is ISubgraphNode subgraphNode)
                     {
                         if (IsAssetSubGraphNode(subgraphNode))
+                        {
                             HandleAssetSubGraph(subgraphNode);
+                        }
                         else
+                        {
                             ExpandSubGraph(subgraphNode);
+                        }
                     }
                 }
             }
-
 
             void HandleAssetSubGraph(ISubgraphNode subgraphNode)
             {
@@ -140,7 +138,7 @@ namespace CLogic.Dialogue.Editor
                 Graph subgraph = subgraphNode.GetSubgraph();
                 MapNodesRecursively(subgraph.GetNodes());
 
-                //Support input node
+                // Support input node
                 foreach (IVariable subgraphInputVariable in subgraph.GetVariables()) // There can be multiple input points and thus multiple start points
                 {
                     if (subgraphInputVariable.VariableKind != VariableKind.Input)
@@ -154,6 +152,7 @@ namespace CLogic.Dialogue.Editor
                     INode subgraphStarterNode = variableNodeOutputPort.FirstConnectedPort.GetNode();
 
                     IPort inputPort = null; // Should never be null according to API
+
                     foreach (IPort port in subgraphNode.GetInputPorts())
                     {
                         if (port.DisplayName != subgraphInputVariable.Name)
@@ -171,6 +170,7 @@ namespace CLogic.Dialogue.Editor
                         subgraphNodePort = inputPort.ID,
                         variableNodePort = variableNodeOutputPort.ID
                     };
+
                     IPort subgraphStarterNodeInputPort = subgraphStarterNode.GetInputPortByName(IDialogueGraphNode.IN_EXECUTION);
                     targetGraph.subgraphWireReferences.Add(subgraphStarterNodeInputPort.ID, subgraphWireRef);
                 }
@@ -186,6 +186,7 @@ namespace CLogic.Dialogue.Editor
 
                     // Node in the subgraph node (not the subgraph) points to inside the parent graph
                     IPort outputPort = null; // Should never be null according to API
+
                     foreach (IPort port in subgraphNode.GetOutputPorts())
                     {
                         if (port.DisplayName != subgraphOutputVariable.Name)
@@ -194,9 +195,10 @@ namespace CLogic.Dialogue.Editor
                         outputPort = port;
                         break;
                     }
-                    INode subgraphEndNode = outputPort.FirstConnectedPort.GetNode();
 
+                    INode subgraphEndNode = outputPort.FirstConnectedPort.GetNode();
                     int targetId;
+
                     if (subgraphEndNode is EndNode) // If the subgraph points to an end node in the origin graph, set the variable node inside the subgraph to point to a graceful end
                     {
                         targetId = DialogueGraph.GRACEFUL_END; // Graceful end
@@ -229,6 +231,7 @@ namespace CLogic.Dialogue.Editor
                         subgraphNodePort = outputPort.ID,
                         variableNodePort = variableNodeInputPort.ID
                     };
+
                     targetGraph.subgraphWireReferences.Add(variableNodeInputPort.FirstConnectedPort.ID, subgraphWireRef);
                 }
             }
@@ -236,7 +239,7 @@ namespace CLogic.Dialogue.Editor
 
         private void ProcessNodes(DialogueEditorGraph editorGraph, DialogueGraph graph, AssetImportContext context)
         {
-            var list = new List<(int id, DialogueNodeData data)>();
+            List<(int id, DialogueNodeData data)> list = new();
             List<ProvisionerData> provisionedData = new();
             HashSet<ScriptableObject> savedProvisions = new();
 
@@ -246,12 +249,9 @@ namespace CLogic.Dialogue.Editor
             graph.nodes = new DialogueNodeData[list.Count];
 
             for (int i = 0; i < list.Count; i++)
-            {
                 graph.nodes[i] = list[i].data;
-            }
 
             graph.provisionerData = provisionedData.ToArray();
-            return;
 
             void ProcessNodesRecursively(IEnumerable<INode> nodes)
             {
@@ -260,6 +260,7 @@ namespace CLogic.Dialogue.Editor
                     if (node is IScriptableObjectProvisionerNode provisionerNode)
                     {
                         ScriptableObject so = provisionerNode.GetScriptableObject();
+
                         if (savedProvisions.Add(so))
                             context.AddObjectToAsset("provision " + (savedProvisions.Count - 1), provisionerNode.GetScriptableObject());
                     }
@@ -278,7 +279,9 @@ namespace CLogic.Dialogue.Editor
                                 list.Add((nodeMap[subgraphNode], subgraphData));
                         }
                         else
+                        {
                             ProcessNodesRecursively(subgraphNode.GetSubgraph().GetNodes());
+                        }
 
                         continue;
                     }
@@ -312,7 +315,6 @@ namespace CLogic.Dialogue.Editor
                 var subgraph = AssetDatabase.LoadAssetByGUID<DialogueGraph>(subgraphGuid);
 
                 nodeData.graph = subgraph;
-
                 nodeData.nextNodeID = nodeMap[subgraphNode.GetOutputPort(0).FirstConnectedPort.GetNode()];
 
                 return nodeData;
@@ -324,6 +326,7 @@ namespace CLogic.Dialogue.Editor
             // No API to distinguish from asset subgraph to local subgraphs
             Type typeToQuery = subgraphNode.GetType().BaseType;
             PropertyInfo prop = typeToQuery.GetProperty("IsReferencingLocalSubgraph", BindingFlags.Instance | BindingFlags.Public);
+
             return !(bool)prop.GetValue(subgraphNode);
         }
     }

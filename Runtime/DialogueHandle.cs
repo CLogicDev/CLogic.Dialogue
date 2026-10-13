@@ -5,8 +5,8 @@ namespace CLogic.Dialogue
 {
     internal struct SubGraph
     {
-        public DialogueGraph dialogueGraph;
         public int subgraphNodeID;
+        public DialogueGraph dialogueGraph;
 
 #if UNITY_EDITOR
         public Unity.GraphToolkit.Editor.GraphVisualization.Context visualizationContext;
@@ -61,9 +61,6 @@ namespace CLogic.Dialogue
             OnFinish?.Invoke();
         }
 
-        public void Cancel()
-        {
-            director.EndDialogue();
-        }
+        public void Cancel() => director.EndDialogue();
     }
 }

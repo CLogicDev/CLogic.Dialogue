@@ -1,6 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
+
+#if UNITY_EDITOR
+using Unity.GraphToolkit.Editor.GraphVisualization;
+#endif
 
 namespace CLogic.Dialogue.Provisioner
 {
@@ -11,7 +15,7 @@ namespace CLogic.Dialogue.Provisioner
         public T GetProvisionedData<T>(ProvisionerData nodeData);
 
 #if UNITY_EDITOR
-        public void PreviewProvision(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, Hash128 provisionedPortHash, object provision);
+        public void PreviewProvision(Context context, Hash128 provisionedPortHash, object provision);
 #endif
     }
 
@@ -22,8 +26,7 @@ namespace CLogic.Dialogue.Provisioner
     public class ProvisionerData
     {
         // Key is node hash, value is name of the port to be provisioned
-        [SerializeField]
-        public Dictionary<Hash128, List<string>> linkedNodes;
+        [SerializeField] public Dictionary<Hash128, List<string>> linkedNodes;
     }
 
     /// <summary>
@@ -44,9 +47,13 @@ namespace CLogic.Dialogue.Provisioner
         public T1 GetProvisionedData<T1>(ProvisionerData nodeData)
         {
             if (SupportsCaching)
+            {
                 cache ??= CreateProvisionedData((TIn)nodeData);
+            }
             else
+            {
                 cache = CreateProvisionedData((TIn)nodeData);
+            }
 
             if (cache is T1 casted)
                 return casted;
@@ -57,10 +64,7 @@ namespace CLogic.Dialogue.Provisioner
         protected abstract TOut CreateProvisionedData(TIn nodeData);
 
 #if UNITY_EDITOR
-        public virtual void PreviewProvision(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, Hash128 provisionedPortHash, object provision)
-        {
-            ctx.GetPortReference(provisionedPortHash).SetPreview(provision.ToString());
-        }
+        public virtual void PreviewProvision(Context context, Hash128 provisionedPortHash, object provision) => context.GetPortReference(provisionedPortHash).SetPreview(provision.ToString());
 #endif
 
         #region Interface Contracts
@@ -68,8 +72,9 @@ namespace CLogic.Dialogue.Provisioner
         public bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TIn, TOut>)} cannot process nodes");
         public void ProcessNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TIn, TOut>)} cannot process nodes");
         public void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialogueProvisioner<TIn, TOut>)} cannot process nodes");
+
 #if UNITY_EDITOR
-        public void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData) => throw new Exception($"{nameof(DialogueProvisioner<TIn, TOut>)} cannot process nodes");
+        public void VisualizeNode(Context context, DialogueNodeData nodeData) => throw new Exception($"{nameof(DialogueProvisioner<TIn, TOut>)} cannot process nodes");
 #endif
         #endregion
     }

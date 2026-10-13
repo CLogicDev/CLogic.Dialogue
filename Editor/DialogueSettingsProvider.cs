@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using UnityEngine;
 using UnityEditor;
 using UnityEditor.Build;
-using UnityEngine;
+using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -9,10 +9,7 @@ namespace CLogic.Dialogue.Editor
     {
         public int callbackOrder => 0;
 
-        public void OnActiveBuildTargetChanged(BuildTarget previousTarget, BuildTarget newTarget)
-        {
-            DialogueSettings.UpdateDefines(DialogueSettings.GetOrCreateSettings().features);
-        }
+        public void OnActiveBuildTargetChanged(BuildTarget previousTarget, BuildTarget newTarget) => DialogueSettings.UpdateDefines(DialogueSettings.GetOrCreateSettings().features);
     }
 
     internal static class DialogueSettingsProvider
@@ -25,21 +22,18 @@ namespace CLogic.Dialogue.Editor
                 label = "Dialogue Settings",
                 guiHandler = (searchContext) =>
                 {
-                    var settings = DialogueSettings.GetOrCreateSettings();
+                    DialogueSettings settings = DialogueSettings.GetOrCreateSettings();
+                    SerializedObject serializedObject = new(settings);
+                    SerializedProperty featuresProperty = serializedObject.FindProperty(nameof(DialogueSettings.features));
 
-                    SerializedObject so = new(settings);
-
-                    SerializedProperty featuresProperty = so.FindProperty(nameof(DialogueSettings.features));
                     featuresProperty.isExpanded = true;
 
                     EditorGUILayout.PropertyField(featuresProperty, true);
 
-                    so.ApplyModifiedProperties();
+                    serializedObject.ApplyModifiedProperties();
 
                     if (GUI.changed)
-                    {
                         DialogueSettings.UpdateDefines(settings.features);
-                    }
                 },
                 keywords = new HashSet<string>(new[] { "Dialogue", "Settings" })
             };

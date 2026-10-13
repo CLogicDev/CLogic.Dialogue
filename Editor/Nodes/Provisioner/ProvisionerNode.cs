@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using CLogic.Dialogue.Provisioner;
-using Unity.GraphToolkit.Editor;
 using UnityEngine;
+using Unity.GraphToolkit.Editor;
+using System.Collections.Generic;
+using CLogic.Dialogue.Provisioner;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -11,9 +11,9 @@ namespace CLogic.Dialogue.Editor
     {
         public const string OUT_PROVISION = "Provisioned Data";
 
-        public void OnValidate(GraphLogger graphLogger);
-
         public Type HandledType { get; }
+
+        public void OnValidate(GraphLogger graphLogger);
 
         public T GetProvisionedData<T>();
     }
@@ -35,8 +35,9 @@ namespace CLogic.Dialogue.Editor
     [Serializable]
     public abstract class ProvisionerNode<T> : Node, IProvisionerNode
     {
-        public Type HandledType => typeof(T);
         protected T cache;
+
+        public Type HandledType => typeof(T);
 
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
@@ -82,19 +83,17 @@ namespace CLogic.Dialogue.Editor
         public ProvisionerData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
             TOut data = new();
-
             List<IPort> provisionedPorts = new(1);
 
             GetOutputPortByName(IProvisionerNode.OUT_PROVISION).GetConnectedPorts(provisionedPorts);
 
             if (provisionedPorts.Any())
-            {
                 data.linkedNodes = new Dictionary<Hash128, List<string>>();
-            }
 
             foreach (IPort provisionedPort in provisionedPorts)
             {
                 Hash128 nodeID = provisionedPort.GetNode().ID;
+
                 if (!data.linkedNodes.TryGetValue(nodeID, out List<string> linkedPortNames))
                     linkedPortNames = data.linkedNodes[nodeID] = new List<string>();
 

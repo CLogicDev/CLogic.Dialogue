@@ -1,20 +1,18 @@
 ﻿#if UNITY_EDITOR
-using System.Reflection;
-using CLogic.Utils;
-using Unity.GraphToolkit.Editor.GraphVisualization;
 using UnityEngine;
+using CLogic.Utils;
+using System.Reflection;
+using Unity.GraphToolkit.Editor.GraphVisualization;
 
 namespace CLogic.Dialogue
 {
     public partial class DialogueDirector
     {
-        public Context CurrentContext { get; private set; }
         private DialogueNodeData previousNode;
 
-        private void SetupDebugContext(DialogueGraph graph)
-        {
-            CurrentContext = Registry.CreateVisualizationContext(graph.graphHash);
-        }
+        public Context CurrentContext { get; private set; }
+
+        private void SetupDebugContext(DialogueGraph graph) => CurrentContext = Registry.CreateVisualizationContext(graph.graphHash);
 
 #nullable enable
         internal bool IsContextDisposed(Context context)
@@ -34,8 +32,9 @@ namespace CLogic.Dialogue
         private void ShowExecutionPath(DialogueNodeData newNode)
         {
             Hash128 outputPort = previousNode?.execOutputPortHash ?? CurrentDialogue.CurrentGraph.entryPortHash; // Null when processing the entry node
-            previousNode = newNode;
             Hash128 inputPort = newNode.execInputPortHash;
+
+            previousNode = newNode;
 
             if (!inputPort.isValid)
             {
@@ -48,6 +47,7 @@ namespace CLogic.Dialogue
                 Integrations.LogWarning("Output port port is not valid to show execution path");
                 return;
             }
+
             WireReference wire;
 
             // Wire goes into a subgraph
@@ -60,8 +60,7 @@ namespace CLogic.Dialogue
                 subgraphEntryWire.IsDashed = true;
                 CurrentContext.Motion.Play(subgraphEntryWire);
             }
-            // Wire comes out from a subgraph
-            else if (CurrentDialogue.CurrentGraph.subgraphWireReferences.TryGetValue(outputPort, out DialogueGraph.SubgraphWireReference outOfSubgraphWireRef))
+            else if (CurrentDialogue.CurrentGraph.subgraphWireReferences.TryGetValue(outputPort, out DialogueGraph.SubgraphWireReference outOfSubgraphWireRef)) // Wire comes out from a subgraph
             {
                 WireReference parentGraphWire = CurrentContext.GetWireReference(outOfSubgraphWireRef.subgraphNodePort, inputPort);
                 WireReference subgraphEntryWire = CurrentContext.GetWireReference(outputPort, outOfSubgraphWireRef.variableNodePort);
@@ -71,7 +70,9 @@ namespace CLogic.Dialogue
                 CurrentContext.Motion.Play(subgraphEntryWire);
             }
             else
+            {
                 wire = CurrentContext.GetWireReference(outputPort, inputPort);
+            }
 
             wire.IsDashed = true;
             CurrentContext.Motion.Play(wire);

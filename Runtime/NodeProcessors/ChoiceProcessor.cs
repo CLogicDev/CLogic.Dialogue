@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using System;
-using CLogic.Utils;
 using UnityEngine;
+using CLogic.Utils;
 using UnityEngine.UI;
 
 namespace CLogic.Dialogue
@@ -26,10 +26,8 @@ namespace CLogic.Dialogue
 
     public class ChoiceProcessor : DialogueProcessor<ChoiceNodeData>
     {
-        [SerializeField]
-        private GameObject choiceButtonPrefab;
-        [SerializeField]
-        private RectTransform choiceContainer;
+        [SerializeField] private GameObject choiceButtonPrefab;
+        [SerializeField] private RectTransform choiceContainer;
 
         public ChoiceOptionData LastSelectedChoice { get; private set; }
 
@@ -42,7 +40,6 @@ namespace CLogic.Dialogue
                 return;
             }
 #endif
-
             HandleChoice(nodeData, director);
         }
 
@@ -74,10 +71,12 @@ namespace CLogic.Dialogue
         private void HandleAutoChoice(ChoiceNodeData dialogueNode, DialogueDirector director)
         {
             int selectedIndex = -1;
+
             for (int i = 0; i < dialogueNode.childBlocks.Count; i++)
             {
                 DialogueNodeData blockNodeData = dialogueNode.childBlocks[i];
                 var choiceNode = (ChoiceOptionData)blockNodeData;
+
                 if (!choiceNode.conditional)
                     continue;
 
@@ -87,6 +86,7 @@ namespace CLogic.Dialogue
                     HandleChoice(dialogueNode, director);
                     return;
                 }
+
                 selectedIndex = i;
             }
 
@@ -112,9 +112,7 @@ namespace CLogic.Dialogue
         private void DestroyChoiceButtons()
         {
             foreach (Transform choiceButton in choiceContainer)
-            {
                 Destroy(choiceButton.gameObject);
-            }
         }
 
         protected override void HandleCancellation(ChoiceNodeData nodeData, DialogueDirector director) => DestroyChoiceButtons();

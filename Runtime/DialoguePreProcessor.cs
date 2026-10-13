@@ -23,7 +23,8 @@ namespace CLogic.Dialogue
         /// </summary>
         public abstract int Priority { get; }
 
-        void IDialoguePreProcessor.PreProcessInternal(DialogueNodeData nodeData, DialogueDirector director) => PreProcess((T)nodeData, director);
         protected abstract void PreProcess(T nodeData, DialogueDirector director);
+
+        void IDialoguePreProcessor.PreProcessInternal(DialogueNodeData nodeData, DialogueDirector director) => PreProcess((T)nodeData, director);
     }
 }
