@@ -1,7 +1,11 @@
 ﻿using System;
 using UnityEngine;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Collections.Generic;
+
+#if UNITY_EDITOR
+using Unity.GraphToolkit.Editor.GraphVisualization;
+#endif
 
 namespace CLogic.Dialogue
 {
@@ -11,19 +15,16 @@ namespace CLogic.Dialogue
     [Serializable]
     public abstract class DialogueNodeData
     {
+        public int nextNodeID = -1;
+        public int startNodeActionID = -1;
+        public int endNodeActionID = -1;
+
         // Debugging References
         public Hash128 nodeHash;
-
         public Hash128 execInputPortHash;
         public Hash128 execOutputPortHash;
 
-        [SerializeField]
-        public Dictionary<string, Hash128> provisionedPorts;
-
-        public int nextNodeID = -1;
-
-        public int startNodeActionID = -1;
-        public int endNodeActionID = -1;
+        [SerializeField] public Dictionary<string, Hash128> provisionedPorts;
     }
 
     /// <summary>
@@ -32,8 +33,7 @@ namespace CLogic.Dialogue
     [Serializable]
     public class ContextNodeData : DialogueNodeData
     {
-        [SerializeReference]
-        public List<DialogueNodeData> childBlocks = new();
+        [SerializeReference] public List<DialogueNodeData> childBlocks = new();
     }
 
     /// <summary>
@@ -56,12 +56,8 @@ namespace CLogic.Dialogue
         public abstract void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director);
 
 #if UNITY_EDITOR
-        public virtual void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData)
-        { }
+        public virtual void VisualizeNode(Context context, DialogueNodeData nodeData) { }
 #endif
-
-        [Obsolete("Use DialogueNodeProcessor<T> instead", false)]
-        protected internal DialogueProcessor() { }
     }
 
     /// <summary>
@@ -71,6 +67,7 @@ namespace CLogic.Dialogue
     public abstract class DialogueProcessor<T> : DialogueProcessor where T : DialogueNodeData
     {
         public override Type NodeType => typeof(T);
+
         public sealed override bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director)
         {
             if (!CanProgressNode((T)nodeData, director))
@@ -84,11 +81,6 @@ namespace CLogic.Dialogue
 
         protected virtual bool CanProgressNode(T nodeData, DialogueDirector director) => true;
 
-#pragma warning disable CS0618
-        protected DialogueProcessor()
-        { }
-#pragma warning restore CS0618
-
         public sealed override void ProcessNode(DialogueNodeData nodeData, DialogueDirector director)
         {
             if (nodeData.startNodeActionID != -1)
@@ -101,13 +93,12 @@ namespace CLogic.Dialogue
 
         public sealed override void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => HandleCancellation((T)nodeData, director);
 
-        protected virtual void HandleCancellation(T nodeData, DialogueDirector director)
-        { }
+        protected virtual void HandleCancellation(T nodeData, DialogueDirector director) { }
 
 #if UNITY_EDITOR
-        public sealed override void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData) => VisualizeNode(ctx, (T)nodeData);
-        protected virtual void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, T nodeData)
-        { }
+        public sealed override void VisualizeNode(Context context, DialogueNodeData nodeData) => VisualizeNode(context, (T)nodeData);
+
+        protected virtual void VisualizeNode(Context context, T nodeData) { }
 #endif
     }
 }

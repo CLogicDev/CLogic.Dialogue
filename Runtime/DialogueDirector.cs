@@ -1,9 +1,9 @@
 ﻿using System;
-using UnityEngine;
-using System.Collections.Generic;
 using System.Linq;
-using CLogic.Dialogue.Provisioner;
+using UnityEngine;
 using CLogic.Utils;
+using System.Collections.Generic;
+using CLogic.Dialogue.Provisioner;
 using Unity.Scripting.LifecycleManagement;
 
 namespace CLogic.Dialogue
@@ -17,26 +17,29 @@ namespace CLogic.Dialogue
         [Tooltip("Defines how deep the director will search for processors in it's children")]
         public int maxDiscoveryDepth = 2;
 
+        [NonSerialized] public IReadOnlyDictionary<Type, IDialogueProcessor> nodeProcessors;
+        [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors;
+        [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors;
+        internal Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
+
+        private int currentNodeID;
+        [NonSerialized] private DialogueNodeData[] nodes;
+
+        private static GameObject monoProcessorsContainer;
+
+        [NoAutoStaticsCleanup]
+        private static List<IDialogueProcessorBase> cachedSingletonProcessors;
+
+        [NoAutoStaticsCleanup]
+        private static Dictionary<Type, IDialogueProcessorBase> cachedSingletonMonoProcessors;
+
         public DialogueHandle CurrentDialogue { get; private set; }
 
         public IDialogueProcessor CurrentProcessor { get; private set; }
 
         public DialogueNodeData CurrentNode { get; private set; }
-        private int currentNodeID;
 
-        [NonSerialized] private DialogueNodeData[] nodes;
-
-        [NonSerialized] public IReadOnlyDictionary<Type, IDialogueProcessor> nodeProcessors;
-        [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors;
-        [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors;
-
-        [NoAutoStaticsCleanup]
-        private static List<IDialogueProcessorBase> cachedSingletonProcessors;
-        [NoAutoStaticsCleanup]
-        private static Dictionary<Type, IDialogueProcessorBase> cachedSingletonMonoProcessors;
-        private static GameObject monoProcessorsContainer;
-
-        internal Dictionary<Hash128, ProvisionerData> provisionerLookup = new();
+        public bool IsPlaying => CurrentNode != null;
 
         [NoAutoStaticsCleanup]
         internal static event Action<DialogueDirector> OnDirectorInitalized;
@@ -47,8 +50,6 @@ namespace CLogic.Dialogue
         public event Action OnDialogueProgress;
         public event Action OnDialogueStart;
         public event Action OnDialogueEnd;
-
-        public bool IsPlaying => CurrentNode != null;
 
         private void Awake()
         {
@@ -75,17 +76,22 @@ namespace CLogic.Dialogue
                 switch (processor)
                 {
                     case IDialoguePreProcessor preProcessor:
+                    {
                         if (!preProcessors.TryGetValue(preProcessor.NodeType, out List<IDialoguePreProcessor> preProcessorList))
                             preProcessorList = preProcessors[preProcessor.NodeType] = new List<IDialoguePreProcessor>();
 
                         preProcessorList.Add(preProcessor);
-                        break;
+                    }
+                    break;
+
                     case IDialoguePostProcessor postProcessor:
+                    {
                         if (!postProcessors.TryGetValue(postProcessor.NodeType, out List<IDialoguePostProcessor> postProcessorList))
                             postProcessorList = postProcessors[postProcessor.NodeType] = new List<IDialoguePostProcessor>();
 
                         postProcessorList.Add(postProcessor);
-                        break;
+                    }
+                    break;
 
                     default:
                         processors.Add(processor.NodeType, (IDialogueProcessor)processor);
@@ -96,7 +102,6 @@ namespace CLogic.Dialogue
             Dictionary<Type, List<IDialoguePreProcessor>> resolvedPreProcessors = new();
             Dictionary<Type, List<IDialoguePostProcessor>> resolvedPostProcessors = new();
 
-            //
             foreach (Type nodeType in processors.Keys.Append(typeof(SubGraphNodeData)))
             {
                 List<IDialoguePreProcessor> preProcessorSort = new();
@@ -137,9 +142,7 @@ namespace CLogic.Dialogue
             foreach (Transform child in parent)
             {
                 foreach (IDialogueProcessor dialogueNodeProcessor in DiscoverProcessorsInHierarchy(child, currentDepth + 1))
-                {
                     yield return dialogueNodeProcessor;
-                }
             }
         }
 
@@ -173,6 +176,7 @@ namespace CLogic.Dialogue
             foreach (Type type in SingletonProcessorAttribute.GetSingletonProcessorTypes())
             {
                 IDialogueProcessorBase processor;
+
                 if (typeof(MonoBehaviour).IsAssignableFrom(type))
                 {
                     processor = (IDialogueProcessorBase)monoProcessorsContainer.AddComponent(type);
@@ -192,7 +196,7 @@ namespace CLogic.Dialogue
         /// <summary>
         /// Plays a given graph. Intended for use with Unity Events
         /// </summary>
-        public void UPlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
+        public void PlayDialogue(DialogueGraph graph) => PlayDialogueGraph(graph, null);
 
         /// <inheritdoc cref="PlayDialogueGraph(DialogueGraph, Action, bool, int?)"/>
         public DialogueHandle PlayDialogueGraph(DialogueGraph graph) => PlayDialogueGraph(graph, null);
@@ -211,10 +215,10 @@ namespace CLogic.Dialogue
 
             if (IsPlaying)
                 EndDialogue();
+
             CurrentDialogue = new DialogueHandle(this, true, graph, onFinish);
 
             LoadGraph(graph, true);
-
             GoToNode(startIndex ?? graph.startNodeID, true);
 
             OnDialogueStart?.Invoke();
@@ -230,12 +234,11 @@ namespace CLogic.Dialogue
             nodes = graph.nodes;
 
             (provisionerLookup ??= new Dictionary<Hash128, ProvisionerData>()).Clear();
+
             foreach (ProvisionerData provisionerData in graph.provisionerData)
             {
                 foreach (var kvp in provisionerData.linkedNodes)
-                {
                     provisionerLookup.Add(kvp.Key, provisionerData);
-                }
             }
 
 #if UNITY_EDITOR
@@ -251,6 +254,7 @@ namespace CLogic.Dialogue
 
             if (!endGracefully)
                 CurrentProcessor?.HandleCancellation(CurrentNode, this);
+
             CurrentNode = null;
 
 #if UNITY_EDITOR
@@ -259,9 +263,7 @@ namespace CLogic.Dialogue
             if (CurrentDialogue.executionFrames != null)
             {
                 while (CurrentDialogue.executionFrames.TryPop(out SubGraph subGraph))
-                {
                     subGraph.visualizationContext?.Dispose();
-                }
             }
 #endif
 
@@ -293,18 +295,32 @@ namespace CLogic.Dialogue
             switch (nodeID)
             {
                 case -1:
+                {
                     Integrations.LogWarning("Abrupt graph ending detected. Please ensure end nodes are properly linked where the graph ends");
+
                     if (IsInSubGraph)
+                    {
                         HandleSubGraphFinished();
+                    }
                     else
+                    {
                         EndDialogue(false);
-                    return false;
+                    }
+                }
+                return false;
+
                 case -2:
+                {
                     if (IsInSubGraph)
+                    {
                         HandleSubGraphFinished();
+                    }
                     else
+                    {
                         EndDialogue();
-                    return false;
+                    }
+                }
+                return false;
             }
 
             CurrentNode = GetNodeFromID(nodeID);
@@ -340,6 +356,7 @@ namespace CLogic.Dialogue
                 ProcessSubGraph(subGraphNodeData); // Sub graph processing has precedence over all processing logic
                 return;
             }
+
             Type type = nodeData.GetType();
 
             if (!TryGetProcessorForNode(type, out IDialogueProcessor nodeProcessor))

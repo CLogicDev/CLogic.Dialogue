@@ -1,8 +1,8 @@
 ﻿using TMPro;
 using System;
+using UnityEngine;
 using CLogic.Dialogue.Provisioner;
 using CLogic.Dialogue.Extras;
-using UnityEngine;
 
 namespace CLogic.Dialogue
 {
@@ -11,8 +11,7 @@ namespace CLogic.Dialogue
     {
         public const string IN_TEXT = "Text";
 
-        [Provision(IN_TEXT)]
-        public string text;
+        [Provision(IN_TEXT)] public string text;
         public string characterName;
         public float textSpeed;
         public bool skippable;
@@ -20,11 +19,8 @@ namespace CLogic.Dialogue
 
     public class ConversationProcessor : DialogueProcessor<ConversationNodeData>
     {
-        [SerializeField]
-        private TypeWriter dialogueTextIterator;
-
-        [SerializeField]
-        private TextMeshProUGUI characterNameText;
+        [SerializeField] private TypeWriter dialogueTextIterator;
+        [SerializeField] private TextMeshProUGUI characterNameText;
 
         private ConversationNodeData currentNode;
 
@@ -52,9 +48,6 @@ namespace CLogic.Dialogue
             return false;
         }
 
-        protected override void HandleCancellation(ConversationNodeData nodeData, DialogueDirector director)
-        {
-            dialogueTextIterator.StopWriting();
-        }
+        protected override void HandleCancellation(ConversationNodeData nodeData, DialogueDirector director) => dialogueTextIterator.StopWriting();
     }
 }

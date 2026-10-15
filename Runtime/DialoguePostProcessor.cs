@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+
 namespace CLogic.Dialogue
 {
     public interface IDialoguePostProcessor : IDialogueProcessorBase
@@ -22,7 +23,8 @@ namespace CLogic.Dialogue
         /// </summary>
         public abstract int Priority { get; }
 
-        void IDialoguePostProcessor.PostProcessInternal(DialogueNodeData nodeData, DialogueDirector director) => PostProcess((T)nodeData, director);
         protected abstract void PostProcess(T nodeData, DialogueDirector director);
+
+        void IDialoguePostProcessor.PostProcessInternal(DialogueNodeData nodeData, DialogueDirector director) => PostProcess((T)nodeData, director);
     }
 }

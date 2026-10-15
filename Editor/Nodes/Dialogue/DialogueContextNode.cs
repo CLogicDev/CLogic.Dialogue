@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using Unity.GraphToolkit.Editor;
 using UnityEngine;
+using Unity.GraphToolkit.Editor;
+using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -48,12 +48,12 @@ namespace CLogic.Dialogue.Editor
                         context.AddOutputPort<ActionNode>(IDialogueGraphNode.OUT_NODE_END).WithDisplayName("End").Build();
                 }
             }
+
             DefineDialoguePorts(context);
             InitFinished();
         }
 
-        protected virtual void DefineDialoguePorts(IPortDefinitionContext context)
-        { }
+        protected virtual void DefineDialoguePorts(IPortDefinitionContext context) { }
 
         public virtual void OnValidate(GraphLogger graphLogger)
         {
@@ -96,11 +96,9 @@ namespace CLogic.Dialogue.Editor
             PostInit();
         }
 
-        protected virtual void PostInit()
-        { }
+        protected virtual void PostInit() { }
 
         // NOTE: Will not be called on a duplicated node
-        protected virtual void OnFirstCreation()
-        { }
+        protected virtual void OnFirstCreation() { }
     }
 }

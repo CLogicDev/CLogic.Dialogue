@@ -8,12 +8,11 @@ namespace CLogic.Dialogue
     {
         public AudioClip audioClip;
     }
-    
+
     public class AudioProcessor : DialogueProcessor<AudioNodeData>
     {
-        [SerializeField]
-        private AudioSource audioSource;
-        
+        [SerializeField] private AudioSource audioSource;
+
         protected override void ProcessNode(AudioNodeData nodeData, DialogueDirector director)
         {
             audioSource.clip = nodeData.audioClip;

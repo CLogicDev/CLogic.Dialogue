@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using Unity.GraphToolkit.Editor;
 
 namespace CLogic.Dialogue.Editor
@@ -9,12 +8,7 @@ namespace CLogic.Dialogue.Editor
     {
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
-            var inputPort = context.AddInputPort<IDialogueGraphNode>("Exit").WithConnectorUI(PortConnectorUI.Arrowhead).Build();
-            
-            PropertyInfo propertyInfo = inputPort.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
-            Type portCapacityType = propertyInfo.PropertyType;
-            object multiCapacity = Enum.Parse(portCapacityType, "Multi");
-            propertyInfo.SetValue(inputPort, multiCapacity);
+            context.AddInputPort<IDialogueGraphNode>("Exit").WithCapacity(PortCapacity.Multi).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
         }
     }
 }

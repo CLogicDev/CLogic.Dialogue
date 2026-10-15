@@ -1,10 +1,10 @@
 ﻿using System;
-using Unity.GraphToolkit.Editor;
-using System.Collections.Generic;
-using System.Reflection;
-using CLogic.Dialogue.Provisioner;
 using UnityEditor;
 using UnityEngine;
+using System.Reflection;
+using Unity.GraphToolkit.Editor;
+using System.Collections.Generic;
+using CLogic.Dialogue.Provisioner;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -13,7 +13,7 @@ namespace CLogic.Dialogue.Editor
     {
         public DialogueNodeStyleMapper()
         {
-            var wireColor = new Color32(39, 145, 217, 255);
+            Color32 wireColor = new(39, 145, 217, 255);
             var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/Icons/Output Icon.svg").image as Texture2D;
 
             Register(typeof(IDialogueGraphNode), icon, wireColor);
@@ -25,7 +25,7 @@ namespace CLogic.Dialogue.Editor
     {
         public DialogueNodeEventsStyleMapper()
         {
-            var wireColor = new Color32(47, 101, 132, 255);
+            Color32 wireColor = new(47, 101, 132, 255);
             var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/Icons/Start Event.svg").image as Texture2D;
 
             Register(typeof(ActionNode), icon, wireColor);
@@ -39,11 +39,11 @@ namespace CLogic.Dialogue.Editor
     [Serializable]
     public abstract class DialogueNode<T> : Node, IDialogueGraphNode, IConnectionValidator where T : DialogueNodeData
     {
-        public virtual bool SupportsStartAction => true;
-        public virtual bool SupportsEndAction => true;
-
         [field: SerializeField]
         public bool IsFirstCreation { get; protected set; } = true;
+
+        public virtual bool SupportsStartAction => true;
+        public virtual bool SupportsEndAction => true;
 
         public TValue GetInputPortValue<TValue>(string portName) => IDialogueGraphNode.GetPortValue<TValue>(GetInputPortByName(portName));
         public bool TryGetPortValue<TValue>(IPort port, out TValue value) => IDialogueGraphNode.TryGetPortValue(port, out value);
@@ -132,12 +132,10 @@ namespace CLogic.Dialogue.Editor
             PostInit();
         }
 
-        protected virtual void PostInit()
-        { }
+        protected virtual void PostInit() { }
 
         // NOTE: Will not be called on a duplicated node
-        protected virtual void OnFirstCreation()
-        { }
+        protected virtual void OnFirstCreation() { }
 
         public virtual bool? CanConnect(IPort output, IPort input)
         {

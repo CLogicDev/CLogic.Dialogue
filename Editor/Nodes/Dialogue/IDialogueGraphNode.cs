@@ -54,22 +54,18 @@ namespace CLogic.Dialogue.Editor
                 switch (node)
                 {
                     case IVariableNode variableNode:
-                    {
                         variableNode.Variable.TryGetDefaultValue(out value);
                         return true;
-                    }
+
                     case IConstantNode constantNode:
-                    {
                         constantNode.TryGetValue(out value);
                         return true;
-                    }
 
                     case IProvisionerNode provisionerNode when typeof(TValue).IsAssignableFrom(provisionerNode.HandledType):
-                    {
                         value = provisionerNode.GetProvisionedData<TValue>();
                         return true;
-                    }
                 }
+
                 value = default;
                 return false;
             }
@@ -101,13 +97,16 @@ namespace CLogic.Dialogue.Editor
             switch (connectedPorts.Count)
             {
                 case 0:
-                    graphLogger.Log("Node output not connected, the graph will end by default", origin, new GraphLogAction("Add End Node", obj =>
+                    graphLogger.Log("Node output not connected, the graph will end by default", origin, new GraphLogAction("Add End Node", (obj) =>
                     {
                         origin.Graph.UndoBeginRecordGraph("Add End Node");
-                        var endNode = new EndNode();
+
+                        EndNode endNode = new();
+
                         endNode.Position = origin.Position;
                         endNode.Position += Vector2.right * 300;
                         endNode.Position += Vector2.up * 32f;
+
                         origin.Graph.AddNode(endNode);
                         origin.Graph.Connect(outputPort, endNode.GetInputPort(0));
                         origin.Graph.UndoEndRecordGraph();
@@ -131,8 +130,8 @@ namespace CLogic.Dialogue.Editor
             if (supportsStartAction)
             {
                 IPort connectedPort = origin.GetOutputPortByName(OUT_NODE_START)?.FirstConnectedPort;
-
                 INode connectedNode = connectedPort.GetNode();
+
                 if (connectedNode is not null and not ActionNode)
                     graphLogger.LogError("Start node must be connected to an action node", origin);
             }
@@ -140,8 +139,8 @@ namespace CLogic.Dialogue.Editor
             if (supportsEndAction)
             {
                 IPort connectedPort = origin.GetOutputPortByName(OUT_NODE_END)?.FirstConnectedPort;
-
                 INode connectedNode = connectedPort.GetNode();
+
                 if (connectedNode is not null and not ActionNode)
                     graphLogger.LogError("End node must be connected to an action node", origin);
             }
@@ -181,7 +180,6 @@ namespace CLogic.Dialogue.Editor
                     nodeData.endNodeActionID = portMap.GetValueOrDefault(connectedPort, DialogueGraph.INVALID_END);
             }
         }
-
         #endregion
     }
 }

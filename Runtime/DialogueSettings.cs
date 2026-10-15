@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using CLogic.Utils.Shared;
+using System.Collections.Generic;
+
 namespace CLogic.Dialogue
 {
     [Serializable]
@@ -10,46 +11,41 @@ namespace CLogic.Dialogue
         public const string DEFINE_CONVERSATION_NODE = "ENABLE_CONVERSATION_NODE";
         public const string DEFINE_CHOICE_NODE = "ENABLE_CHOICE_NODE";
         public const string DEFINE_CHOICE_OPTION_NODE = "ENABLE_CHOICE_OPTION_NODE";
-        
+
         public bool conversationNode = true;
         public bool choiceNode = true;
         public bool choiceOptionNode = true;
     }
-    
+
     public class DialogueSettings : SettingsSo<DialogueSettings>
     {
         internal const string KEY = "dev.clogic.dialogue";
-        
+
         protected override string AssetName { get; set; } = "DialogueSettings.asset";
         protected override string Key { get; set; } = KEY;
 
         // What features of the dialogue system should be enabled
         public DefaultFeatures features;
-        
+
         public static void UpdateDefines(DefaultFeatures features)
         {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             var target = UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(UnityEditor.EditorUserBuildSettings.selectedBuildTargetGroup);
-            
+
             string currentDefines = UnityEditor.PlayerSettings.GetScriptingDefineSymbols(target);
-            
-            List<string> listedDefines = currentDefines
-                    .Split(';')
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .ToList();
-            
+
+            List<string> listedDefines = currentDefines.Split(';').Where((define) => !string.IsNullOrWhiteSpace(define)).ToList();
+
             AddOrRemove(DefaultFeatures.DEFINE_CONVERSATION_NODE, features.conversationNode);
             AddOrRemove(DefaultFeatures.DEFINE_CHOICE_NODE, features.choiceNode);
             AddOrRemove(DefaultFeatures.DEFINE_CHOICE_OPTION_NODE, features.choiceOptionNode);
-            
+
             string newDefines = string.Join(";", listedDefines);
-            
+
             // Avoid triggering a recompile when nothing has changed.
             if (newDefines != currentDefines)
                 UnityEditor.PlayerSettings.SetScriptingDefineSymbols(target, newDefines);
-            
-            return;
-            
+
             void AddOrRemove(string define, bool exists)
             {
                 if (exists)
@@ -62,7 +58,7 @@ namespace CLogic.Dialogue
                     listedDefines.Remove(define);
                 }
             }
-            #endif
+#endif
         }
     }
 }

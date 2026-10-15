@@ -31,6 +31,7 @@ namespace CLogic.Dialogue.Editor
             IEnumerable<INode> nodes = GetNodes();
 
             int connectedStartNodes = 0;
+
             foreach (INode node in nodes)
             {
                 if (node is IDialogueGraphNodeBase dialogueNode)
@@ -40,10 +41,12 @@ namespace CLogic.Dialogue.Editor
                         case ValidationType.Always:
                             dialogueNode.OnValidate(graphLogger);
                             break;
+
                         case ValidationType.OnChanged:
                             if (graphLogger.GraphChanges.ChangedNodes.Any(n => n.Node == node))
                                 dialogueNode.OnValidate(graphLogger);
                             break;
+
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
