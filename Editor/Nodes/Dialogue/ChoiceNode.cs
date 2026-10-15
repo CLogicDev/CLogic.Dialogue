@@ -28,10 +28,8 @@ namespace CLogic.Dialogue.Editor
 
         public override ChoiceNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portMap)
         {
-            ChoiceNodeData nodeData = new()
-            {
-                execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID
-            };
+            ChoiceNodeData nodeData = new();
+            nodeData.execInputPortHash = GetInputPortByName(IDialogueGraphNode.IN_EXECUTION).ID;
 
             ProcessChildBlocks(nodeData, graph, portMap);
 

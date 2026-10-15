@@ -12,6 +12,7 @@ namespace CLogic.Dialogue.Conditionals.Editor
     {
         private const string OP_INPUT_COUNT = "InputCount";
         private const string OP_LOGICAL_TYPE = "LogicalType";
+
         private const string IN_EVALUATOR = "Evaluators";
 
         protected override void OnDefineOptions(IOptionDefinitionContext context)

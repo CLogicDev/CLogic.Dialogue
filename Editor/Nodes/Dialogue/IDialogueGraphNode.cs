@@ -32,8 +32,10 @@ namespace CLogic.Dialogue.Editor
     {
         public const string IN_EXECUTION = "In";
         public const string OUT_EXECUTION = "Out";
+
         public const string OUT_NODE_END = "End";
         public const string OUT_NODE_START = "Start";
+
         public const string OP_NODE_EVENTS = "UseEvents";
 
         public DialogueNodeData ProcessNode(DialogueGraph graph, Dictionary<IPort, int> portMap);
@@ -95,15 +97,13 @@ namespace CLogic.Dialogue.Editor
             switch (connectedPorts.Count)
             {
                 case 0:
-                    graphLogger.Log("Node output not connected, the graph will end by default", origin, new GraphLogAction("Add End Node", obj =>
+                    graphLogger.Log("Node output not connected, the graph will end by default", origin, new GraphLogAction("Add End Node", (obj) =>
                     {
                         origin.Graph.UndoBeginRecordGraph("Add End Node");
 
-                        EndNode endNode = new()
-                        {
-                            Position = origin.Position
-                        };
+                        EndNode endNode = new();
 
+                        endNode.Position = origin.Position;
                         endNode.Position += Vector2.right * 300;
                         endNode.Position += Vector2.up * 32f;
 
