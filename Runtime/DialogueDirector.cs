@@ -11,6 +11,12 @@ namespace CLogic.Dialogue
     [AutoStaticsCleanup]
     public partial class DialogueDirector : MonoBehaviour
     {
+        /// <summary>
+        /// Defines how deep the director will search for processors in it's children
+        /// </summary>
+        [Tooltip("Defines how deep the director will search for processors in it's children")]
+        public int maxDiscoveryDepth = 2;
+
         [NonSerialized] public IReadOnlyDictionary<Type, IDialogueProcessor> nodeProcessors;
         [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors;
         [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors;
@@ -56,7 +62,7 @@ namespace CLogic.Dialogue
         #region Processor Resolution
         private void ResolveProcessors()
         {
-            IDialogueProcessor[] childProcessors = GetComponentsInChildren<IDialogueProcessor>();
+            IEnumerable<IDialogueProcessorBase> childProcessors = DiscoverProcessorsInHierarchy(transform);
             IEnumerable<IDialogueProcessorBase> singletonProcessors = DiscoverSingletonProcessors();
 
             IEnumerable<IDialogueProcessorBase> resolvedProcessors = childProcessors.Concat(singletonProcessors);
@@ -101,16 +107,16 @@ namespace CLogic.Dialogue
                 List<IDialoguePreProcessor> preProcessorSort = new();
                 List<IDialoguePostProcessor> postProcessorSort = new();
 
-                foreach (var typeProcessorPair in preProcessors)
+                foreach (var kvp in preProcessors)
                 {
-                    if (typeProcessorPair.Key.IsAssignableFrom(nodeType))
-                        preProcessorSort.AddRange(typeProcessorPair.Value);
+                    if (kvp.Key.IsAssignableFrom(nodeType))
+                        preProcessorSort.AddRange(kvp.Value);
                 }
 
-                foreach (var typeProcessorPair in postProcessors)
+                foreach (var kvp in postProcessors)
                 {
-                    if (typeProcessorPair.Key.IsAssignableFrom(nodeType))
-                        postProcessorSort.AddRange(typeProcessorPair.Value);
+                    if (kvp.Key.IsAssignableFrom(nodeType))
+                        postProcessorSort.AddRange(kvp.Value);
                 }
 
                 preProcessorSort.Sort((a, b) => a.Priority.CompareTo(b.Priority));
@@ -123,6 +129,21 @@ namespace CLogic.Dialogue
             nodeProcessors = processors;
             nodePreProcessors = resolvedPreProcessors;
             nodePostProcessors = resolvedPostProcessors;
+        }
+
+        private IEnumerable<IDialogueProcessor> DiscoverProcessorsInHierarchy(Transform parent, int currentDepth = 0)
+        {
+            foreach (IDialogueProcessor processor in parent.GetComponents<IDialogueProcessor>())
+                yield return processor;
+
+            if (currentDepth >= maxDiscoveryDepth)
+                yield break;
+
+            foreach (Transform child in parent)
+            {
+                foreach (IDialogueProcessor dialogueNodeProcessor in DiscoverProcessorsInHierarchy(child, currentDepth + 1))
+                    yield return dialogueNodeProcessor;
+            }
         }
 
         private IEnumerable<IDialogueProcessorBase> DiscoverSingletonProcessors()
