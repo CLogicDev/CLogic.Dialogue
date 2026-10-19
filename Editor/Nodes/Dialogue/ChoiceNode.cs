@@ -49,13 +49,10 @@ namespace CLogic.Dialogue.Editor
             if (BlockCount == 0)
                 graphLogger.LogError("Choice node needs at least one branch output", this);
 
-#if CLOGIC_CONDITIONAL
+#if CLOGIC_CONDITIONAL && ENABLE_CHOICE_OPTION_NODE
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
 
-            if (!isAutoChoice)
-                return;
-
-            if (BlockCount == 1)
+            if (!isAutoChoice && BlockCount == 1)
                 return;
 
             bool hasConditionalSet = false;
@@ -89,7 +86,9 @@ namespace CLogic.Dialogue.Editor
 #endif
         }
 
+#if ENABLE_CHOICE_OPTION_NODE
         protected override void OnFirstCreation() => CreateBlockNode<ChoiceOptionNode>();
+#endif
     }
 
     public class ChoiceNodeView : DialogueNodeView<ChoiceNode> { }
