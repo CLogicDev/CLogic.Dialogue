@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-#if ENABLE_CHOICE_OPTION_NODE && ENABLE_CHOICE_NODE
+#if !DISABLE_CHOICE_OPTION_NODE && !DISABLE_CHOICE_NODE
     [Serializable, UseWithContext(typeof(ChoiceNode)), Node("", "", "Choice Option")]
     public class ChoiceOptionNode : DialogueBlockNode<ChoiceOptionData>
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-#if ENABLE_CHOICE_NODE
+#if !DISABLE_CHOICE_NODE
     [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/Choice Block.svg", "Choice Block")]
     public class ChoiceNode : DialogueContextNode<ChoiceNodeData>
     {
@@ -49,7 +49,7 @@ namespace CLogic.Dialogue.Editor
             if (BlockCount == 0)
                 graphLogger.LogError("Choice node needs at least one branch output", this);
 
-#if CLOGIC_CONDITIONAL && ENABLE_CHOICE_OPTION_NODE
+#if CLOGIC_CONDITIONAL && !DISABLE_CHOICE_OPTION_NODE
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
 
             if (!isAutoChoice && BlockCount == 1)
@@ -86,7 +86,7 @@ namespace CLogic.Dialogue.Editor
 #endif
         }
 
-#if ENABLE_CHOICE_OPTION_NODE
+#if !DISABLE_CHOICE_OPTION_NODE
         protected override void OnFirstCreation() => CreateBlockNode<ChoiceOptionNode>();
 #endif
     }

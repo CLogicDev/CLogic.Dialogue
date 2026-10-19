@@ -11,13 +11,13 @@ namespace CLogic.Dialogue.Editor
     [FilePath("ProjectSettings/CLogic/DialogueSettings.asset", FilePathAttribute.Location.ProjectFolder)]
     internal class DialogueSettings : ScriptableSingleton<DialogueSettings>
     {
-        public const string DEFINE_CHOICE_OPTION_NODE = "ENABLE_CHOICE_OPTION_NODE";
-        public const string DEFINE_CONVERSATION_NODE = "ENABLE_CONVERSATION_NODE";
-        public const string DEFINE_CHOICE_NODE = "ENABLE_CHOICE_NODE";
+        public const string DEFINE_CHOICE_OPTION_NODE = "DISABLE_CHOICE_OPTION_NODE";
+        public const string DEFINE_CONVERSATION_NODE = "DISABLE_CONVERSATION_NODE";
+        public const string DEFINE_CHOICE_NODE = "DISABLE_CHOICE_NODE";
 
-        [SerializeField] private bool choiceNode = true;
-        [SerializeField] private bool conversationNode = true;
-        [SerializeField] private bool choiceOptionNode = true;
+        [SerializeField] private bool disableChoiceNode;
+        [SerializeField] private bool disableConversationNode;
+        [SerializeField] private bool disableChoiceOptionNode;
 
         internal void UpdateDefines()
         {
@@ -26,9 +26,9 @@ namespace CLogic.Dialogue.Editor
 
             List<string> listedDefines = currentDefines.Split(';').Where((define) => !string.IsNullOrWhiteSpace(define)).ToList();
 
-            ToggleDefine(DEFINE_CONVERSATION_NODE, conversationNode);
-            ToggleDefine(DEFINE_CHOICE_NODE, choiceNode);
-            ToggleDefine(DEFINE_CHOICE_OPTION_NODE, choiceOptionNode);
+            ToggleDefine(DEFINE_CONVERSATION_NODE, disableConversationNode);
+            ToggleDefine(DEFINE_CHOICE_NODE, disableChoiceNode);
+            ToggleDefine(DEFINE_CHOICE_OPTION_NODE, disableChoiceOptionNode);
 
             string newDefines = string.Join(";", listedDefines);
 

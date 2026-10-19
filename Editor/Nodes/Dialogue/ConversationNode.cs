@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-#if ENABLE_CONVERSATION_NODE
+#if !DISABLE_CONVERSATION_NODE
     [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/Conversation Node.svg", "Conversation")]
     public class ConversationNode : DialogueNode<ConversationNodeData>
     {
