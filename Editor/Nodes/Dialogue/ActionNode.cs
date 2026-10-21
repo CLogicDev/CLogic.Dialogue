@@ -11,6 +11,8 @@ namespace CLogic.Dialogue.Editor
         public override bool SupportStartAction => false;
         public override bool SupportEndAction => false;
 
+        public override void OnEnable() => Tooltip = "Defines action blocks to be executed at runtime";
+
         protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {
             context.AddInputPort<ActionNode>(IDialogueGraphNode.IN_EXECUTION).WithDisplayName(string.Empty).WithConnectorUI(PortConnectorUI.Arrowhead).WithCapacity(PortCapacity.Multi).Build();

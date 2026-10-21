@@ -12,12 +12,14 @@ namespace CLogic.Dialogue.Editor
 
         private const string OP_AUTO_CHOICE = "AutoChoice";
 
+        public override void OnEnable() => Tooltip = "Presents a set of choices to branch out the dialogue";
+
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
             base.OnDefineOptions(context);
 
 #if CLOGIC_CONDITIONAL
-            context.AddOption<bool>(OP_AUTO_CHOICE).WithDisplayName("Is Auto Choice").Build();
+            context.AddOption<bool>(OP_AUTO_CHOICE).WithDisplayName("Is Auto Choice").WithTooltip("Automatically selects a choice based on the conditional value.").Build();
 #endif
         }
 

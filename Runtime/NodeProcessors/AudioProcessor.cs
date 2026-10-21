@@ -9,6 +9,7 @@ namespace CLogic.Dialogue
         public AudioClip audioClip;
     }
 
+    [AddComponentMenu("CLogic/Dialogue/Processors/Audio Processor")]
     public class AudioProcessor : DialogueProcessor<AudioNodeData>
     {
         [SerializeField] private AudioSource audioSource;

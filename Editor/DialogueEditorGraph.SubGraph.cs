@@ -8,16 +8,15 @@ namespace CLogic.Dialogue.Editor
     /// </summary>
     public partial class DialogueEditorGraph
     {
-        /// <summary>
-        /// Determines whether the data of the subgraph should be expanded into the main graph or processed separately
-        /// </summary>
         public const string OP_EXPAND_SUBGRAPH = "ExpandedSubgraph";
 
         public bool IsSubGraphInstance { get; private set; } = false;
 
         protected sealed override void OnDefineSubgraphNodeOptions(Node.IOptionDefinitionContext context)
         {
-            context.AddOption<bool>(OP_EXPAND_SUBGRAPH).WithDisplayName("Expand Into Parent Graph").Build();
+            const string ExpandSubgraphTooltip = "Determines whether the data of the subgraph should be expanded into the main graph or processed separately";
+
+            context.AddOption<bool>(OP_EXPAND_SUBGRAPH).WithDisplayName("Expand Into Parent Graph").WithTooltip(ExpandSubgraphTooltip).Build();
 
             IsSubGraphInstance = true;
         }

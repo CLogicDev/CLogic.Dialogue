@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 namespace CLogic.Dialogue
 {
+    [AddComponentMenu("CLogic/Dialogue/Dialogue Progressor")]
     public class DialogueProgressor : MonoBehaviour
     {
         [SerializeField] private DialogueDirector dialogueDirector;
