@@ -1,25 +1,59 @@
+using System;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
+using System.Reflection;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 using CLogic.Dialogue.Extras;
+using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
     [CanEditMultipleObjects, CustomEditor(typeof(DialogueDirector), true)]
     public class DialogueDirectorEditor : UnityEditor.Editor
     {
+        private const string DROPDOWN_DEFAULT_VALUE = "(select processor)";
+
+        private Dictionary<string, string> processorTypeMap = new();
+
+        private void OnEnable() => processorTypeMap = GetProcessors();
+
         public override VisualElement CreateInspectorGUI()
         {
             VisualElement root = new();
+            DropdownField processorDropdown = new("Add Processors", processorTypeMap.Keys.ToList(), 0);
+
             InspectorElement.FillDefaultInspector(root, serializedObject, this);
 
             var playOnStartField = root.Q<PropertyField>("PropertyField:playOnStart");
             var dialogueGraphField = root.Q<PropertyField>("PropertyField:graph");
 
+            processorDropdown.style.marginTop = 10f;
             dialogueGraphField.style.marginLeft = 20f;
 
+            processorDropdown.AddToClassList(DropdownField.alignedFieldUssClassName);
+
             playOnStartField.RegisterCallback<ChangeEvent<bool>>((callback) => dialogueGraphField.style.display = callback.newValue ? DisplayStyle.Flex : DisplayStyle.None);
+            processorDropdown.RegisterCallback<ChangeEvent<string>>((callback) =>
+            {
+                if (callback.newValue == DROPDOWN_DEFAULT_VALUE)
+                    return;
+
+                foreach (var target in targets)
+                {
+                    var targetComponent = target as Component;
+
+                    Type componentType = Type.GetType(processorTypeMap[callback.newValue]);
+
+                    if (targetComponent.GetComponent(componentType) == null) // Disallow adding the component if it's already present
+                        targetComponent.gameObject.AddComponent(componentType);
+                }
+
+                processorDropdown.SetValueWithoutNotify(DROPDOWN_DEFAULT_VALUE);
+            });
+
+            root.Add(processorDropdown);
 
             return root;
         }
@@ -38,6 +72,39 @@ namespace CLogic.Dialogue.Editor
             GameObject typeWritterObject = new("TypeWriterText", typeof(TypeWriter));
 
             Selection.activeGameObject = typeWritterObject;
+        }
+
+        private Dictionary<string, string> GetProcessors()
+        {
+            Dictionary<string, string> processorList = new() { { DROPDOWN_DEFAULT_VALUE, null } };
+            List<string> processorsToExclude = GetExistingProcessors();
+
+            foreach (Type type in TypeCache.GetTypesDerivedFrom<IDialogueProcessorBase>())
+            {
+                if (processorsToExclude != null && processorsToExclude.Contains(type.Name)) // Exclude processors that are already added from the dropdown
+                    continue;
+
+                if (!type.IsGenericType && !type.IsInterface && type != typeof(DialogueProcessor) && type.GetCustomAttribute<SingletonProcessorAttribute>() == null)
+                    processorList.Add(type.Name, type.AssemblyQualifiedName);
+            }
+
+            return processorList;
+        }
+
+        private List<string> GetExistingProcessors()
+        {
+            // Can't easily tell what processors are or not on multiple targets so we will not attempt to exclude them, they won't be added twice anyway.
+            if (targets.Length > 1)
+                return null;
+
+            List<string> existingProcessors = new();
+
+            var targetComponent = target as Component;
+
+            foreach (var processor in targetComponent.GetComponents<IDialogueProcessorBase>())
+                existingProcessors.Add(processor.GetType().Name);
+
+            return existingProcessors;
         }
     }
 }

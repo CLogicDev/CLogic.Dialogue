@@ -8,7 +8,7 @@ using Unity.Scripting.LifecycleManagement;
 
 namespace CLogic.Dialogue
 {
-    [AutoStaticsCleanup, AddComponentMenu("CLogic/Dialogue/Dialogue Director")]
+    [AutoStaticsCleanup, DisallowMultipleComponent, AddComponentMenu("CLogic/Dialogue/Dialogue Director")]
     public partial class DialogueDirector : MonoBehaviour
     {
         [Tooltip("Play a dialogue graph automatically on start")]
