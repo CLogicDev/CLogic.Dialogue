@@ -13,7 +13,7 @@ namespace CLogic.Dialogue.Editor
     [CanEditMultipleObjects, CustomEditor(typeof(DialogueDirector), true)]
     public class DialogueDirectorEditor : UnityEditor.Editor
     {
-        private const string DROPDOWN_DEFAULT_VALUE = "(select processor)";
+        private const string DROPDOWN_DEFAULT_VALUE = "(Select Processor)";
 
         private Dictionary<string, string> processorTypeMap = new();
 
@@ -101,7 +101,7 @@ namespace CLogic.Dialogue.Editor
 
             var targetComponent = target as Component;
 
-            foreach (var processor in targetComponent.GetComponents<IDialogueProcessorBase>())
+            foreach (var processor in targetComponent!.GetComponentsInChildren<IDialogueProcessorBase>())
                 existingProcessors.Add(processor.GetType().Name);
 
             return existingProcessors;
