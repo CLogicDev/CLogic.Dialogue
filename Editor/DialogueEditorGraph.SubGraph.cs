@@ -14,7 +14,7 @@ namespace CLogic.Dialogue.Editor
 
         protected sealed override void OnDefineSubgraphNodeOptions(Node.IOptionDefinitionContext context)
         {
-            const string ExpandSubgraphTooltip = "Determines whether the data of the subgraph should be expanded into the main graph or processed separately";
+            const string ExpandSubgraphTooltip = "Determines whether the nodes of the subgraph should be expanded into the main graph or processed separately";
 
             context.AddOption<bool>(OP_EXPAND_SUBGRAPH).WithDisplayName("Expand Into Parent Graph").WithTooltip(ExpandSubgraphTooltip).Build();
 
