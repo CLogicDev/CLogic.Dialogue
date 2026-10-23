@@ -13,6 +13,8 @@ namespace CLogic.Dialogue.Editor
 
         public const string IN_AUDIOCLIP = "AudioClip";
 
+        public override void OnEnable() => Tooltip = "Plays the specified audio clip";
+
         public override AudioNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portmap) => new()
         {
             audioClip = GetPortValue<AudioClip>(GetInputPortByName(IN_AUDIOCLIP))

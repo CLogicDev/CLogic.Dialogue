@@ -24,9 +24,12 @@ namespace CLogic.Dialogue
 #endif
     }
 
+    [AddComponentMenu("CLogic/Dialogue/Processors/Choice Processor")]
     public class ChoiceProcessor : DialogueProcessor<ChoiceNodeData>
     {
         [SerializeField] private GameObject choiceButtonPrefab;
+
+        [Tooltip("The container in which the choice buttons will be placed")]
         [SerializeField] private RectTransform choiceContainer;
 
         public ChoiceOptionData LastSelectedChoice { get; private set; }

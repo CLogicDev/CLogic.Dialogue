@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-#if ENABLE_CHOICE_OPTION_NODE
+#if !DISABLE_CHOICE_OPTION_NODE && !DISABLE_CHOICE_NODE
     [Serializable, UseWithContext(typeof(ChoiceNode)), Node("", "", "Choice Option")]
     public class ChoiceOptionNode : DialogueBlockNode<ChoiceOptionData>
     {
@@ -17,15 +17,17 @@ namespace CLogic.Dialogue.Editor
 
         public override bool SupportEndAction => false;
 
+        public override void OnEnable() => Tooltip = "Defines a choice option";
+
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
-            context.AddInputPort<string>(IN_TEXT).Build();
+            context.AddInputPort<string>(IN_TEXT).WithTooltip("The text displayed for this choice option").Build();
             context.AddOutputPort<IDialogueGraphNode>(OUT_EXECUTION).WithConnectorUI(PortConnectorUI.Arrowhead).WithDisplayName(string.Empty).Build();
 
             base.OnDefinePorts(context);
 
 #if CLOGIC_CONDITIONAL
-            context.AddInputPort<Conditional.ConditionalEvaluator>(IN_CONDITIONAL).Build();
+            context.AddInputPort<Conditional.ConditionalEvaluator>(IN_CONDITIONAL).WithTooltip("The conditional that determines if this choice option is available").Build();
 #endif
         }
 

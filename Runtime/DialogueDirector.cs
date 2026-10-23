@@ -8,9 +8,13 @@ using Unity.Scripting.LifecycleManagement;
 
 namespace CLogic.Dialogue
 {
-    [AutoStaticsCleanup]
+    [AutoStaticsCleanup, DisallowMultipleComponent, AddComponentMenu("CLogic/Dialogue/Dialogue Director")]
     public partial class DialogueDirector : MonoBehaviour
     {
+        [Tooltip("Play a dialogue graph automatically on start")]
+        [SerializeField] private bool playOnStart;
+        [SerializeField] private DialogueGraph graph;
+
         [NonSerialized] public IReadOnlyDictionary<Type, IDialogueProcessor> nodeProcessors;
         [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePreProcessor>> nodePreProcessors;
         [NonSerialized] public IReadOnlyDictionary<Type, List<IDialoguePostProcessor>> nodePostProcessors;
@@ -49,6 +53,12 @@ namespace CLogic.Dialogue
         {
             ResolveProcessors();
             OnDirectorInitalized?.Invoke(this);
+        }
+
+        private void Start()
+        {
+            if (playOnStart)
+                PlayDialogueGraph(graph);
         }
 
         private void OnDestroy() => OnDirectorDestroyed?.Invoke(this);

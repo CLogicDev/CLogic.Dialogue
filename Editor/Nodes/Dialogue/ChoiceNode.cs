@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-#if ENABLE_CHOICE_NODE
+#if !DISABLE_CHOICE_NODE
     [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/Choice Block.svg", "Choice Block")]
     public class ChoiceNode : DialogueContextNode<ChoiceNodeData>
     {
@@ -12,12 +12,14 @@ namespace CLogic.Dialogue.Editor
 
         private const string OP_AUTO_CHOICE = "AutoChoice";
 
+        public override void OnEnable() => Tooltip = "Presents a set of choices to branch out the dialogue";
+
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {
             base.OnDefineOptions(context);
 
 #if CLOGIC_CONDITIONAL
-            context.AddOption<bool>(OP_AUTO_CHOICE).WithDisplayName("Is Auto Choice").Build();
+            context.AddOption<bool>(OP_AUTO_CHOICE).WithDisplayName("Is Auto Choice").WithTooltip("Automatically selects a choice based on the conditional value.").Build();
 #endif
         }
 
@@ -49,13 +51,10 @@ namespace CLogic.Dialogue.Editor
             if (BlockCount == 0)
                 graphLogger.LogError("Choice node needs at least one branch output", this);
 
-#if CLOGIC_CONDITIONAL
+#if CLOGIC_CONDITIONAL && !DISABLE_CHOICE_OPTION_NODE
             GetNodeOptionByName(OP_AUTO_CHOICE).TryGetValue(out bool isAutoChoice);
 
-            if (!isAutoChoice)
-                return;
-
-            if (BlockCount == 1)
+            if (!isAutoChoice && BlockCount == 1)
                 return;
 
             bool hasConditionalSet = false;
@@ -89,7 +88,9 @@ namespace CLogic.Dialogue.Editor
 #endif
         }
 
+#if !DISABLE_CHOICE_OPTION_NODE
         protected override void OnFirstCreation() => CreateBlockNode<ChoiceOptionNode>();
+#endif
     }
 
     public class ChoiceNodeView : DialogueNodeView<ChoiceNode> { }

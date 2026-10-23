@@ -9,6 +9,8 @@ namespace CLogic.Dialogue.Editor
     {
         public const string OUT_START = "Entry";
 
+        public override void OnEnable() => Tooltip = "The entry point of the graph";
+
         protected override void OnDefinePorts(IPortDefinitionContext context) => context.AddOutputPort<IDialogueGraphNode>(OUT_START).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
 
         public void OnValidate(GraphLogger graphLogger)

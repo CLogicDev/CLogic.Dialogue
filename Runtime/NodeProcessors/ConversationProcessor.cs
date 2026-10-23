@@ -17,9 +17,10 @@ namespace CLogic.Dialogue
         public bool skippable;
     }
 
+    [AddComponentMenu("CLogic/Dialogue/Processors/Conversation Processor")]
     public class ConversationProcessor : DialogueProcessor<ConversationNodeData>
     {
-        [SerializeField] private TypeWriter dialogueTextIterator;
+        [SerializeField] private TypeWriter dialogueTextWriter;
         [SerializeField] private TextMeshProUGUI characterNameText;
 
         private ConversationNodeData currentNode;
@@ -29,25 +30,25 @@ namespace CLogic.Dialogue
             currentNode = nodeData;
             characterNameText.text = nodeData.characterName;
 
-            float typingSpeed = nodeData.textSpeed == 0f ? dialogueTextIterator.speedWordsPerMin : nodeData.textSpeed;
+            float typingSpeed = nodeData.textSpeed == 0f ? dialogueTextWriter.speedWordsPerMin : nodeData.textSpeed;
 
-            dialogueTextIterator.StartWriting(nodeData.text, typingSpeed, null);
+            dialogueTextWriter.StartWriting(nodeData.text, typingSpeed, null);
         }
 
         protected override bool CanProgressNode(ConversationNodeData nodeData, DialogueDirector director)
         {
             base.CanProgressNode(nodeData, director);
 
-            if (!dialogueTextIterator.IsWriting)
+            if (!dialogueTextWriter.IsWriting)
                 return true;
 
             if (!currentNode.skippable)
                 return false;
 
-            dialogueTextIterator.SkipAnimation();
+            dialogueTextWriter.SkipAnimation();
             return false;
         }
 
-        protected override void HandleCancellation(ConversationNodeData nodeData, DialogueDirector director) => dialogueTextIterator.StopWriting();
+        protected override void HandleCancellation(ConversationNodeData nodeData, DialogueDirector director) => dialogueTextWriter.StopWriting();
     }
 }
