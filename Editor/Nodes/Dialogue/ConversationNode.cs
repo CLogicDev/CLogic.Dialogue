@@ -53,12 +53,6 @@ namespace CLogic.Dialogue.Editor
 
             return node;
         }
-
-        public override void OnValidate(GraphLogger graphLogger)
-        {
-            base.OnValidate(graphLogger);
-            Debug.Log("Validating node... " + ID);
-        }
     }
 
     public class ConversationNodeView : DialogueNodeView<ConversationNode> { }
