@@ -34,24 +34,24 @@ namespace CLogic.Dialogue.Editor
 
             processorDropdown.AddToClassList(DropdownField.alignedFieldUssClassName);
 
-            playOnStartField.RegisterCallback<ChangeEvent<bool>>((callback) => dialogueGraphField.style.display = callback.newValue ? DisplayStyle.Flex : DisplayStyle.None);
-            processorDropdown.RegisterCallback<ChangeEvent<string>>((callback) =>
+            playOnStartField.RegisterCallback<ChangeEvent<bool>, PropertyField>( (callback, graphField) => graphField.style.display = callback.newValue ? DisplayStyle.Flex : DisplayStyle.None, dialogueGraphField);
+            processorDropdown.RegisterCallback<ChangeEvent<string>, Dictionary<string, string>>((callback, typeMap) =>
             {
                 if (callback.newValue == DROPDOWN_DEFAULT_VALUE)
                     return;
-
+                
                 foreach (var target in targets)
                 {
                     var targetComponent = target as Component;
-
-                    Type componentType = Type.GetType(processorTypeMap[callback.newValue]);
-
+                    
+                    var componentType = Type.GetType(typeMap[callback.newValue]);
+                    
                     if (targetComponent.GetComponent(componentType) == null) // Disallow adding the component if it's already present
                         targetComponent.gameObject.AddComponent(componentType);
                 }
-
+                
                 processorDropdown.SetValueWithoutNotify(DROPDOWN_DEFAULT_VALUE);
-            });
+            }, processorTypeMap);
 
             root.Add(processorDropdown);
 
@@ -67,11 +67,11 @@ namespace CLogic.Dialogue.Editor
         }
 
         [MenuItem("GameObject/CLogic/Dialogue/Type Writer")]
-        private static void CreateTypeWritterObject()
+        private static void CreateTypeWriterObject()
         {
-            GameObject typeWritterObject = new("TypeWriterText", typeof(TypeWriter));
+            GameObject typeWriterObject = new("TypeWriterText", typeof(TypeWriter));
 
-            Selection.activeGameObject = typeWritterObject;
+            Selection.activeGameObject = typeWriterObject;
         }
 
         private Dictionary<string, string> GetProcessors()
