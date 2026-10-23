@@ -79,7 +79,7 @@ namespace CLogic.Dialogue.Editor
 
             inspectorElement.Q<ObjectField>("unity-input-m_Script").parent.RemoveFromHierarchy(); // Remove the auto-generated script field
 
-            inspectorElement.RegisterCallback<ChangeEvent<bool>>((callback) => DialogueSettings.instance.UpdateDefines());
+            inspectorElement.RegisterCallback<ChangeEvent<bool>>(_ => DialogueSettings.instance.UpdateDefines());
 
             rootElement.Add(header);
             rootElement.Add(inspectorElement);
