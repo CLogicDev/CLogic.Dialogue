@@ -13,22 +13,14 @@ namespace CLogic.Dialogue.Editor
     {
         public DialogueNodeStyleMapper()
         {
-            Color32 wireColor = new(39, 145, 217, 255);
-            var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Output Icon.svg").image as Texture2D;
-
-            Register(typeof(IDialogueGraphNode), icon, wireColor);
+            MapWireStyle(typeof(IDialogueGraphNode), Color.lightBlue, "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/OutputIcon.svg");
+            MapWireStyle(typeof(ActionNode), Color.deepSkyBlue, "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/StartEvent.svg");
         }
-    }
 
-    [DataTypeStyleMapper(typeof(DialogueEditorGraph))]
-    public class DialogueNodeEventsStyleMapper : DataTypeStyleMapper
-    {
-        public DialogueNodeEventsStyleMapper()
+        private void MapWireStyle(Type nodeType, Color wireColor, string iconPath)
         {
-            Color32 wireColor = new(47, 101, 132, 255);
-            var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Start Event.svg").image as Texture2D;
-
-            Register(typeof(ActionNode), icon, wireColor);
+            var icon = EditorGUIUtility.IconContent(iconPath).image as Texture2D;
+            Register(nodeType, icon, wireColor);
         }
     }
 

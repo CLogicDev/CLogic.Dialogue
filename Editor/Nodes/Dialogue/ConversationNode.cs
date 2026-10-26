@@ -1,11 +1,12 @@
 ﻿using System;
+using UnityEngine;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
 #if !DISABLE_CONVERSATION_NODE
-    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Conversation Node.svg", "Conversation")]
+    [Serializable, Node("Basic", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/ConversationNode.svg", "Conversation")]
     public class ConversationNode : DialogueNode<ConversationNodeData>
     {
         public const string IN_CHARACTER_NAME = "Character";
@@ -14,7 +15,11 @@ namespace CLogic.Dialogue.Editor
 
         public const string OP_TEXT_AREA_LINES = "Text Area Lines";
 
-        public override void OnEnable() => Tooltip = "Defines a conversation to be displayed";
+        public override void OnEnable()
+        {
+            DefaultColor = Color.coral;
+            Tooltip = "Defines a conversation to be displayed";
+        }
 
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {

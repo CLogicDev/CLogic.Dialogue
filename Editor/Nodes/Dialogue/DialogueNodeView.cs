@@ -17,7 +17,7 @@ namespace CLogic.Dialogue.Editor
 
         public override void OnViewBuilt()
         {
-            borderMaterial = new Material(Shader.Find("CLogic/DialogueSystem/S_DottedBorder"))
+            borderMaterial = new Material(Shader.Find("CLogic/DialogueSystem/DottedBorder"))
             {
                 hideFlags = HideFlags.HideAndDontSave // Prevents the material from being removed when exiting play mode
             };

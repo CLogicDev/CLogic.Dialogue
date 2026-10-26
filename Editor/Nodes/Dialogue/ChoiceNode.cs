@@ -1,18 +1,23 @@
 using System;
+using UnityEngine;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
 #if !DISABLE_CHOICE_NODE
-    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Choice Block.svg", "Choice Block")]
+    [Serializable, Node("Basic", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/ChoiceBlock.svg", "Choice Block")]
     public class ChoiceNode : DialogueContextNode<ChoiceNodeData>
     {
         public override bool SupportExecution => false;
 
         private const string OP_AUTO_CHOICE = "AutoChoice";
 
-        public override void OnEnable() => Tooltip = "Presents a set of choices to branch out the dialogue";
+        public override void OnEnable()
+        {
+            DefaultColor = Color.mediumPurple;
+            Tooltip = "Presents a set of choices to branch out the dialogue";
+        }
 
         protected override void OnDefineOptions(IOptionDefinitionContext context)
         {

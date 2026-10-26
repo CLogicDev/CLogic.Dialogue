@@ -1,15 +1,20 @@
 ﻿using System;
+using UnityEngine;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Start Node.svg", "Start Point")]
+    [Serializable, Node("Basic", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/StartNode.svg", "Start Point")]
     public class StartNode : Node, IDialogueGraphNode, IConnectionValidator
     {
         public const string OUT_START = "Entry";
 
-        public override void OnEnable() => Tooltip = "The entry point of the graph";
+        public override void OnEnable()
+        {
+            DefaultColor = Color.limeGreen;
+            Tooltip = "The entry point of the graph";
+        }
 
         protected override void OnDefinePorts(IPortDefinitionContext context) => context.AddOutputPort<IDialogueGraphNode>(OUT_START).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
 
