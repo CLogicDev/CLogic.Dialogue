@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1e56ebf5e9acf1a44a2a15f82db5c388
+guid: 7763a81ee7b45e943967ad3faa99581f
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -19,8 +19,8 @@ ScriptedImporter:
   preserveViewport: 0
   advancedMode: 0
   tessellationMode: 1
-  predefinedResolutionIndex: 2
-  targetResolution: 720
+  predefinedResolutionIndex: 3
+  targetResolution: 480
   resolutionMultiplier: 1
   stepDistance: 10
   samplingStepDistance: 100
@@ -32,7 +32,7 @@ ScriptedImporter:
   textureSize: 128
   textureWidth: 256
   textureHeight: 256
-  wrapMode: 0
+  wrapMode: 1
   filterMode: 1
   sampleCount: 4
   preserveSVGImageAspect: 0
