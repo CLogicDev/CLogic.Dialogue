@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Events", "Packages/dev.clogic.dialogue/Icons/Action Block.svg", "Action Block")]
+    [Serializable, Node("Events", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Action Block.svg", "Action Block")]
     public class ActionNode : DialogueContextNode<ActionNodeData>, IConnectionValidator
     {
         public override bool SupportExecution => false;

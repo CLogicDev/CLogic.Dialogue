@@ -1,12 +1,11 @@
 ﻿using System;
-using UnityEngine;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
 #if !DISABLE_CONVERSATION_NODE
-    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/Conversation Node.svg", "Conversation")]
+    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Conversation Node.svg", "Conversation")]
     public class ConversationNode : DialogueNode<ConversationNodeData>
     {
         public const string IN_CHARACTER_NAME = "Character";

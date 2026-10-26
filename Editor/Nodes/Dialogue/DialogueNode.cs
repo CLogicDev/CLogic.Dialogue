@@ -14,7 +14,7 @@ namespace CLogic.Dialogue.Editor
         public DialogueNodeStyleMapper()
         {
             Color32 wireColor = new(39, 145, 217, 255);
-            var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/Icons/Output Icon.svg").image as Texture2D;
+            var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Output Icon.svg").image as Texture2D;
 
             Register(typeof(IDialogueGraphNode), icon, wireColor);
         }
@@ -26,7 +26,7 @@ namespace CLogic.Dialogue.Editor
         public DialogueNodeEventsStyleMapper()
         {
             Color32 wireColor = new(47, 101, 132, 255);
-            var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/Icons/Start Event.svg").image as Texture2D;
+            var icon = EditorGUIUtility.IconContent("Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Start Event.svg").image as Texture2D;
 
             Register(typeof(ActionNode), icon, wireColor);
         }

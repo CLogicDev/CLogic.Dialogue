@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/Start Node.svg", "Start Point")]
+    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Start Node.svg", "Start Point")]
     public class StartNode : Node, IDialogueGraphNode, IConnectionValidator
     {
         public const string OUT_START = "Entry";

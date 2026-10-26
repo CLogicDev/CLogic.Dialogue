@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace CLogic.Dialogue.Editor
 {
 #if !DISABLE_CHOICE_NODE
-    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/Choice Block.svg", "Choice Block")]
+    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/Choice Block.svg", "Choice Block")]
     public class ChoiceNode : DialogueContextNode<ChoiceNodeData>
     {
         public override bool SupportExecution => false;
