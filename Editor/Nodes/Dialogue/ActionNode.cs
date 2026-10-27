@@ -1,17 +1,22 @@
 ﻿using System;
+using UnityEngine;
 using Unity.GraphToolkit.Editor;
 using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Events", "Packages/dev.clogic.dialogue/Icons/Action Block.svg", "Action Block")]
+    [Serializable, Node("Basic", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/ActionBlock.svg", "Action Block")]
     public class ActionNode : DialogueContextNode<ActionNodeData>, IConnectionValidator
     {
         public override bool SupportExecution => false;
         public override bool SupportStartAction => false;
         public override bool SupportEndAction => false;
 
-        public override void OnEnable() => Tooltip = "Defines action blocks to be executed at runtime";
+        public override void OnEnable()
+        {
+            DefaultColor = Color.dodgerBlue;
+            Tooltip = "Defines action blocks to be executed at runtime";
+        }
 
         protected override void DefineDialoguePorts(IPortDefinitionContext context)
         {

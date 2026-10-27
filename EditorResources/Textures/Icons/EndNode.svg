@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:affinity="https://www.affinity.studio/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <ellipse id="path1" cx="258.63" cy="266.521" rx="222.685" ry="211.288"/>
+    <ellipse id="path2" cx="258.63" cy="267.864" rx="204.215" ry="193.412" style="fill:rgb(120,135,142);"/>
+    <rect id="rect3" x="247.326" y="168.138" width="26.406" height="292.9" style="fill:white;"/>
+    <g id="rect5-6" transform="matrix(-0.85537,-0.518017,-0.845971,0.533229,0.876712,21.917808)">
+        <rect x="-549.425" y="107.947" width="24.695" height="130.982" style="fill:white;"/>
+    </g>
+    <g id="rect4-2" transform="matrix(1,0,0,1,0.876712,21.917808)">
+        <rect x="353.381" y="285.651" width="25.166" height="56.747" style="fill:white;"/>
+    </g>
+    <g id="path3-9" transform="matrix(1,0,0,1,0.876712,21.917808)">
+        <circle cx="366.47" cy="285.095" r="36.445" style="fill:white;"/>
+    </g>
+    <circle id="path3-5" cx="152.143" cy="228.246" r="36.445" style="fill:white;"/>
+    <ellipse id="path3" cx="259.253" cy="160.001" rx="36.445" ry="35.818" style="fill:white;"/>
+    <rect id="rect4" x="139.973" y="245.022" width="26.406" height="75.93" style="fill:white;"/>
+    <g id="rect5" transform="matrix(0.85537,-0.518017,0.845971,0.533229,0,0)">
+        <rect x="-220.21" y="388" width="29.197" height="128.308" style="fill:white;"/>
+    </g>
+</svg>

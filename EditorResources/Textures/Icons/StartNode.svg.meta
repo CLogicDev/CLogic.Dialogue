@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ac24f0f0464a8f148a638a04fc4bf991
+guid: 7a42cc61af3d3ee44af2eed3047fab0a
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -15,12 +15,12 @@ ScriptedImporter:
   alignment: 0
   customPivot: {x: 0, y: 0}
   generatePhysicsShape: 0
-  viewportOptions: 0
+  viewportOptions: 1
   preserveViewport: 0
   advancedMode: 0
   tessellationMode: 1
-  predefinedResolutionIndex: 1
-  targetResolution: 1080
+  predefinedResolutionIndex: 3
+  targetResolution: 480
   resolutionMultiplier: 1
   stepDistance: 10
   samplingStepDistance: 100
@@ -32,9 +32,9 @@ ScriptedImporter:
   textureSize: 128
   textureWidth: 256
   textureHeight: 256
-  wrapMode: 0
+  wrapMode: 1
   filterMode: 1
-  sampleCount: 8
+  sampleCount: 4
   preserveSVGImageAspect: 0
   useSVGPixelsPerUnit: 0
   spriteData:
