@@ -17,7 +17,7 @@ namespace CLogic.Dialogue.Editor
 
         public override void OnEnable()
         {
-            DefaultColor = Color.coral;
+            DefaultColor = Color.lightSeaGreen;
             Tooltip = "Defines a conversation to be displayed";
         }
 
