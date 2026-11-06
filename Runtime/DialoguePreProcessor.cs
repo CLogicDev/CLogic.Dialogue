@@ -3,31 +3,28 @@ using UnityEngine;
 
 namespace CLogic.Dialogue
 {
-    public interface IDialoguePreProcessor
+    public interface IDialoguePreProcessor : IDialogueProcessorBase
     {
-        public Type HandledType { get; }
-        
         public int Priority { get; }
-        
+
         internal void PreProcessInternal(DialogueNodeData nodeData, DialogueDirector director);
     }
-    
-    public abstract class DialoguePreProcessor<T> : MonoBehaviour, IDialogueProcessor, IDialoguePreProcessor where T : DialogueNodeData
+
+    /// <summary>
+    /// A base class for creating dialogue pre-processors that can access dialogue node data before it is processed by the dialogue system.
+    /// </summary>
+    /// <typeparam name="T">The type of dialogue node data this pre-processor handles.</typeparam>
+    public abstract class DialoguePreProcessor<T> : MonoBehaviour, IDialoguePreProcessor where T : DialogueNodeData
     {
-        public Type HandledType => typeof(T);
+        public Type NodeType => typeof(T);
+
+        /// <summary>
+        /// Represents the execution priority of the pre-processor. Lowest is executed first.
+        /// </summary>
         public abstract int Priority { get; }
-        
-        void IDialoguePreProcessor.PreProcessInternal(DialogueNodeData nodeData, DialogueDirector director) => PreProcess((T)nodeData, director);
+
         protected abstract void PreProcess(T nodeData, DialogueDirector director);
-        
-        #region Interface Contracts
-        public Type NodeType => HandledType;
-        public bool CanProgressNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialoguePreProcessor<T>)} cannot process nodes");
-        public void ProcessNode(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialoguePreProcessor<T>)} cannot process nodes");
-        public void HandleCancellation(DialogueNodeData nodeData, DialogueDirector director) => throw new Exception($"{nameof(DialoguePreProcessor<T>)} cannot process nodes");
-        #if UNITY_EDITOR
-        public void VisualizeNode(Unity.GraphToolkit.Editor.GraphVisualization.Context ctx, DialogueNodeData nodeData) => throw new Exception($"{nameof(DialoguePreProcessor<T>)} cannot process nodes");
-        #endif
-        #endregion
+
+        void IDialoguePreProcessor.PreProcessInternal(DialogueNodeData nodeData, DialogueDirector director) => PreProcess((T)nodeData, director);
     }
 }

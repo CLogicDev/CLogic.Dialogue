@@ -1,45 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+
 namespace CLogic.Dialogue
 {
     public partial class DialogueDirector
     {
-        public struct SubGraph
-        {
-            public DialogueHandle dialogue;
-            public Action finishCallback;
-            public int originatingID;
-                        
-            #if UNITY_EDITOR
-            public Unity.GraphToolkit.Editor.GraphVisualization.Context visualizationContext;
-            #endif
-        }
-        
-        private Stack<SubGraph> graphStack = new();
-        
+        public bool IsInSubGraph => CurrentDialogue?.executionFrames?.Count > 0;
+
         private void ProcessSubGraph(SubGraphNodeData subgraph)
         {
-            graphStack.Push(new SubGraph
+            CurrentDialogue.executionFrames ??= new Stack<SubGraph>();
+
+            CurrentDialogue.executionFrames.Push(new SubGraph
             {
-                dialogue = CurrentDialogue,
-                originatingID = currentNodeID,
-                #if UNITY_EDITOR
+                dialogueGraph = CurrentDialogue.CurrentGraph,
+                subgraphNodeID = currentNodeID,
+
+#if UNITY_EDITOR
                 visualizationContext = CurrentContext
-                #endif
+#endif
             });
-            PlayDialogueGraph(subgraph.graph, HandleSubGraphFinished, callFinishCallback: false);
+
+            CurrentDialogue.CurrentGraph = subgraph.graph;
+            CurrentNode = null;
+
+            LoadGraph(subgraph.graph);
+            GoToNode(subgraph.graph.startNodeID, true);
         }
-        
+
+
         private void HandleSubGraphFinished()
         {
-            if (!graphStack.TryPop(out SubGraph graph))
-                return;
-            
-            #if UNITY_EDITOR
-            CurrentContext = graph.visualizationContext;
-            #endif
-            
-            PlayDialogueGraph(graph.dialogue.DialogueGraph, graph.finishCallback, true, graph.dialogue.DialogueGraph.nodes[graph.originatingID].nextNodeID, createVisualizationContext: false);
+            if (!CurrentDialogue.executionFrames.TryPop(out SubGraph subgraph))
+                throw new Exception("Subgraph did not terminate properly");
+
+            CurrentDialogue.CurrentGraph = subgraph.dialogueGraph;
+            LoadGraph(subgraph.dialogueGraph, false);
+
+#if UNITY_EDITOR
+            CurrentContext = subgraph.visualizationContext;
+#endif
+
+            var subgraphNode = nodes[subgraph.subgraphNodeID] as SubGraphNodeData;
+
+            CurrentNode = null;
+            GoToNode(subgraphNode.nextNodeID, true);
         }
     }
 }

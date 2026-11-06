@@ -2,9 +2,14 @@
 using UnityEngine;
 using System.Collections.Generic;
 using CLogic.Dialogue.Provisioner;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("CLogic.Dialogue.Editor")]
 namespace CLogic.Dialogue
 {
+    /// <summary>
+    /// Runtime equivalent of the editor graph used for playing dialogues using the <see cref="DialogueDirector"/>
+    /// </summary>
     public class DialogueGraph : ScriptableObject
     {
         [Serializable]
@@ -13,24 +18,22 @@ namespace CLogic.Dialogue
             public Hash128 subgraphNodePort;
             public Hash128 variableNodePort;
         }
-        
-        [SerializeField]
-        public Dictionary<Hash128, SubgraphWireReference> subgraphWireReferences;
-        
+
+        public const int INVALID_END = -1;
+        public const int GRACEFUL_END = -2;
+
+        public int startNodeID = -1;
+
         public Hash128 graphHash;
         public Hash128 entryPortHash;
-        
-        public int startNodeID = -1;
-        
-        [SerializeReference]
-        public DialogueNodeData[] nodes;
-        
-        [SerializeReference]
-        public ProvisionerData[] provisionerData;
+
+        [SerializeField] public Dictionary<Hash128, SubgraphWireReference> subgraphWireReferences;
+        [SerializeReference] public DialogueNodeData[] nodes;
+        [SerializeReference] public ProvisionerData[] provisionerData;
     }
-    
+
     [Serializable]
-    public class SubGraphNodeData : DialogueNodeData
+    internal class SubGraphNodeData : DialogueNodeData
     {
         public DialogueGraph graph;
     }

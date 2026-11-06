@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Reflection;
+using UnityEngine;
 using Unity.GraphToolkit.Editor;
 
 namespace CLogic.Dialogue.Editor
 {
-    [Serializable, Node("Basic Nodes", "Packages/dev.clogic.dialogue/Icons/End Node.svg", "End Point")]
+    [Serializable, Node("Basic", "Packages/dev.clogic.dialogue/EditorResources/Textures/Icons/EndNode.svg", "End Point")]
     public class EndNode : Node
     {
+        public override void OnEnable()
+        {
+            DefaultColor = Color.softRed;
+            Tooltip = "The exit point of the graph";
+        }
+
         protected override void OnDefinePorts(IPortDefinitionContext context)
         {
-            var inputPort = context.AddInputPort<IDialogueGraphNode>("Exit").WithConnectorUI(PortConnectorUI.Arrowhead).Build();
-            
-            PropertyInfo propertyInfo = inputPort.GetType().GetProperty("Capacity", BindingFlags.Instance | BindingFlags.Public);
-            Type portCapacityType = propertyInfo.PropertyType;
-            object multiCapacity = Enum.Parse(portCapacityType, "Multi");
-            propertyInfo.SetValue(inputPort, multiCapacity);
+            context.AddInputPort<IDialogueGraphNode>("Exit").WithCapacity(PortCapacity.Multi).WithConnectorUI(PortConnectorUI.Arrowhead).Build();
         }
     }
 }
