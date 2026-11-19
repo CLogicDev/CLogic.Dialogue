@@ -3,7 +3,8 @@
     "rootNamespace": "CLogic.Dialogue.Editor",
     "references": [
         "GUID:1a5ce730afcd98d4d91f6a091725bb81",
-        "GUID:743432685a1859d48b828bbf3716c2d0"
+        "GUID:743432685a1859d48b828bbf3716c2d0",
+        "GUID:eec0964c48f6f4e40bc3ec2257ccf8c5"
     ],
     "includePlatforms": [
         "Editor"
@@ -19,6 +20,11 @@
             "name": "dev.clogic.conditional",
             "expression": "",
             "define": "CLOGIC_CONDITIONAL"
+        },
+        {
+            "name": "com.unity.localization",
+            "expression": "",
+            "define": "HAS_LOCALIZATION"
         }
     ],
     "noEngineReferences": false
