@@ -4,6 +4,10 @@ using UnityEngine;
 using System.Collections;
 using JetBrains.Annotations;
 
+#if HAS_LOCALIZATION
+using Unity.Localization;
+#endif
+
 namespace CLogic.Dialogue.Extras
 {
     [RequireComponent(typeof(TextMeshProUGUI))]
@@ -13,6 +17,12 @@ namespace CLogic.Dialogue.Extras
 
         [TextArea] public string textToWrite;
         [TextArea] public string startText;
+
+#if HAS_LOCALIZATION
+        [Header("Localization")]
+        [SerializeField] private LocalizedString localizedTextToWrite;
+        [SerializeField] private LocalizedString localizedStartText;
+#endif
 
         [Header("Settings")]
         public float speedWordsPerMin = 120f;
@@ -40,8 +50,16 @@ namespace CLogic.Dialogue.Extras
         public void StopWriting() => StopWriting(false, false);
         public void SkipAnimation() => StopWriting(true, true);
 
-        public void StartWriting() => StartWriting(textToWrite);
-        public void StartWriting(string text, Action finishCallback = null) => StartWriting(text, speedWordsPerMin, finishCallback, startText, delayEmptySpace);
+        public void StartWriting()
+        {
+#if HAS_LOCALIZATION
+            StartWritingLocalized();
+#else
+            StartWriting(textToWrite, startText);
+#endif
+        }
+
+        public void StartWriting(string text, string startText = "", Action finishCallback = null) => StartWriting(text, speedWordsPerMin, finishCallback, startText, delayEmptySpace);
         public void StartWriting(string text, float wordsPerMin, Action finishCallback) => StartWriting(text, wordsPerMin, finishCallback, null, true);
         #endregion
 
@@ -71,6 +89,32 @@ namespace CLogic.Dialogue.Extras
 
             IsWriting = false;
         }
+
+#if HAS_LOCALIZATION
+        private async void StartWritingLocalized()
+        {
+            string text = textToWrite;
+            string start = startText;
+
+            if (!localizedTextToWrite.IsEmpty)
+            {
+                string localized = await localizedTextToWrite.GetLocalizedStringAsync();
+
+                if (!string.IsNullOrEmpty(localized))
+                    text = localized;
+            }
+
+            if (!localizedStartText.IsEmpty)
+            {
+                string localized = await localizedStartText.GetLocalizedStringAsync();
+
+                if (!string.IsNullOrEmpty(localized))
+                    start = localized;
+            }
+
+            StartWriting(text, start);
+        }
+#endif
 
         private IEnumerator WriterCoroutine(string text, float wordsPerMinute, Action finishCallback = null, [CanBeNull] string startText = null, bool delayEmptySpace = true)
         {
