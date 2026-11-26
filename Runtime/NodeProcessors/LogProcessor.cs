@@ -1,11 +1,15 @@
 using System;
 using UnityEngine;
+using CLogic.Dialogue.Provisioner;
 
 namespace CLogic.Dialogue
 {
     [Serializable]
     public class LogNodeData : BlockNodeData
     {
+        public const string IN_MESSAGE = "Message";
+
+        [Provision(IN_MESSAGE)]
         public string message;
     }
 

@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using Unity.GraphToolkit.Editor;
+using System.Collections.Generic;
 
 namespace CLogic.Dialogue.Editor
 {
@@ -11,11 +11,11 @@ namespace CLogic.Dialogue.Editor
 
         public override void OnEnable() => Tooltip = "Logs a message to the console";
 
+        protected override void OnDefinePorts(IPortDefinitionContext context) => context.AddInputPort<string>(IN_MESSAGE).Build();
+
         public override LogNodeData ProcessNodeAsset(DialogueGraph graph, Dictionary<IPort, int> portmap) => new()
         {
             message = GetPortValue<string>(GetInputPortByName(IN_MESSAGE))
         };
-
-        protected override void OnDefinePorts(IPortDefinitionContext context) => context.AddInputPort<string>(IN_MESSAGE).Build();
     }
 }
